@@ -1,0 +1,10 @@
+{
+  "name": "aeo-n8n",
+  "version": "0.1.0",
+  "description": "Comprehensive n8n workflow automation skills including expressions, node configuration, code nodes, and MCP integration",
+  "author": {
+    "name": "AeyeOps",
+    "url": "https://github.com/AeyeOps"
+  },
+  "license": "MIT"
+}

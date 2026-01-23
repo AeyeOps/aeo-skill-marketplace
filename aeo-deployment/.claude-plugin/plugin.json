@@ -1,0 +1,10 @@
+{
+  "name": "aeo-deployment",
+  "version": "0.1.0",
+  "description": "Release management agents for orchestrating deployments, ensuring compliance, and implementing progressive rollout strategies",
+  "author": {
+    "name": "AeyeOps",
+    "url": "https://github.com/AeyeOps"
+  },
+  "license": "MIT"
+}

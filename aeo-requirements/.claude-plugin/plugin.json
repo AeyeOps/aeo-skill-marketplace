@@ -1,0 +1,10 @@
+{
+  "name": "aeo-requirements",
+  "version": "0.1.0",
+  "description": "Requirements gathering agents for product discovery, technical specifications, stakeholder interviews, and build-vs-buy analysis",
+  "author": {
+    "name": "AeyeOps",
+    "url": "https://github.com/AeyeOps"
+  },
+  "license": "MIT"
+}

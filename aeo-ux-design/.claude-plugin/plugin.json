@@ -1,0 +1,10 @@
+{
+  "name": "aeo-ux-design",
+  "version": "0.1.0",
+  "description": "User experience agents for interface optimization, accessibility validation, and WCAG compliance verification",
+  "author": {
+    "name": "AeyeOps",
+    "url": "https://github.com/AeyeOps"
+  },
+  "license": "MIT"
+}

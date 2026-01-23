@@ -1,0 +1,10 @@
+{
+  "name": "aeo-performance",
+  "version": "0.1.0",
+  "description": "Performance engineering toolkit with agents for profiling, bottleneck identification, optimization planning, and monitoring setup",
+  "author": {
+    "name": "AeyeOps",
+    "url": "https://github.com/AeyeOps"
+  },
+  "license": "MIT"
+}

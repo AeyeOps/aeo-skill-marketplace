@@ -1,0 +1,10 @@
+{
+  "name": "aeo-tdd-workflow",
+  "version": "0.1.0",
+  "description": "Test-driven development agents enforcing red-green-refactor methodology with comprehensive test generation and quality validation",
+  "author": {
+    "name": "AeyeOps",
+    "url": "https://github.com/AeyeOps"
+  },
+  "license": "MIT"
+}

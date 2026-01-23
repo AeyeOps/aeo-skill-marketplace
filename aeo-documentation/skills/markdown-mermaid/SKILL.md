@@ -1,0 +1,121 @@
+---
+name: markdown-mermaid
+description: |
+  Craft Mermaid diagrams within Markdown for flowcharts, ERDs, sequence diagrams, state machines,
+  Gantt charts, and mindmaps. Includes validated syntax templates, layout optimization, and
+  cross-platform rendering for GitHub, GitLab, VS Code, and Obsidian. Activate when visualizing
+  architecture, documenting APIs, illustrating database schemas, debugging rendering failures,
+  or selecting the appropriate diagram type for technical documentation.
+---
+
+# Mermaid in Markdown
+
+Create diagrams using fenced code blocks:
+
+````markdown
+```mermaid
+flowchart TB
+    A[Start] --> B[End]
+```
+````
+
+## Reference Files (Load Only What You Need)
+
+### Core Diagrams
+| Diagram Type | Load this file |
+|--------------|----------------|
+| **Flowchart** - processes, workflows | [flowchart.md](references/flowchart.md) |
+| **Sequence** - API interactions | [sequence.md](references/sequence.md) |
+| **Class** - OOP structures | [class.md](references/class.md) |
+| **State** - lifecycles, FSM | [state.md](references/state.md) |
+| **ERD** - database schemas | [erd.md](references/erd.md) |
+| **Gantt** - project timelines | [gantt.md](references/gantt.md) |
+
+### Charts & Data Visualization
+| Diagram Type | Load this file |
+|--------------|----------------|
+| **Pie** - proportional data | [pie.md](references/pie.md) |
+| **Quadrant** - priority matrix | [quadrant.md](references/quadrant.md) |
+| **Radar** - multi-dimensional | [radar.md](references/radar.md) |
+| **XY Chart** - line/bar graphs | [xychart.md](references/xychart.md) |
+| **Sankey** - flow quantities | [sankey.md](references/sankey.md) |
+| **Treemap** - hierarchical data | [treemap.md](references/treemap.md) |
+
+### Specialized Diagrams
+| Diagram Type | Load this file |
+|--------------|----------------|
+| **C4** - architecture (Context/Container/Component) | [c4.md](references/c4.md) |
+| **Architecture** - cloud/infra | [architecture.md](references/architecture.md) |
+| **Block** - manual layouts | [block.md](references/block.md) |
+| **Mindmap** - brainstorming | [mindmap.md](references/mindmap.md) |
+| **Timeline** - chronological events | [timeline.md](references/timeline.md) |
+| **Journey** - user workflows | [journey.md](references/journey.md) |
+| **GitGraph** - branching | [gitgraph.md](references/gitgraph.md) |
+| **Kanban** - task boards | [kanban.md](references/kanban.md) |
+| **ZenUML** - code-like sequence | [zenuml.md](references/zenuml.md) |
+| **Requirement** - SysML | [requirement.md](references/requirement.md) |
+| **Packet** - network protocols | [packet.md](references/packet.md) |
+
+### Reference & Guides
+| When you need... | Load this file |
+|------------------|----------------|
+| **Which diagram to use?** | [selection-guide.md](references/selection-guide.md) |
+| **Layout/width problems** | [layout.md](references/layout.md) |
+| **Styling and themes** | [styling.md](references/styling.md) |
+| **Platform compatibility** | [platforms.md](references/platforms.md) |
+| **Core syntax rules** | [syntax.md](references/syntax.md) |
+| **Copy-paste templates** | [templates.md](references/templates.md) |
+
+## Quick Diagram Selection
+
+| Scenario | Diagram | Keyword |
+|----------|---------|---------|
+| Database tables | ERD | `erDiagram` |
+| API calls | Sequence | `sequenceDiagram` |
+| Process steps | Flowchart | `flowchart TB` |
+| Status lifecycle | State | `stateDiagram-v2` |
+| Project schedule | Gantt | `gantt` |
+| Brainstorm | Mindmap | `mindmap` |
+| Architecture | Flowchart+subgraphs | `flowchart TB` |
+| Git workflow | GitGraph | `gitGraph` |
+| Task board | Kanban | `kanban` |
+
+## Essential Patterns
+
+### Flowchart
+```mermaid
+flowchart TB
+    Start[Start] --> Check{Valid?}
+    Check -->|Yes| Process[Process]
+    Check -->|No| Error[Error]
+```
+
+### ERD
+```mermaid
+erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    CUSTOMER { int id PK }
+```
+
+### Sequence
+```mermaid
+sequenceDiagram
+    Client->>API: Request
+    API-->>Client: Response
+```
+
+## Critical Rules
+
+1. **Use TB direction** - LR causes width issues on narrow viewports
+2. **Wrap "end"** - Use `[end]`, `(end)`, or `"end"` (reserved word)
+3. **Split large diagrams** - Keep under 20 nodes per diagram
+4. **Test first** - Use [mermaid.live](https://mermaid.live/) before committing
+
+## Common Fixes
+
+| Problem | Solution |
+|---------|----------|
+| Diagram too wide | Change `LR` to `TB` |
+| Not rendering | Check for "end" keyword |
+| Subgraph direction ignored | External connections override direction |
+| Platform differences | See [platforms.md](references/platforms.md) |

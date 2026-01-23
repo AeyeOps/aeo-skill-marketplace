@@ -1,0 +1,124 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "aeo-skill-marketplace",
+  "description": "Curated collection of AI development skills for Claude Code and compatible agents",
+  "owner": {
+    "name": "AeyeOps",
+    "email": "support@aeyeops.com",
+    "url": "https://github.com/AeyeOps"
+  },
+  "plugins": [
+    {
+      "name": "aeo-claude",
+      "description": "Claude development skills: Agent SDK reference, skill creation, slash command creation, and Opus prompting techniques",
+      "category": "development",
+      "source": "./aeo-claude",
+      "tags": ["claude", "agent-sdk", "skills", "prompting", "slash-commands"]
+    },
+    {
+      "name": "aeo-agile-tools",
+      "description": "Specialized agents for agile methodology support including sprint facilitation, backlog management, requirements analysis, and delivery coordination",
+      "category": "productivity",
+      "source": "./aeo-agile-tools",
+      "tags": ["agile", "scrum", "project-management"]
+    },
+    {
+      "name": "aeo-architecture",
+      "description": "Design and documentation toolkit with agents for creating system architectures, C4 diagrams, ADRs, and conducting quality analysis",
+      "category": "development",
+      "source": "./aeo-architecture",
+      "tags": ["architecture", "c4", "adr", "design"]
+    },
+    {
+      "name": "aeo-code-analysis",
+      "description": "Tools for examining legacy codebases, assessing technical debt, evaluating technology options, and documenting undocumented systems",
+      "category": "development",
+      "source": "./aeo-code-analysis",
+      "tags": ["code-analysis", "legacy", "technical-debt"]
+    },
+    {
+      "name": "aeo-deployment",
+      "description": "Release management agents for orchestrating deployments, ensuring compliance, and implementing progressive rollout strategies",
+      "category": "deployment",
+      "source": "./aeo-deployment",
+      "tags": ["deployment", "ci-cd", "rollout"]
+    },
+    {
+      "name": "aeo-documentation",
+      "description": "Documentation suite implementing the Diataxis framework with dedicated agents for tutorials, how-to guides, explanations, and reference materials",
+      "category": "development",
+      "source": "./aeo-documentation",
+      "tags": ["documentation", "diataxis", "technical-writing"]
+    },
+    {
+      "name": "aeo-epcc-workflow",
+      "description": "Structured development methodology agents supporting the Explore-Plan-Code-Commit cycle from initial discovery through final delivery",
+      "category": "development",
+      "source": "./aeo-epcc-workflow",
+      "tags": ["workflow", "epcc", "development-process"]
+    },
+    {
+      "name": "aeo-performance",
+      "description": "Performance engineering toolkit with agents for profiling, bottleneck identification, optimization planning, and monitoring setup",
+      "category": "development",
+      "source": "./aeo-performance",
+      "tags": ["performance", "profiling", "optimization"]
+    },
+    {
+      "name": "aeo-requirements",
+      "description": "Requirements gathering agents for product discovery, technical specifications, stakeholder interviews, and build-vs-buy analysis",
+      "category": "productivity",
+      "source": "./aeo-requirements",
+      "tags": ["requirements", "product", "evaluation"]
+    },
+    {
+      "name": "aeo-security",
+      "description": "Security assessment agents for vulnerability scanning, compliance validation, code auditing, and remediation guidance",
+      "category": "security",
+      "source": "./aeo-security",
+      "tags": ["security", "audit", "compliance"]
+    },
+    {
+      "name": "aeo-tdd-workflow",
+      "description": "Test-driven development agents enforcing red-green-refactor methodology with comprehensive test generation and quality validation",
+      "category": "testing",
+      "source": "./aeo-tdd-workflow",
+      "tags": ["tdd", "testing", "red-green-refactor"]
+    },
+    {
+      "name": "aeo-testing",
+      "description": "Quality assurance agents for test planning, automated validation, quality gate enforcement, and coverage analysis",
+      "category": "testing",
+      "source": "./aeo-testing",
+      "tags": ["testing", "qa", "quality-gates"]
+    },
+    {
+      "name": "aeo-troubleshooting",
+      "description": "Systematic debugging agents with structured problem-solving workflows and collaborative escalation mechanisms",
+      "category": "development",
+      "source": "./aeo-troubleshooting",
+      "tags": ["debugging", "troubleshooting", "problem-solving"]
+    },
+    {
+      "name": "aeo-ux-design",
+      "description": "User experience agents for interface optimization, accessibility validation, and WCAG compliance verification",
+      "category": "design",
+      "source": "./aeo-ux-design",
+      "tags": ["ux", "ui", "accessibility", "wcag"]
+    },
+    {
+      "name": "aeo-python",
+      "description": "Python development skills covering CLI engineering, data pipelines, and terminal UI development with Textual",
+      "category": "development",
+      "source": "./aeo-python",
+      "tags": ["python", "cli", "data-engineering", "textual", "tui"]
+    },
+    {
+      "name": "aeo-n8n",
+      "description": "Comprehensive n8n workflow automation skills including expressions, node configuration, code nodes, and MCP integration",
+      "category": "automation",
+      "source": "./aeo-n8n",
+      "tags": ["n8n", "workflow", "automation", "low-code"]
+    }
+  ]
+}

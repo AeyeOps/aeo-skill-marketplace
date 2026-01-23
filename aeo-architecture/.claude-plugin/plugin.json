@@ -1,0 +1,10 @@
+{
+  "name": "aeo-architecture",
+  "version": "0.1.0",
+  "description": "Design and documentation toolkit with agents for creating system architectures, C4 diagrams, ADRs, and conducting quality analysis",
+  "author": {
+    "name": "AeyeOps",
+    "url": "https://github.com/AeyeOps"
+  },
+  "license": "MIT"
+}

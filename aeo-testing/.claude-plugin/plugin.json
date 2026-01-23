@@ -1,0 +1,10 @@
+{
+  "name": "aeo-testing",
+  "version": "0.1.0",
+  "description": "Quality assurance agents for test planning, automated validation, quality gate enforcement, and coverage analysis",
+  "author": {
+    "name": "AeyeOps",
+    "url": "https://github.com/AeyeOps"
+  },
+  "license": "MIT"
+}

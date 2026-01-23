@@ -1,0 +1,10 @@
+{
+  "name": "aeo-epcc-workflow",
+  "version": "0.1.0",
+  "description": "Structured development methodology agents supporting the Explore-Plan-Code-Commit cycle from initial discovery through final delivery",
+  "author": {
+    "name": "AeyeOps",
+    "url": "https://github.com/AeyeOps"
+  },
+  "license": "MIT"
+}
