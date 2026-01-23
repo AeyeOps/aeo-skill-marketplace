@@ -229,8 +229,7 @@ my-cli-app:
 ## Related Patterns
 
 **This Skill:**
-- [../examples/](../examples/) - CLI application examples
-- [../templates/Makefile](../templates/Makefile) - Makefile template
+- [Makefile Template](../templates/Makefile) - Makefile template
 
 ---
 

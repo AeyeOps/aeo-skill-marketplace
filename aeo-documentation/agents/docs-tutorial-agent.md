@@ -245,9 +245,9 @@ Now that you understand the basics:
 - **"Advanced [feature]"** → `../how-to/[advanced-task].md`
 
 ### When Others Link TO Tutorials
-- **From How-to**: "New to [system]? Start with our [tutorial](../tutorials/[topic].md)"
-- **From Reference**: "Getting started? Try our [tutorial](../tutorials/getting-started-[topic].md) first"
-- **From Explanation**: "Want hands-on practice? Follow our [tutorial](../tutorials/[topic].md)"
+- **From How-to**: "New to this? Start with our tutorial" → `../tutorials/<topic>.md`
+- **From Reference**: "Getting started? Try our tutorial first" → `../tutorials/getting-started-<topic>.md`
+- **From Explanation**: "Want hands-on practice? Follow our tutorial" → `../tutorials/<topic>.md`
 
 ## Success Metrics
 

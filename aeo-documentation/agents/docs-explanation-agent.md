@@ -307,9 +307,9 @@ Key insights to remember:
 - **"Related concepts"** → `../explanation/[related-concept].md`
 
 ### When Others Link TO Explanation Documentation
-- **From Tutorials**: "[Understand why this works](../explanation/[concept].md)"
-- **From How-to**: "[Background on this approach](../explanation/[design].md)"
-- **From Reference**: "[Conceptual overview](../explanation/[architecture].md)" or "[Design rationale](../explanation/[decisions].md)"
+- **From Tutorials**: "Understand why this works" → `../explanation/<concept>.md`
+- **From How-to**: "Background on this approach" → `../explanation/<design>.md`
+- **From Reference**: "Conceptual overview" → `../explanation/<architecture>.md` or `../explanation/<decisions>.md`
 
 ## Conceptual Framework Patterns
 

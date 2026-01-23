@@ -277,8 +277,8 @@ For [high-scale/performance-critical] scenarios:
 
 ### When Others Link TO How-To Guides
 - **From Tutorials**: "Ready for real tasks? Try [these guides](../how-to/)"
-- **From Reference**: "Common use cases in [how-to guides](../how-to/[task].md)"
-- **From Explanation**: "Implement this concept in [practice](../how-to/[implementation].md)"
+- **From Reference**: "Common use cases in how-to guides" → `../how-to/<task>.md`
+- **From Explanation**: "Implement this concept in practice" → `../how-to/<implementation>.md`
 
 ## Problem Categories and Patterns
 

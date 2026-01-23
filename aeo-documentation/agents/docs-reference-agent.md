@@ -436,9 +436,9 @@ command deploy --timeout 600 prod     # Deploy with custom timeout
 - **"Related [item]"** → `../reference/[related-component].md`
 
 ### When Others Link TO Reference Documentation
-- **From Tutorials**: "See [all options](../reference/[component].md)" or "[Complete specification](../reference/[api].md)"
-- **From How-to**: "[Technical details](../reference/[spec].md)" or "[Full parameter list](../reference/[cli].md)"
-- **From Explanation**: "[Implementation details](../reference/[internals].md)" or "[API specification](../reference/[api].md)"
+- **From Tutorials**: "See all options" → `../reference/<component>.md` or `../reference/<api>.md`
+- **From How-to**: "Technical details" → `../reference/<spec>.md` or `../reference/<cli>.md`
+- **From Explanation**: "Implementation details" → `../reference/<internals>.md` or `../reference/<api>.md`
 
 ## Information Architecture Patterns
 

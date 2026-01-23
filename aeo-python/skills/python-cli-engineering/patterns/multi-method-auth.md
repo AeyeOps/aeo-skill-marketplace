@@ -355,7 +355,7 @@ auth_method: oauth1  # Still testing OAuth 2.0
 ## Related Patterns
 
 **This Skill:**
-- [../reference/configuration.md](../reference/configuration.md) - Environment-specific config patterns
+- [Configuration Patterns](../references/configuration.md) - Environment-specific config patterns
 - [make-integration.md](make-integration.md) - CLI structure with Make integration
 
 **Common Examples:**

@@ -211,19 +211,7 @@ This starts with 2-3 critical questions (architecture, cloud, framework), then g
 
 ## Documentation
 
-Comprehensive documentation following the Diataxis framework:
-
-### 📘 Tutorials (Learning-Oriented)
-- [Requirements Gathering Workflow](docs/tutorials/requirements-gathering-workflow.md) - 20 min hands-on tutorial
-
-### 📗 How-To Guides (Task-Oriented)
-- [Evaluate Technology Choices](docs/how-to/evaluate-technology-choices.md) - Quick technology evaluation
-
-### 📙 Explanation (Understanding-Oriented)
-- [Requirements Discovery Methodology](docs/explanation/requirements-discovery-methodology.md) - Why separate PRD and Technical Requirements
-
-### 📕 Reference
-- This README serves as quick reference
+This README serves as the primary reference. The commands and agents above provide interactive guidance for requirements gathering workflows.
 
 ## Agents
 
@@ -368,17 +356,16 @@ Or use `/tech-req` directly without PRD for technology decisions only.
 
 ## Contributing
 
-See [CONTRIBUTING.md](../../CONTRIBUTING.md) for guidelines on how to contribute to this plugin.
+Contributions welcome. Submit issues and pull requests to the repository.
 
 ## License
 
-MIT-0 - See [LICENSE](../../LICENSE) for details.
+MIT - See [LICENSE](../LICENSE) for details.
 
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/AeyeOps/aeo-skill-marketplace/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/AeyeOps/aeo-skill-marketplace/discussions)
-- **Documentation**: [Full Documentation](../../docs/)
 
 ## Related Plugins
 

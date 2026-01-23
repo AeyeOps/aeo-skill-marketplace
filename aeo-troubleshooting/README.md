@@ -287,19 +287,7 @@ Which path should we take?
 
 ## Documentation
 
-Comprehensive documentation following the Diataxis framework:
-
-### 📘 Tutorials (Learning-Oriented)
-- [Systematic Troubleshooting Tutorial](docs/tutorials/systematic-troubleshooting.md) - 15 min hands-on walkthrough
-
-### 📗 How-To Guides (Task-Oriented)
-- [Debug Common Errors](docs/how-to/debug-common-errors.md) - Patterns for frequent issues
-
-### 📙 Explanation (Understanding-Oriented)
-- [Systematic Debugging Philosophy](docs/explanation/systematic-debugging-philosophy.md) - Why ask-for-help prevents spinning wheels
-
-### 📕 Reference
-- This README serves as quick reference
+This README serves as the primary reference. The `/troubleshoot` command provides interactive guidance for systematic debugging workflows.
 
 ## Agents
 
@@ -488,11 +476,11 @@ Error during /epcc-code → /troubleshoot → Fix → /epcc-commit
 
 ## Contributing
 
-See [CONTRIBUTING.md](../../CONTRIBUTING.md) for guidelines.
+Contributions welcome. Submit issues and pull requests to the repository.
 
 ## License
 
-MIT-0 - See [LICENSE](../../LICENSE) for details.
+MIT - See [LICENSE](../LICENSE) for details.
 
 ## Support
 
