@@ -301,7 +301,6 @@ Complete working examples:
 - [examples/simple-skill.md](examples/simple-skill.md) - Single-file skill
 - [examples/multi-file-skill.md](examples/multi-file-skill.md) - Multi-file with references
 - [examples/code-skill.md](examples/code-skill.md) - Skill with scripts
-- [examples/mcp-skill.md](examples/mcp-skill.md) - Skill using MCP tools
 
 ---
 

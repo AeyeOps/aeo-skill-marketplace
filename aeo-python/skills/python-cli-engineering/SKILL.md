@@ -1,7 +1,7 @@
 ---
 name: python-cli-engineering
 description: Engineer production-grade Python CLI tools with UV for package management, Ruff for linting, Pyright for strict typing, Typer for commands, and Rich for polished output. Addresses fail-fast patterns, pydantic-settings configuration, modular code organization, and professional UX conventions. Apply when creating admin utilities, data processors, or developer tooling.
-allowed-tools: Read, Write, Edit, Bash(uv:*), Bash(ruff:*), Bash(pyright:*)
+allowed-tools: Read, Write, Edit, Bash
 ---
 
 # Python CLI Engineering
