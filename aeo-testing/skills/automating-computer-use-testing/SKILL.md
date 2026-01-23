@@ -279,7 +279,7 @@ This skill uses progressive disclosure - additional files loaded only when neede
 - Any unexpected behavior
 
 ### Examples (`examples/`)
-- [example_webapp_testing.md](examples/example_webapp_testing.md) - Christina workspace QA (complete goal file)
+- [example_webapp_testing.md](examples/example_webapp_testing.md) - Multi-panel dashboard QA (complete goal file)
 - [example_form_automation.md](examples/example_form_automation.md) - Form validation testing (step-by-step)
 - [example_visual_regression.md](examples/example_visual_regression.md) - Visual comparison testing (screenshot workflow)
 
@@ -392,7 +392,7 @@ export GOOGLE_API_KEY="your-key-here"
 ---
 
 **Built on research from:**
-- Christina Investigation Workspace automation
+- Multi-panel dashboard workspace automation
 - Claude Skills best practices (docs.claude.com)
 - Gemini 2.5 Computer Use API (ai.google.dev)
 - Industry QA automation patterns

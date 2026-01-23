@@ -29,7 +29,7 @@ graph LR
 | **Productivity** | 2 plugins | Agile roles, requirements gathering |
 | **Design** | 1 plugin | UX optimization, React PWA patterns |
 
-**Total:** 16 plugins · 18 skills · 61 agents · 24 commands
+**Total:** 16 plugins · 18 skills · 65 agents · 24 commands
 
 ---
 

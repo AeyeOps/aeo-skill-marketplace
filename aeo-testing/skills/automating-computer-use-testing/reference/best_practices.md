@@ -40,7 +40,7 @@ Success Criteria:
 - All 6 panels render correctly (Explorer, Resources, Canvas, Properties, Intelligence, Console)
 - Panel collapse animation completes in 250-350ms
 - No console errors or warnings visible
-- Layout matches christina_workspace_1.html visual benchmark
+- Layout matches workspace_prototype.html visual benchmark
 ```
 
 **Bad:**
@@ -102,9 +102,9 @@ Success Criteria:
 
 **Good:**
 ```
-You are a QA engineer testing the Christina Investigation Workspace, a professional support intelligence platform for enterprise analysts.
+You are a QA engineer testing a multi-panel dashboard workspace, a professional data visualization platform for enterprise analysts.
 
-Your goal is to validate the Investigation-Centric 4-panel workspace implementation matches the design specification.
+Your goal is to validate the 4-panel workspace implementation matches the design specification.
 ```
 
 **Bad:**

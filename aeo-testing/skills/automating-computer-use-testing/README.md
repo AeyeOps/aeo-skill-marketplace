@@ -39,7 +39,7 @@ automating-computer-use-testing/
 │   ├── harness_template.py           # Python Playwright harness
 │   └── env_template.env              # Environment variables template
 ├── examples/
-│   ├── example_webapp_testing.md     # Complete example: Christina webapp QA
+│   ├── example_webapp_testing.md     # Complete example: Multi-panel webapp QA
 │   ├── example_form_automation.md    # Example: form filling automation
 │   └── example_visual_regression.md  # Example: visual comparison testing
 ├── scripts/
@@ -70,7 +70,7 @@ This skill helps you create Gemini 2.5 Computer Use automations for:
 
 ## Examples
 
-### Example 1: Web App Testing (Christina Workspace)
+### Example 1: Web App Testing (Dashboard Workspace)
 
 **Input:**
 ```
@@ -236,7 +236,7 @@ export GOOGLE_API_KEY="your-key-here"
 ## Credits
 
 Built on research from:
-- Christina Investigation Workspace automation
+- Multi-panel dashboard workspace automation
 - Claude Skills best practices (docs.claude.com)
 - Gemini 2.5 Computer Use API (ai.google.dev)
 - Industry QA automation patterns

@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
-"""Gemini computer-use automation harness for the Christina Investigation Workspace.
+"""Gemini computer-use automation harness for web application QA testing.
 
-This script automates QA testing of the Christina React PWA workspace using Gemini's
-computer-use capabilities. It validates the 4-panel layout, selection-driven architecture,
-panel collapse/expand, and visual fidelity against the HTML prototype.
+This script automates QA testing of web applications using Gemini's
+computer-use capabilities. It validates multi-panel layouts, selection-driven
+architecture, interactive components, and visual fidelity against prototypes.
 
 Usage:
-    GOOGLE_API_KEY=... python tmp/gemini_computer_use_christina.py
+    GOOGLE_API_KEY=... python harness_template.py
 
 Relevant environment variables (all optional except `GOOGLE_API_KEY`):
-    CHRISTINA_SPA_URL              – Base URL to open (default: http://localhost:5173)
-    CHRISTINA_COMPUTER_USE_GOAL    – Natural-language QA instructions for the agent
-    CHRISTINA_COMPUTER_USE_WIDTH   – Viewport width in pixels (default: 1920)
-    CHRISTINA_COMPUTER_USE_HEIGHT  – Viewport height in pixels (default: 1080)
-    CHRISTINA_COMPUTER_USE_TURNS   – Maximum reasoning turns (default: 30)
-    CHRISTINA_COMPUTER_USE_HEADLESS – "true"/"false" toggle for headless browser
+    WEBAPP_URL                     – Base URL to open (default: http://localhost:5173)
+    COMPUTER_USE_GOAL              – Natural-language QA instructions for the agent
+    COMPUTER_USE_WIDTH             – Viewport width in pixels (default: 1920)
+    COMPUTER_USE_HEIGHT            – Viewport height in pixels (default: 1080)
+    COMPUTER_USE_TURNS             – Maximum reasoning turns (default: 30)
+    COMPUTER_USE_HEADLESS          – "true"/"false" toggle for headless browser
     GOOGLE_COMPUTER_USE_MODEL      – Gemini model id (default: computer-use preview)
-    CHRISTINA_COMPUTER_USE_EXCLUDED – Comma-separated list of functions to disable
+    COMPUTER_USE_EXCLUDED          – Comma-separated list of functions to disable
 
 The script expects `playwright` browsers to be installed (`pip install playwright && playwright install --with-deps chromium`).
 """
@@ -51,13 +51,13 @@ if not API_KEY:
 
 MODEL_ID = os.getenv("GOOGLE_COMPUTER_USE_MODEL", "gemini-2.5-computer-use-preview-10-2025")
 
-# Christina workspace typically runs on Vite default port 5173
-SCREEN_WIDTH = int(os.getenv("CHRISTINA_COMPUTER_USE_WIDTH", "1920"))
-SCREEN_HEIGHT = int(os.getenv("CHRISTINA_COMPUTER_USE_HEIGHT", "1080"))
+# Webapp typically runs on Vite default port 5173
+SCREEN_WIDTH = int(os.getenv("COMPUTER_USE_WIDTH", "1920"))
+SCREEN_HEIGHT = int(os.getenv("COMPUTER_USE_HEIGHT", "1080"))
 
-SPA_URL = os.getenv("CHRISTINA_SPA_URL", "http://localhost:5173")
+SPA_URL = os.getenv("WEBAPP_URL", "http://localhost:5173")
 
-DEFAULT_GOAL_PATH = Path(__file__).resolve().parent / "gemini_goal_christina.txt"
+DEFAULT_GOAL_PATH = Path(__file__).resolve().parent / "goal.txt"
 
 
 def _load_goal_from_file() -> str | None:
@@ -68,25 +68,25 @@ def _load_goal_from_file() -> str | None:
     return contents or None
 
 
-USER_GOAL = os.getenv("CHRISTINA_COMPUTER_USE_GOAL")
+USER_GOAL = os.getenv("COMPUTER_USE_GOAL")
 if USER_GOAL:
     USER_GOAL = USER_GOAL.strip()
 else:
     USER_GOAL = _load_goal_from_file() or (
-        "Open the Christina Investigation Workspace at the configured localhost URL, "
-        "verify all 6 panels render correctly, test panel collapse/expand on Investigation Explorer, "
-        "select different items in the tree and observe Workbench Canvas and Context Properties updates, "
+        "Open the web application at the configured localhost URL, "
+        "verify all panels render correctly, test interactive components, "
+        "select different items and observe panel updates, "
         "then provide a QA summary of what works and what's broken."
     )
 
 EXCLUDED_FUNCTIONS = [
     fn.strip()
-    for fn in os.getenv("CHRISTINA_COMPUTER_USE_EXCLUDED", "").split(",")
+    for fn in os.getenv("COMPUTER_USE_EXCLUDED", "").split(",")
     if fn.strip()
 ]
 
-TURN_LIMIT = int(os.getenv("CHRISTINA_COMPUTER_USE_TURNS", "30"))
-HEADLESS = os.getenv("CHRISTINA_COMPUTER_USE_HEADLESS", "false").lower() in {"1", "true", "yes"}
+TURN_LIMIT = int(os.getenv("COMPUTER_USE_TURNS", "30"))
+HEADLESS = os.getenv("COMPUTER_USE_HEADLESS", "false").lower() in {"1", "true", "yes"}
 
 
 # ---------------------------------------------------------------------------
@@ -334,7 +334,7 @@ def main() -> None:
         thinking_config=types.ThinkingConfig(include_thoughts=True),
     )
 
-    print("Launching Chromium for Christina Workspace QA...")
+    print("Launching Chromium for Web Application QA...")
     playwright = sync_playwright().start()
     browser = playwright.chromium.launch(headless=HEADLESS)
     context = browser.new_context(viewport={"width": SCREEN_WIDTH, "height": SCREEN_HEIGHT})
@@ -342,12 +342,12 @@ def main() -> None:
 
     try:
         try:
-            print(f"Navigating to Christina workspace at {SPA_URL}...")
+            print(f"Navigating to web application at {SPA_URL}...")
             page.goto(SPA_URL, wait_until="load")
         except PlaywrightError as exc:
             print(
-                f"[gemini] Failed to reach Christina workspace at {SPA_URL}.\n"
-                "Start the Vite dev server (`npm run dev` in the React project) or set CHRISTINA_SPA_URL, then rerun."
+                f"[gemini] Failed to reach web application at {SPA_URL}.\n"
+                "Start the dev server (e.g., `npm run dev`) or set WEBAPP_URL, then rerun."
             )
             raise SystemExit(1) from exc
 

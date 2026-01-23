@@ -481,7 +481,7 @@ browser = playwright.chromium.launch(headless=False, devtools=True)
 If issue persists after troubleshooting:
 
 1. **Check examples:**
-   - `examples/example_webapp_testing.md` - Christina workspace automation
+   - `examples/example_webapp_testing.md` - Dashboard workspace automation
    - `examples/example_form_automation.md` - Form testing
    - `examples/example_visual_regression.md` - Visual regression
 
