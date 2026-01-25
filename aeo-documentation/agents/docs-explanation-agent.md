@@ -1,5 +1,6 @@
 ---
 name: docs-explanation-agent
+version: 0.1.0
 description: Invoke when writing conceptual documentation that explains why things work. Creates understanding-oriented content covering design rationale, architectural principles, and system behavior.
 
 model: opus

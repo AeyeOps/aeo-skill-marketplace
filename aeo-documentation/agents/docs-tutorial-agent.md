@@ -1,5 +1,6 @@
 ---
 name: docs-tutorial-agent
+version: 0.1.0
 description: Engage for learning-oriented documentation that teaches through doing. Creates hands-on tutorials with progressive complexity and achievable milestones.
 
 model: opus

@@ -1,5 +1,6 @@
 ---
 name: ui-designer
+version: 0.1.0
 description: Engage for visual design and interface implementation. Creates component designs, establishes design tokens, implements responsive layouts, and ensures visual consistency.
 
 model: opus

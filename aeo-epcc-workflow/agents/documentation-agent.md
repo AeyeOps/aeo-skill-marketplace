@@ -1,5 +1,6 @@
 ---
 name: documentation-agent
+version: 0.1.0
 description: Use as the primary documentation coordinator. Applies the Diataxis framework to organize content into tutorials, how-tos, explanations, and references.
 
 model: opus

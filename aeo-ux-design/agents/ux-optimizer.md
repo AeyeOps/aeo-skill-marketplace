@@ -1,5 +1,6 @@
 ---
 name: ux-optimizer
+version: 0.1.0
 description: Activate when improving user experience or interface design. Analyzes interaction patterns, suggests usability improvements, and validates accessibility compliance.
 
 model: opus

@@ -1,5 +1,6 @@
 ---
 name: performance-optimizer
+version: 0.1.0
 description: Use for systematic performance improvement initiatives. Profiles systems end-to-end, prioritizes optimization efforts by impact, and implements performance enhancements.
 
 model: opus

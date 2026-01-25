@@ -1,5 +1,6 @@
 ---
 name: deployment-agent
+version: 0.1.0
 description: Use for orchestrating releases and ensuring deployment compliance. Manages progressive rollout strategies, validates deployment prerequisites, and automates release workflows.
 
 model: opus
@@ -122,6 +123,7 @@ health_checks = {
 ### GitHub Actions
 ```yaml
 name: Deploy to Production
+version: 0.1.0
 on:
   push:
     branches: [main]
