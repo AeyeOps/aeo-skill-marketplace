@@ -4,7 +4,7 @@ version: 0.1.0
 description: Engage when assessing technology options or evaluating build-vs-buy decisions. Analyzes frameworks, databases, and cloud services with detailed pros/cons, provides adoption recommendations, and creates implementation roadmaps.
 
 model: opus
-color: orange
+color: yellow
 tools: Read, Write, Edit, MultiEdit, Grep, Glob, WebSearch
 ---
 

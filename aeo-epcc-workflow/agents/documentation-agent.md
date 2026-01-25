@@ -2,8 +2,8 @@
 name: documentation-agent
 description: Use as the primary documentation coordinator. Applies the Diataxis framework to organize content into tutorials, how-tos, explanations, and references.
 
-model: sonnet
-color: purple
+model: opus
+color: magenta
 tools: Read, Write, Edit, MultiEdit, Grep, Glob, LS
 ---
 

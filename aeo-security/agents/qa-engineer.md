@@ -3,8 +3,8 @@ name: qa-engineer
 version: 0.1.0
 description: Invoke before releases or when establishing quality processes. Creates comprehensive test plans, designs test scenarios, performs exploratory testing, and tracks quality metrics.
 
-model: sonnet
-color: teal
+model: opus
+color: cyan
 tools: [Read, Write, Edit, MultiEdit, Grep, Glob, Bash, BashOutput]
 ---
 

@@ -3,7 +3,7 @@ name: ux-optimizer
 description: Activate when improving user experience or interface design. Analyzes interaction patterns, suggests usability improvements, and validates accessibility compliance.
 
 model: opus
-color: pink
+color: magenta
 tools: Read, Write, Edit, MultiEdit, Grep, Glob, WebSearch, WebFetch
 ---
 

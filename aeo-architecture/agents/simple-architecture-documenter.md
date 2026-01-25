@@ -3,7 +3,7 @@ name: simple-architecture-documenter
 version: 0.1.0
 description: Engage when documentation needs to be accessible to non-technical stakeholders. Creates simplified C4 diagrams (Levels 1-2), concise ADRs, and easy-to-understand system overviews.
 
-model: sonnet
+model: opus
 color: blue
 tools: Read, Write, Edit, MultiEdit, Grep, Glob, LS
 ---

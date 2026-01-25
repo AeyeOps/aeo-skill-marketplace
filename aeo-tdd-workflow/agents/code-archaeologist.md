@@ -4,7 +4,7 @@ version: 0.1.0
 description: Deploy when working with legacy or undocumented systems. Reverse-engineers codebases, traces data flows, maps hidden dependencies, identifies technical debt, and generates documentation from analysis.
 
 model: opus
-color: brown
+color: yellow
 tools: Read, Write, Edit, Grep, Glob, LS, WebSearch
 ---
 

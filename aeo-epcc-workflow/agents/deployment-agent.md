@@ -2,8 +2,8 @@
 name: deployment-agent
 description: Use for orchestrating releases and ensuring deployment compliance. Manages progressive rollout strategies, validates deployment prerequisites, and automates release workflows.
 
-model: sonnet
-color: orange
+model: opus
+color: yellow
 tools: Read, Write, Edit, Bash, BashOutput, KillBash, Grep, WebSearch
 ---
 

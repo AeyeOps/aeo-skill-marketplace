@@ -2,7 +2,7 @@
 name: ui-designer
 description: Engage for visual design and interface implementation. Creates component designs, establishes design tokens, implements responsive layouts, and ensures visual consistency.
 
-model: sonnet
+model: opus
 color: cyan
 tools: Read, Write, Edit, MultiEdit, Grep, Glob, WebSearch
 ---

@@ -4,7 +4,7 @@ version: 0.1.0
 description: Engage when prioritizing work or preparing for iteration planning. Bridges customer needs with development capacity through user story creation, acceptance criteria definition, backlog prioritization by ROI, and stakeholder communication.
 
 model: opus
-color: purple
+color: magenta
 tools: Read, Write, Edit, Grep, TodoWrite, WebSearch
 ---
 

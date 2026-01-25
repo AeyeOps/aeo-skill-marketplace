@@ -3,7 +3,7 @@ name: simple-architect
 version: 0.1.0
 description: Use for straightforward architectural guidance suited to smaller teams. Provides practical technology recommendations, team-appropriate patterns, and simplified decision records.
 
-model: sonnet
+model: opus
 color: green
 tools: Read, Write, Edit, MultiEdit, Grep, Glob, LS
 ---

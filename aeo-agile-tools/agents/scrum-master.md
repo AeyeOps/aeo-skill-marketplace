@@ -3,7 +3,7 @@ name: scrum-master
 version: 0.1.0
 description: Call upon during iteration ceremonies or when delivery cadence needs improvement. Dedicated to process facilitation, retrospective leadership, velocity tracking, impediment removal, and continuous improvement.
 
-model: sonnet
+model: opus
 color: green
 tools: Read, Write, Edit, Grep, TodoWrite, WebSearch
 ---

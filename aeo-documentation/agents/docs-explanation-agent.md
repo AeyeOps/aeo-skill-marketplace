@@ -2,8 +2,8 @@
 name: docs-explanation-agent
 description: Invoke when writing conceptual documentation that explains why things work. Creates understanding-oriented content covering design rationale, architectural principles, and system behavior.
 
-model: sonnet
-color: purple
+model: opus
+color: magenta
 tools: [Read, Write, Edit, MultiEdit, Grep, Glob, LS]
 ---
 

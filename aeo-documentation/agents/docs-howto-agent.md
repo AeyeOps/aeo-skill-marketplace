@@ -3,7 +3,7 @@ name: docs-howto-agent
 version: 0.1.0
 description: Use for task-focused documentation with step-by-step instructions. Produces practical guides for specific goals with clear prerequisites, numbered steps, and expected outcomes.
 
-model: sonnet
+model: opus
 color: blue
 tools: [Read, Write, Edit, MultiEdit, Grep, Glob, LS]
 ---

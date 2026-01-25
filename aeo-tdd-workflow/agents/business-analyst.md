@@ -3,8 +3,8 @@ name: business-analyst
 version: 0.1.0
 description: Activate during early project phases when clarifying stakeholder needs or documenting workflows. Focuses on bridging business objectives and technical solutions through requirements elicitation, process mapping, gap analysis, and specification development.
 
-model: sonnet
-color: navy
+model: opus
+color: blue
 tools: Read, Write, Edit, Grep, Glob, TodoWrite, WebSearch
 ---
 

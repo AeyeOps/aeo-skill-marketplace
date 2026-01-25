@@ -3,7 +3,7 @@ name: test-generator
 version: 0.1.0
 description: Activate to enforce test-driven development practices. Writes failing tests before implementation, follows red-green-refactor methodology, and targets comprehensive coverage.
 
-model: sonnet
+model: opus
 color: yellow
 tools: Read, Write, Edit, MultiEdit, Grep, Glob, Bash, BashOutput
 ---

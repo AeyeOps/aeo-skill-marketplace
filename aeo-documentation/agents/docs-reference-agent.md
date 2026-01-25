@@ -3,8 +3,8 @@ name: docs-reference-agent
 version: 0.1.0
 description: Deploy for comprehensive technical reference materials. Generates API documentation, configuration references, and lookup tables with consistent formatting.
 
-model: sonnet
-color: orange
+model: opus
+color: yellow
 tools: [Read, Write, Edit, MultiEdit, Grep, Glob, LS]
 ---
 

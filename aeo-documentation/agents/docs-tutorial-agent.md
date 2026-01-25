@@ -2,7 +2,7 @@
 name: docs-tutorial-agent
 description: Engage for learning-oriented documentation that teaches through doing. Creates hands-on tutorials with progressive complexity and achievable milestones.
 
-model: sonnet
+model: opus
 color: green
 tools: [Read, Write, Edit, MultiEdit, Grep, Glob, LS]
 ---

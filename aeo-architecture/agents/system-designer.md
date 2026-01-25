@@ -4,7 +4,7 @@ version: 0.1.0
 description: Deploy for high-level system planning and integration design. Produces component diagrams, defines service boundaries, models data flows, and plans for scalability and resilience.
 
 model: opus
-color: purple
+color: magenta
 tools: Read, Write, Edit, MultiEdit, Grep, Glob, LS
 ---
 
