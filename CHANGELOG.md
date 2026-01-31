@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-01-31
+
+### Changed
+
+- **markdown-mermaid skill**: Added dark theme as preferred default for consistent colors across all diagram types
+- **markdown-mermaid skill**: Added ELK renderer init directives for complex diagrams with edge crossings
+- **markdown-mermaid skill**: Added ASCII-only labels rule (avoid emoji/Unicode)
+- **markdown-mermaid skill**: Added no-inline-styling rule (use theme directive instead)
+- **markdown-mermaid skill**: Updated TB direction guidance for letter-size PDF output
+- **markdown-mermaid skill**: Expanded common fixes table with 4 new entries
+
 ## [0.1.1] - 2025-01-31
 
 ### Changed
