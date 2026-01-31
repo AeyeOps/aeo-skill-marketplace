@@ -166,11 +166,12 @@ mindmap
 2. **Wrap "end"** - Use `[end]`, `(end)`, or `"end"` (reserved word)
 3. **Quote special chars** - Text with `[]{}()` needs double quotes: `A["text [with] brackets"]`
 4. **Avoid node IDs starting with o/x** - `A---oB` parsed as circle edge; use `A--- oB` or `A---OB`
-5. **Split large diagrams** - Keep under 20 nodes per diagram
-6. **Test first** - Use [mermaid.live](https://mermaid.live/) before committing
-7. **ASCII labels only** - Avoid emoji/Unicode symbols - use text equivalents
-8. **Dark theme preferred** - Use `%%{init: {'theme': 'dark'}}%%` for all diagrams; provides color differentiation and consistent appearance
-9. **No inline styling** - Remove `style NodeID fill:#hex` lines; use theme init directive instead
+5. **Alphanumeric node IDs only** - Use `A1`, `userAuth`, not `user-auth` or `step.1` (hyphens/dots break parsing)
+6. **Split large diagrams** - Keep under 20 nodes per diagram
+7. **Test first** - Use [mermaid.live](https://mermaid.live/) before committing
+8. **ASCII labels only** - Avoid emoji/Unicode because not all renderers support them
+9. **Dark theme preferred** - Use `%%{init: {'theme': 'dark'}}%%` for all diagrams; provides color differentiation and consistent appearance
+10. **No inline styling** - Avoid `style NodeID fill:#hex` lines because themes provide consistent colors across diagrams
 
 ## Initialization Directives
 
@@ -208,6 +209,7 @@ flowchart TB
 | Diagram not rendering | Check for lowercase "end" - capitalize or quote it |
 | Diagram too wide / PDF overflow | Change `LR` to `TB` for letter-size output |
 | "Parse error" on node | Quote text containing brackets: `["my [label]"]` |
+| Node ID parse error | Use alphanumeric only - no hyphens, dots, or special chars |
 | Unexpected edge style | Node ID starts with o/x - add space or capitalize |
 | Subgraph direction ignored | External connections override - restructure links |
 | GitHub not rendering | Check for unsupported features (ELK, some beta charts) |
