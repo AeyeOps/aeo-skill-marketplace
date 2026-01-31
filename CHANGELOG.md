@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2025-01-31
+
+### Changed
+
+- **markdown-mermaid skill**: Improved trigger-focused description with "Use when:" language
+- **markdown-mermaid skill**: Expanded copy-paste examples from 3 to 6 patterns (added architecture subgraphs, state machine, mindmap)
+- **markdown-mermaid skill**: Expanded critical rules from 4 to 6 (added quote special chars, node ID gotchas)
+- **markdown-mermaid skill**: Expanded common fixes table from 4 to 7 issues with more specific solutions
+
 ## [0.1.0] - 2025-01-21
 
 ### Added

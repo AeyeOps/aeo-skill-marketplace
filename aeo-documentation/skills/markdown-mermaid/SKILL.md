@@ -3,9 +3,9 @@ name: markdown-mermaid
 description: |
   Craft Mermaid diagrams within Markdown for flowcharts, ERDs, sequence diagrams, state machines,
   Gantt charts, and mindmaps. Includes validated syntax templates, layout optimization, and
-  cross-platform rendering for GitHub, GitLab, VS Code, and Obsidian. Activate when visualizing
-  architecture, documenting APIs, illustrating database schemas, debugging rendering failures,
-  or selecting the appropriate diagram type for technical documentation.
+  cross-platform rendering for GitHub, GitLab, VS Code, and Obsidian. Use when: creating diagrams
+  in markdown files, debugging "diagram not rendering" errors, selecting diagram types for docs,
+  visualizing database schemas or API flows, or fixing Mermaid syntax issues.
 ---
 
 # Mermaid in Markdown
@@ -80,42 +80,103 @@ flowchart TB
 | Git workflow | GitGraph | `gitGraph` |
 | Task board | Kanban | `kanban` |
 
-## Essential Patterns
+## Essential Patterns (Copy-Paste Ready)
 
-### Flowchart
+### Flowchart with Decision
 ```mermaid
 flowchart TB
     Start[Start] --> Check{Valid?}
     Check -->|Yes| Process[Process]
     Check -->|No| Error[Error]
+    Process --> Done[Done]
+    Error --> Done
 ```
 
-### ERD
+### Flowchart with Subgraphs (Architecture)
+```mermaid
+flowchart TB
+    subgraph Frontend
+        UI[Web App]
+    end
+    subgraph Backend
+        API[API Server]
+        DB[(Database)]
+    end
+    UI --> API --> DB
+```
+
+### ERD with Attributes
 ```mermaid
 erDiagram
     CUSTOMER ||--o{ ORDER : places
-    CUSTOMER { int id PK }
+    ORDER ||--|{ LINE_ITEM : contains
+    CUSTOMER {
+        int id PK
+        string name
+        string email UK
+    }
+    ORDER {
+        int id PK
+        int customer_id FK
+        date created_at
+    }
 ```
 
-### Sequence
+### Sequence with Activation
 ```mermaid
 sequenceDiagram
-    Client->>API: Request
-    API-->>Client: Response
+    participant C as Client
+    participant A as API
+    participant D as Database
+    C->>+A: POST /users
+    A->>+D: INSERT user
+    D-->>-A: user_id
+    A-->>-C: 201 Created
+```
+
+### State Machine
+```mermaid
+stateDiagram-v2
+    [*] --> Draft
+    Draft --> Pending: Submit
+    Pending --> Approved: Approve
+    Pending --> Rejected: Reject
+    Approved --> [*]
+    Rejected --> Draft: Revise
+```
+
+### Mindmap
+```mermaid
+mindmap
+    root((Project))
+        Backend
+            API
+            Database
+        Frontend
+            React
+            CSS
+        DevOps
+            CI/CD
+            Monitoring
 ```
 
 ## Critical Rules
 
 1. **Use TB direction** - LR causes width issues on narrow viewports
 2. **Wrap "end"** - Use `[end]`, `(end)`, or `"end"` (reserved word)
-3. **Split large diagrams** - Keep under 20 nodes per diagram
-4. **Test first** - Use [mermaid.live](https://mermaid.live/) before committing
+3. **Quote special chars** - Text with `[]{}()` needs double quotes: `A["text [with] brackets"]`
+4. **Avoid node IDs starting with o/x** - `A---oB` parsed as circle edge; use `A--- oB` or `A---OB`
+5. **Split large diagrams** - Keep under 20 nodes per diagram
+6. **Test first** - Use [mermaid.live](https://mermaid.live/) before committing
 
 ## Common Fixes
 
 | Problem | Solution |
 |---------|----------|
-| Diagram too wide | Change `LR` to `TB` |
-| Not rendering | Check for "end" keyword |
-| Subgraph direction ignored | External connections override direction |
+| Diagram not rendering | Check for lowercase "end" - capitalize or quote it |
+| Diagram too wide | Change `LR` to `TB` direction |
+| "Parse error" on node | Quote text containing brackets: `["my [label]"]` |
+| Unexpected edge style | Node ID starts with o/x - add space or capitalize |
+| Subgraph direction ignored | External connections override - restructure links |
+| GitHub not rendering | Check for unsupported features (ELK, some beta charts) |
 | Platform differences | See [platforms.md](references/platforms.md) |
