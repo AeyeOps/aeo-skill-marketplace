@@ -1,6 +1,6 @@
 {
   "name": "aeo-nous",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Self-improving context system: extracts learnings and knowledge from sessions, injects them at startup, monitors context usage with statusline activity logger",
   "author": {
     "name": "AeyeOps",

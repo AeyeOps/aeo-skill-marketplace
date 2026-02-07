@@ -2,9 +2,9 @@
 # Example Visual Statusline for Claude Code
 #
 # This is an OPTIONAL visual statusline bundled with aeo-nous. It renders a
-# compact terminal status bar showing context %, git info, lines changed, and
-# model name. You do NOT need this for nous to function -- only the activity
-# logger (nous-logger.sh) is required.
+# readable terminal status bar showing model, git info, lines changed, and
+# context usage with token counts. You do NOT need this for nous to function --
+# only the activity logger (nous-logger.sh) is required.
 #
 # To use this as your visual statusline, point your wrapper's ORIGINAL_CMD
 # at this script, or set it directly in ~/.claude/settings.json.
@@ -23,7 +23,7 @@ ctx_total=$(echo "$input" | jq -r '.context_window.context_window_size // 0')
 [ "$ctx_used" = "null" ] && ctx_used=0
 [ "$ctx_total" = "null" ] && ctx_total=0
 
-# --- Context Usage ----------------------------------------------------------------
+# --- Context Bar ------------------------------------------------------------------
 bar_width=10
 filled=$((pct * bar_width / 100))
 [ $filled -gt $bar_width ] && filled=$bar_width
@@ -37,39 +37,6 @@ elif [ $pct -lt 75 ]; then pct_color="\033[33m"
 elif [ $pct -lt 90 ]; then pct_color="\033[38;5;208m"
 else pct_color="\033[31m"; fi
 
-# --- Cost -------------------------------------------------------------------------
-cost_usd=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
-cost_display=$(printf "$%.2f" "$cost_usd")
-
-# --- Lines Changed ----------------------------------------------------------------
-lines_info=""
-if [ "$lines_added" -gt 0 ] || [ "$lines_removed" -gt 0 ]; then
-    lines_info=" \033[32m+${lines_added}\033[0m/\033[31m-${lines_removed}\033[0m"
-fi
-
-# --- PWD --------------------------------------------------------------------------
-short_pwd="?"
-if [ -n "$cwd" ]; then
-    short_pwd=$(basename "$cwd")
-    [ ${#short_pwd} -gt 15 ] && short_pwd="${short_pwd:0:12}..."
-fi
-
-# --- Git --------------------------------------------------------------------------
-git_info=""
-if [ -n "$cwd" ] && [ -d "$cwd" ] && git -C "$cwd" rev-parse --git-dir &>/dev/null; then
-    branch=$(git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null || git -C "$cwd" rev-parse --short HEAD 2>/dev/null)
-    [ ${#branch} -gt 12 ] && branch="${branch:0:10}.."
-    git_info="\033[35m$branch\033[0m"
-    staged=$(git -C "$cwd" diff --cached --numstat 2>/dev/null | wc -l | tr -d ' ')
-    modified=$(git -C "$cwd" diff --numstat 2>/dev/null | wc -l | tr -d ' ')
-    untracked=$(git -C "$cwd" ls-files --others --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
-    git_detail=""
-    [ "$staged" -gt 0 ] && git_detail+=" \033[32m${staged}staged\033[0m"
-    [ "$modified" -gt 0 ] && git_detail+=" \033[33m${modified}mod\033[0m"
-    [ "$untracked" -gt 0 ] && git_detail+=" \033[90m${untracked}new\033[0m"
-    [ -n "$git_detail" ] && git_info+="$git_detail"
-fi
-
 # --- Token Display ----------------------------------------------------------------
 fmt_tokens() {
     local n=$1
@@ -82,12 +49,33 @@ fmt_tokens() {
 ctx_used_fmt=$(fmt_tokens "$ctx_used")
 ctx_total_fmt=$(fmt_tokens "$ctx_total")
 
+# --- Lines Changed ----------------------------------------------------------------
+lines_info=""
+if [ "$lines_added" -gt 0 ] || [ "$lines_removed" -gt 0 ]; then
+    lines_info="\033[32m+${lines_added}\033[0m/\033[31m-${lines_removed}\033[0m lines"
+fi
+
+# --- Git --------------------------------------------------------------------------
+git_info=""
+if [ -n "$cwd" ] && [ -d "$cwd" ] && git -C "$cwd" rev-parse --git-dir &>/dev/null; then
+    branch=$(git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null || git -C "$cwd" rev-parse --short HEAD 2>/dev/null)
+    [ ${#branch} -gt 12 ] && branch="${branch:0:10}.."
+    git_info="\033[35m$branch\033[0m"
+    staged=$(git -C "$cwd" diff --cached --numstat 2>/dev/null | wc -l | tr -d ' ')
+    modified=$(git -C "$cwd" diff --numstat 2>/dev/null | wc -l | tr -d ' ')
+    untracked=$(git -C "$cwd" ls-files --others --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
+    git_detail=""
+    [ "$staged" -gt 0 ] && git_detail+=" \033[32m${staged} staged\033[0m"
+    [ "$modified" -gt 0 ] && git_detail+=" \033[33m${modified} mod\033[0m"
+    [ "$untracked" -gt 0 ] && git_detail+=" \033[90m${untracked} new\033[0m"
+    [ -n "$git_detail" ] && git_info+="$git_detail"
+fi
+
 # --- Model ------------------------------------------------------------------------
-short_model=$(echo "$model_name" | sed 's/Claude //' | cut -c1-6)
+short_model=$(echo "$model_name" | sed 's/^Claude //')
 
 # --- Render -----------------------------------------------------------------------
 printf "\033[36m%s\033[0m" "$short_model"
-[ -n "$git_info" ] && printf " │ %b" "$git_info"
-printf "%b" "$lines_info"
-printf " │ ctx[%b]%b%d%% (%s/%s)\033[0m" "$bar" "$pct_color" "$pct" "$ctx_used_fmt" "$ctx_total_fmt"
-printf " │ %s" "$cost_display"
+[ -n "$git_info" ] && printf "  |  %b" "$git_info"
+[ -n "$lines_info" ] && printf "  |  %b" "$lines_info"
+printf "  |  ctx [%b] %b%d%%\033[0m (%s/%s)" "$bar" "$pct_color" "$pct" "$ctx_used_fmt" "$ctx_total_fmt"
