@@ -94,17 +94,17 @@ allowed-tools: Read, Glob, Grep
 
 ### Git Operations Only
 ```yaml
-allowed-tools: Bash(git:*)
+allowed-tools: Bash(git *)
 ```
 
 ### Specific Commands
 ```yaml
-allowed-tools: Bash(npm test:*), Bash(npm run build:*)
+allowed-tools: Bash(npm test *), Bash(npm run build *)
 ```
 
 ### Multiple Tool Types
 ```yaml
-allowed-tools: Read, Edit, Bash(git:*), Bash(npm:*)
+allowed-tools: Read, Edit, Bash(git *), Bash(npm *)
 ```
 
 ## Multi-Step Workflow Patterns

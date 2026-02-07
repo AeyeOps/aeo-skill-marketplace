@@ -1,7 +1,7 @@
 ---
 description: [Brief description shown in /help]
 argument-hint: [<required> [optional]]
-allowed-tools: [Read, Edit, Bash(git:*)]
+allowed-tools: [Read, Edit, Bash(git *)]
 ---
 
 # [Command Name]

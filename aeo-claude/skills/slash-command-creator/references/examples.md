@@ -15,7 +15,7 @@
 ---
 description: Create a git commit with conventional commit format
 argument-hint: [message]
-allowed-tools: Bash(git:*)
+allowed-tools: Bash(git *)
 ---
 
 Create a git commit for staged changes.
@@ -36,7 +36,7 @@ Message: $ARGUMENTS
 ---
 description: Create and switch to a new feature branch
 argument-hint: <branch-name>
-allowed-tools: Bash(git:*)
+allowed-tools: Bash(git *)
 ---
 
 1. Check git status is clean
@@ -50,7 +50,7 @@ allowed-tools: Bash(git:*)
 ---
 description: Create a pull request with summary
 argument-hint: [title]
-allowed-tools: Bash(git:*), Bash(gh:*)
+allowed-tools: Bash(git *), Bash(gh *)
 ---
 
 Create a pull request:
@@ -173,7 +173,7 @@ Match existing test framework in project.
 ---
 description: Analyze and fix a failing test
 argument-hint: <test-file:test-name>
-allowed-tools: Read, Edit, Bash(pytest:*), Bash(npm test:*)
+allowed-tools: Read, Edit, Bash(pytest *), Bash(npm test *)
 ---
 
 Fix failing test: $ARGUMENTS
@@ -248,7 +248,7 @@ Group by:
 ```markdown
 ---
 description: Check for outdated or vulnerable dependencies
-allowed-tools: Bash(npm:*), Bash(pip:*), Bash(cargo:*), Read
+allowed-tools: Bash(npm *), Bash(pip *), Bash(cargo *), Read
 ---
 
 Check project dependencies:
@@ -263,7 +263,7 @@ Check project dependencies:
 ```markdown
 ---
 description: Remove build artifacts and caches
-allowed-tools: Bash(rm:*), Bash(find:*)
+allowed-tools: Bash(rm *), Bash(find *)
 ---
 
 Clean project:

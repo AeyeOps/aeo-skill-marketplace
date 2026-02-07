@@ -20,7 +20,7 @@ Create effective Claude Code slash commands - reusable prompt templates stored a
 ---
 description: Brief description shown in /help
 argument-hint: <required> [optional]
-allowed-tools: Bash(git:*), Read, Edit
+allowed-tools: Bash(git *), Read, Edit
 model: claude-sonnet-4-20250514
 disable-model-invocation: false
 ---
