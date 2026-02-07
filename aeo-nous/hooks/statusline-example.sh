@@ -18,9 +18,13 @@ lines_added=$(echo "$input" | jq -r '.cost.total_lines_added // 0')
 lines_removed=$(echo "$input" | jq -r '.cost.total_lines_removed // 0')
 pct=$(echo "$input" | jq -r '.context_window.used_percentage // 0')
 [ "$pct" = "null" ] || [ -z "$pct" ] && pct=0
+ctx_used=$(echo "$input" | jq -r '(.context_window.current_usage.input_tokens // 0) + (.context_window.current_usage.cache_creation_input_tokens // 0) + (.context_window.current_usage.cache_read_input_tokens // 0)')
+ctx_total=$(echo "$input" | jq -r '.context_window.context_window_size // 0')
+[ "$ctx_used" = "null" ] && ctx_used=0
+[ "$ctx_total" = "null" ] && ctx_total=0
 
-# --- Progress Bar -----------------------------------------------------------------
-bar_width=6
+# --- Context Usage ----------------------------------------------------------------
+bar_width=10
 filled=$((pct * bar_width / 100))
 [ $filled -gt $bar_width ] && filled=$bar_width
 bar=""
@@ -33,10 +37,14 @@ elif [ $pct -lt 75 ]; then pct_color="\033[33m"
 elif [ $pct -lt 90 ]; then pct_color="\033[38;5;208m"
 else pct_color="\033[31m"; fi
 
-# --- Lines +/- --------------------------------------------------------------------
+# --- Cost -------------------------------------------------------------------------
+cost_usd=$(echo "$input" | jq -r '.cost.total_cost_usd // 0')
+cost_display=$(printf "$%.2f" "$cost_usd")
+
+# --- Lines Changed ----------------------------------------------------------------
 lines_info=""
 if [ "$lines_added" -gt 0 ] || [ "$lines_removed" -gt 0 ]; then
-    lines_info=" \033[32m+${lines_added}\033[0m\033[31m-${lines_removed}\033[0m"
+    lines_info=" \033[32m+${lines_added}\033[0m/\033[31m-${lines_removed}\033[0m"
 fi
 
 # --- PWD --------------------------------------------------------------------------
@@ -55,16 +63,31 @@ if [ -n "$cwd" ] && [ -d "$cwd" ] && git -C "$cwd" rev-parse --git-dir &>/dev/nu
     staged=$(git -C "$cwd" diff --cached --numstat 2>/dev/null | wc -l | tr -d ' ')
     modified=$(git -C "$cwd" diff --numstat 2>/dev/null | wc -l | tr -d ' ')
     untracked=$(git -C "$cwd" ls-files --others --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
-    [ "$staged" -gt 0 ] && git_info+=" \033[32m+$staged\033[0m"
-    [ "$modified" -gt 0 ] && git_info+="\033[33m~$modified\033[0m"
-    [ "$untracked" -gt 0 ] && git_info+="\033[90m?$untracked\033[0m"
+    git_detail=""
+    [ "$staged" -gt 0 ] && git_detail+=" \033[32m${staged}staged\033[0m"
+    [ "$modified" -gt 0 ] && git_detail+=" \033[33m${modified}mod\033[0m"
+    [ "$untracked" -gt 0 ] && git_detail+=" \033[90m${untracked}new\033[0m"
+    [ -n "$git_detail" ] && git_info+="$git_detail"
 fi
+
+# --- Token Display ----------------------------------------------------------------
+fmt_tokens() {
+    local n=$1
+    if [ "$n" -ge 1000 ]; then
+        printf "%dK" $((n / 1000))
+    else
+        printf "%d" "$n"
+    fi
+}
+ctx_used_fmt=$(fmt_tokens "$ctx_used")
+ctx_total_fmt=$(fmt_tokens "$ctx_total")
 
 # --- Model ------------------------------------------------------------------------
 short_model=$(echo "$model_name" | sed 's/Claude //' | cut -c1-6)
 
 # --- Render -----------------------------------------------------------------------
-printf "\033[34m%s\033[0m" "$short_pwd"
+printf "\033[36m%s\033[0m" "$short_model"
 [ -n "$git_info" ] && printf " │ %b" "$git_info"
-printf " │ [%b]%b%d%%\033[0m%b" "$bar" "$pct_color" "$pct" "$lines_info"
-printf " │ \033[36m%s\033[0m" "$short_model"
+printf "%b" "$lines_info"
+printf " │ ctx[%b]%b%d%% (%s/%s)\033[0m" "$bar" "$pct_color" "$pct" "$ctx_used_fmt" "$ctx_total_fmt"
+printf " │ %s" "$cost_display"
