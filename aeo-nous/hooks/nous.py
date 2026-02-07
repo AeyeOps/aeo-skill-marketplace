@@ -44,7 +44,7 @@ LOG_PATH = Path.home() / ".claude" / "nous.log"
 STATUSLINE_PATH = Path.home() / ".claude" / "statusline-activity.jsonl"
 
 # SessionStart: how many recent entries to inject from each encoded file
-INJECT_RECENT_COUNT = 5
+INJECT_RECENT_COUNT = 10
 
 # Statusline: max lines to read (matches LOG_ROTATE_AT in statusline.sh)
 STATUSLINE_MAX_LINES = 100
