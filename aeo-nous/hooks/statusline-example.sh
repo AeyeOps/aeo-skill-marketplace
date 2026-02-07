@@ -1,31 +1,15 @@
 #!/bin/bash
-# Claude Code Status Line + Activity Logger
+# Example Visual Statusline for Claude Code
 #
-# Configured via: claude config set statuslineCommand ~/.claude/hooks/statusline.sh
+# This is an OPTIONAL visual statusline bundled with aeo-nous. It renders a
+# compact terminal status bar showing context %, git info, lines changed, and
+# model name. You do NOT need this for nous to function -- only the activity
+# logger (nous-logger.sh) is required.
 #
-# Two jobs:
-# 1. Append enriched JSON to ~/.claude/statusline-activity.jsonl (consumed by Stop hook)
-# 2. Render compact terminal status bar
-
-LOGFILE="$HOME/.claude/statusline-activity.jsonl"
-LOCKFILE="$HOME/.claude/.statusline-rotate.lock"
-LOG_ROTATE_AT=1000
-LOG_KEEP=500
+# To use this as your visual statusline, point your wrapper's ORIGINAL_CMD
+# at this script, or set it directly in ~/.claude/settings.json.
 
 input=$(cat)
-
-# --- Activity Log -----------------------------------------------------------------
-ts=$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)
-host=$(hostname)
-echo "$input" | jq -c --arg ts "$ts" --arg host "$host" '{meta_ts: $ts, meta_host: $host} + .' >> "$LOGFILE"
-
-# Log rotation
-if [ "$(wc -l < "$LOGFILE" 2>/dev/null || echo 0)" -ge "$LOG_ROTATE_AT" ]; then
-    (
-        flock -n 9 || exit 0
-        tail -"$LOG_KEEP" "$LOGFILE" > "$LOGFILE.tmp" && mv "$LOGFILE.tmp" "$LOGFILE"
-    ) 9>"$LOCKFILE" 2>/dev/null
-fi
 
 # --- Extract Fields ---------------------------------------------------------------
 model_name=$(echo "$input" | jq -r '.model.display_name // "Claude"')
