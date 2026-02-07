@@ -114,9 +114,30 @@ Compare against existing patterns:
 
 **NEEDS VALIDATION** (Requires investigation)
 
+## Scorecard
+
+After all findings sections, output this human-readable scorecard table:
+
+```
+## Scorecard
+
+| Category           | Count | Action needed? |
+|--------------------|-------|----------------|
+| Critical           |     X | YES            |
+| Errors             |     X | YES            |
+| Alignment issues   |     X | YES            |
+| Missing            |     X | YES            |
+| Needs validation   |     X | YES            |
+| Improvements       |     X | no             |
+| Validated          |     X | no             |
+| **Status**         |       | **PASS / NEEDS_ACTION** |
+```
+
+Rules for Action needed column: Critical, Errors, Alignment, Missing, Needs validation = YES when count > 0. Improvements and Validated are always "no".
+
 ## Machine-Parseable Summary
 
-Conclude with this exact summary block (parsed by automation hooks):
+Immediately after the scorecard, output this exact summary block (parsed by automation hooks):
 
 ```
 <ultrareview_summary>
@@ -136,4 +157,4 @@ Rules:
 - `status: PASS` only if critical=0 AND errors=0 AND alignment=0 AND missing=0 AND needs_validation=0
 - `status: NEEDS_ACTION` if any actionable findings exist
 - Count each distinct finding, not each bullet point
-- The summary block appears at the very end of your response
+- The scorecard and summary block appear at the very end of your response, in that order

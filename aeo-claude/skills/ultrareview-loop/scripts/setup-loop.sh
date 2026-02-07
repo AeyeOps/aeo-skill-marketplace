@@ -83,7 +83,7 @@ done
 INITIAL_FOCUS="${FOCUS_PARTS[*]:-}"
 
 # Generate unique session token (full UUID for distinctiveness)
-TOKEN="ulr-$(cat /proc/sys/kernel/random/uuid)"
+TOKEN="ulr-$(cat /proc/sys/kernel/random/uuid 2>/dev/null || uuidgen 2>/dev/null || od -x /dev/urandom | head -1 | awk '{OFS="-"; print $2$3,$4,$5,$6,$7$8$9}')"
 
 # Create state file with YAML frontmatter
 mkdir -p "$PROJECT_ROOT/.claude"

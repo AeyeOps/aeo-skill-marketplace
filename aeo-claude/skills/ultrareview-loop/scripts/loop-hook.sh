@@ -19,11 +19,11 @@ HOOK_INPUT=$(cat)
 CURRENT_SESSION=$(echo "$HOOK_INPUT" | jq -r '.session_id')
 TRANSCRIPT_PATH=$(echo "$HOOK_INPUT" | jq -r '.transcript_path')
 
-# Find project root by walking up from cwd looking for .claude/ directory
+# Find project root by walking up from cwd looking for .claude/ or .git/ directory
 find_project_root() {
   local dir="$PWD"
   while [[ "$dir" != "/" ]]; do
-    if [[ -d "$dir/.claude" ]]; then
+    if [[ -d "$dir/.claude" ]] || [[ -d "$dir/.git" ]]; then
       echo "$dir"
       return 0
     fi
@@ -58,7 +58,7 @@ for STATE_FILE in "${STATE_FILES[@]}"; do
 
   # Check staleness (24 hours)
   if [[ -n "$STARTED_AT" ]]; then
-    STARTED_EPOCH=$(date -d "$STARTED_AT" +%s 2>/dev/null || echo "0")
+    STARTED_EPOCH=$(date -d "$STARTED_AT" +%s 2>/dev/null || date -jf '%Y-%m-%dT%H:%M:%SZ' "$STARTED_AT" +%s 2>/dev/null || echo "0")
     NOW_EPOCH=$(date +%s)
     AGE_HOURS=$(( (NOW_EPOCH - STARTED_EPOCH) / 3600 ))
     if [[ $AGE_HOURS -gt 24 ]]; then
@@ -124,14 +124,13 @@ if [[ ! -f "$TRANSCRIPT_PATH" ]]; then
   exit 0
 fi
 
-# Read last assistant message
-if ! grep -q '"role":"assistant"' "$TRANSCRIPT_PATH"; then
+# Read last assistant message (scan from end for performance on large transcripts)
+LAST_LINE=$(tac "$TRANSCRIPT_PATH" | grep -m1 '"role":"assistant"' || true)
+if [[ -z "$LAST_LINE" ]]; then
   echo "Ultrareview loop: No assistant messages in transcript" >&2
   rm "$MY_STATE_FILE"
   exit 0
 fi
-
-LAST_LINE=$(grep '"role":"assistant"' "$TRANSCRIPT_PATH" | tail -1)
 if ! LAST_OUTPUT=$(echo "$LAST_LINE" | jq -r '.message.content | map(select(.type == "text")) | map(.text) | join("\n")' 2>&1); then
   echo "Ultrareview loop: Failed to parse transcript" >&2
   rm "$MY_STATE_FILE"
@@ -151,7 +150,7 @@ HAS_ACTIONABLE=false
 # Extract the summary block
 if echo "$LAST_OUTPUT" | grep -q '<ultrareview_summary>'; then
   # Parse status from summary block
-  REVIEW_STATUS=$(echo "$LAST_OUTPUT" | grep -oP '(?<=status: )[A-Z_]+' | head -1)
+  REVIEW_STATUS=$(echo "$LAST_OUTPUT" | grep -o 'status: [A-Z_]*' | head -1 | sed 's/status: //')
 
   if [[ "$REVIEW_STATUS" == "NEEDS_ACTION" ]]; then
     HAS_ACTIONABLE=true
@@ -159,11 +158,11 @@ if echo "$LAST_OUTPUT" | grep -q '<ultrareview_summary>'; then
     HAS_ACTIONABLE=false
   else
     # Fallback: check individual counts if status not found
-    CRITICAL=$(echo "$LAST_OUTPUT" | grep -oP '(?<=critical: )\d+' | head -1)
-    ERRORS=$(echo "$LAST_OUTPUT" | grep -oP '(?<=errors: )\d+' | head -1)
-    ALIGNMENT=$(echo "$LAST_OUTPUT" | grep -oP '(?<=alignment: )\d+' | head -1)
-    MISSING=$(echo "$LAST_OUTPUT" | grep -oP '(?<=missing: )\d+' | head -1)
-    NEEDS_VAL=$(echo "$LAST_OUTPUT" | grep -oP '(?<=needs_validation: )\d+' | head -1)
+    CRITICAL=$(echo "$LAST_OUTPUT" | grep -o 'critical: [0-9]*' | head -1 | sed 's/critical: //')
+    ERRORS=$(echo "$LAST_OUTPUT" | grep -o 'errors: [0-9]*' | head -1 | sed 's/errors: //')
+    ALIGNMENT=$(echo "$LAST_OUTPUT" | grep -o 'alignment: [0-9]*' | head -1 | sed 's/alignment: //')
+    MISSING=$(echo "$LAST_OUTPUT" | grep -o 'missing: [0-9]*' | head -1 | sed 's/missing: //')
+    NEEDS_VAL=$(echo "$LAST_OUTPUT" | grep -o 'needs_validation: [0-9]*' | head -1 | sed 's/needs_validation: //')
 
     TOTAL=$((${CRITICAL:-0} + ${ERRORS:-0} + ${ALIGNMENT:-0} + ${MISSING:-0} + ${NEEDS_VAL:-0}))
     if [[ $TOTAL -gt 0 ]]; then
@@ -171,12 +170,8 @@ if echo "$LAST_OUTPUT" | grep -q '<ultrareview_summary>'; then
     fi
   fi
 else
-  # No summary block found - fall back to marker detection
-  if echo "$LAST_OUTPUT" | grep -qE 'CRITICAL|ERRORS FOUND|ALIGNMENT ISSUES|MISSING|IMPROVEMENT|NEEDS VALIDATION'; then
-    if ! echo "$LAST_OUTPUT" | grep -qB2 -E 'CRITICAL|ERRORS|ALIGNMENT|MISSING|IMPROVEMENT|NEEDS VALIDATION' | grep -qi 'resolved\|fixed\|completed'; then
-      HAS_ACTIONABLE=true
-    fi
-  fi
+  # No summary block found - conservatively assume actionable findings exist
+  HAS_ACTIONABLE=true
 fi
 
 # Decision logic
