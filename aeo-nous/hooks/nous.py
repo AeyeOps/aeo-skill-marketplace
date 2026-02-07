@@ -40,9 +40,8 @@ if TYPE_CHECKING:
 # =============================================================================
 
 SCRIPT_DIR = Path(__file__).parent
-LOG_PATH = SCRIPT_DIR / "nous.log"
+LOG_PATH = Path.home() / ".claude" / "nous.log"
 STATUSLINE_PATH = Path.home() / ".claude" / "statusline-activity.jsonl"
-USER_CLAUDE_MD = Path.home() / ".claude" / "CLAUDE.md"
 
 # SessionStart: how many recent entries to inject from each encoded file
 INJECT_RECENT_COUNT = 5
@@ -368,16 +367,15 @@ def handle_session_start(hook: SessionStartInput) -> int:
     Inject context at session start.
 
     Outputs to stdout (gets injected into Claude context):
-    1. User CLAUDE.md (~/.claude/CLAUDE.md)
-    2. Project CLAUDE.md ({cwd}/CLAUDE.md)
-    3. Recent learnings from engram
-    4. Recent knowledge from cortex
+    1. Recent learnings from engram
+    2. Recent knowledge from cortex
+
+    Note: CLAUDE.md files are NOT injected here — Claude Code loads them natively.
     """
     log(f"SESSION_START source={hook.source} model={hook.model} perm={hook.permission_mode}",
         session=hook.session_id, project=hook.cwd)
 
     project_dir = Path(hook.cwd)
-    project_claude_md = project_dir / "CLAUDE.md"
 
     # Paths to encoded files
     engram_path = project_dir / ".claude/nous/learnings/engram.jsonl"
@@ -385,38 +383,21 @@ def handle_session_start(hook: SessionStartInput) -> int:
 
     output_parts = []
 
-    # 1. User CLAUDE.md
-    if USER_CLAUDE_MD.exists():
-        try:
-            content = USER_CLAUDE_MD.read_text().strip()
-            if content:
-                output_parts.append(f"<user_claude_md>\n{content}\n</user_claude_md>")
-        except OSError as e:
-            log(f"ERROR read user CLAUDE.md: {e}", session=hook.session_id, project=hook.cwd)
-
-    # 2. Project CLAUDE.md
-    if project_claude_md.exists():
-        try:
-            content = project_claude_md.read_text().strip()
-            if content:
-                output_parts.append(f"<project_claude_md>\n{content}\n</project_claude_md>")
-        except OSError as e:
-            log(f"ERROR read project CLAUDE.md: {e}", session=hook.session_id, project=hook.cwd)
-
-    # 3. Recent learnings (engram)
+    # 1. Recent learnings (engram)
     learnings = read_last_n_jsonl(engram_path, INJECT_RECENT_COUNT)
     if learnings:
         learnings_text = "\n".join(json.dumps(e) for e in learnings)
         output_parts.append(f"<recent_learnings>\n{learnings_text}\n</recent_learnings>")
 
-    # 4. Recent knowledge (cortex)
+    # 2. Recent knowledge (cortex)
     knowledge = read_last_n_jsonl(cortex_path, INJECT_RECENT_COUNT)
     if knowledge:
         knowledge_text = "\n".join(json.dumps(e) for e in knowledge)
         output_parts.append(f"<recent_knowledge>\n{knowledge_text}\n</recent_knowledge>")
 
-    # 5. Instruction to share injected context
-    output_parts.append("<nous_notice>Share a brief summary of the learnings and knowledge injected above so the user understands what context you received.</nous_notice>")
+    # 3. Instruction to share injected context
+    if learnings or knowledge:
+        output_parts.append("<nous_notice>Share a brief summary of the learnings and knowledge injected above so the user understands what context you received.</nous_notice>")
 
     # Output to stdout - this gets injected into Claude's context
     if output_parts:
@@ -628,6 +609,9 @@ def run_stop_hook(current: "StatuslineEntry", previous: "StatuslineEntry | None"
 
 def main() -> int:
     """Hook entry point. Fire-and-forget, always returns 0."""
+    if os.environ.get("NOUS_SUBPROCESS"):
+        return 0
+
     start_time = datetime.now()
     session_id = "?"
     project = "?"
