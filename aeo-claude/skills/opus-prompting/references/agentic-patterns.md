@@ -1,22 +1,24 @@
-# Agentic Patterns for Opus 4.5
+# Agentic Patterns for Opus 4.6
 
-Best practices for building agents, MCPs, and long-horizon workflows with Opus 4.5.
+Best practices for building agents, agent teams, MCPs, and long-horizon workflows with Opus 4.6.
 
 ## Table of Contents
 
 1. [Context Management](#1-context-management)
-2. [Sub-Agent Delegation](#2-sub-agent-delegation)
-3. [Tool Design](#3-tool-design)
-4. [State Tracking](#4-state-tracking)
-5. [Long-Horizon Workflows](#5-long-horizon-workflows)
-6. [Parallel Execution](#6-parallel-execution)
-7. [Error Handling](#7-error-handling)
+2. [Agent Teams](#2-agent-teams)
+3. [Sub-Agent Delegation](#3-sub-agent-delegation)
+4. [Tool Design](#4-tool-design)
+5. [State Tracking](#5-state-tracking)
+6. [Long-Horizon Workflows](#6-long-horizon-workflows)
+7. [Parallel Execution](#7-parallel-execution)
+8. [Error Handling](#8-error-handling)
+9. [Adaptive Thinking](#9-adaptive-thinking)
 
 ---
 
 ## 1. Context Management
 
-Opus 4.5 is context-aware and can track remaining token budget.
+Opus 4.6 has a standard 200K context window with 1M available in beta. Server-side compaction is now available, reducing client-side context management burden.
 
 ### Key Patterns
 
@@ -30,16 +32,17 @@ When approaching context limits (~20% remaining), create a progress summary:
 Then clear context and resume with the summary.
 ```
 
-**Inform About Compaction**
+**Server-Side Compaction (4.6 Beta)**
 ```
-Your context window will be automatically compacted as it approaches its limit.
-You can continue working indefinitely by saving progress to external files.
+Opus 4.6 supports server-side context summarization via the Compaction API.
+Older messages are automatically summarized when approaching limits—no
+additional API calls required. This enables effectively infinite conversations.
 ```
 
 **Fresh Starts vs Compaction**
 ```
 Consider starting with a fresh context window rather than compaction.
-Opus 4.5 effectively discovers state from local filesystems.
+Opus 4.6 effectively discovers state from local filesystems.
 
 On fresh start:
 1. Call pwd to establish location
@@ -50,7 +53,41 @@ On fresh start:
 
 ---
 
-## 2. Sub-Agent Delegation
+## 2. Agent Teams
+
+Opus 4.6 introduces agent teams—parallel agents coordinating on complex projects.
+
+### When to Use Teams
+
+- Frontend, backend, and testing can run simultaneously
+- Large refactors across independent modules
+- Research + implementation in parallel
+- Any task where components are independent but need coordination
+
+### Team Pattern
+
+```
+Create teams of agents that collaborate in parallel:
+
+- Coordinator: Breaks down task, assigns to specialists
+- Specialists: Work on independent components simultaneously
+- Reviewer: Validates integration across components
+
+Agents share state via filesystem (progress files, git branches).
+```
+
+### Teams vs Sub-Agents
+
+| | Sub-Agents | Agent Teams |
+|---|---|---|
+| **Execution** | Sequential | Parallel |
+| **Context** | Each gets fresh window | Each gets fresh window |
+| **Coordination** | Parent manages | Coordinator + shared state |
+| **Use when** | Research, investigation | Implementation, multi-component work |
+
+---
+
+## 3. Sub-Agent Delegation
 
 Delegate research-heavy tasks to sub-agents to preserve main context.
 
@@ -81,9 +118,9 @@ a separate agent with a new context window.
 
 ---
 
-## 3. Tool Design
+## 4. Tool Design
 
-Opus 4.5 responds strongly to tool descriptions. Design carefully.
+Opus 4.5+ responds strongly to tool descriptions. Design carefully.
 
 ### Tool Description Pattern
 
@@ -116,7 +153,7 @@ Use the search tool to find relevant code or documentation.
 
 ---
 
-## 4. State Tracking
+## 5. State Tracking
 
 Maintain state effectively across context windows.
 
@@ -160,9 +197,9 @@ On session start, check git status and recent commits.
 
 ---
 
-## 5. Long-Horizon Workflows
+## 6. Long-Horizon Workflows
 
-Opus 4.5 excels at sustained reasoning across extended tasks.
+Opus 4.6 excels at sustained reasoning across extended tasks, now with up to 128K output tokens.
 
 ### Incremental Progress
 
@@ -205,9 +242,9 @@ These reduce cognitive load across sessions.
 
 ---
 
-## 6. Parallel Execution
+## 7. Parallel Execution
 
-Opus 4.5 excels at parallel tool execution.
+Opus 4.6 excels at parallel tool execution.
 
 ### Encourage Parallelism
 
@@ -239,7 +276,7 @@ to ensure stability.
 
 ---
 
-## 7. Error Handling
+## 8. Error Handling
 
 Design for robustness in agentic workflows.
 
@@ -255,7 +292,7 @@ If you encounter an error you cannot resolve:
 
 ### Prompt Injection Resistance
 
-Opus 4.5 has improved prompt injection resistance, but:
+Opus 4.6 has improved prompt injection resistance, but:
 
 ```
 - Still vulnerable (~33% success rate with 10 attempts)
@@ -307,14 +344,40 @@ Keep your context focused on the current implementation.
 
 ---
 
-## Effort Parameter
+## 9. Adaptive Thinking
 
-Opus 4.5 supports an `effort` parameter:
+Opus 4.6 replaces extended thinking with adaptive thinking—4 effort levels that dynamically adjust reasoning depth.
 
-| Level | Use Case |
-|-------|----------|
-| `high` | Complex reasoning, architecture decisions (default) |
-| `medium` | Standard implementation tasks |
-| `low` | Simple edits, quick lookups |
+### Effort Levels
 
-Tune based on task complexity to balance quality and speed.
+| Level | Use Case | Reasoning Behavior |
+|-------|----------|-------------------|
+| `low` | Simple edits, quick lookups | Skips deliberation |
+| `medium` | Standard implementation | Moderate reasoning |
+| `high` | Complex reasoning, architecture (default) | Full deliberation |
+| `max` | Hardest problems, novel research | Peak reasoning capability |
+
+### Migration from Extended Thinking
+
+```
+# Before (Opus 4.5)
+"thinking": {"type": "enabled", "budget_tokens": 10000}
+
+# After (Opus 4.6)
+"thinking": {"type": "enabled", "effort": "high"}
+```
+
+The `budget_tokens` parameter is deprecated. Opus 4.6 auto-calibrates reasoning depth within each effort level.
+
+### Prompting Implications
+
+- The "think" word sensitivity from 4.5 is reduced since adaptive thinking handles reasoning calibration
+- Avoid explicitly requesting reasoning depth ("think harder")—instead, set the effort level via API
+- For Claude Code skills: the model selects effort automatically; no need to specify in skill prompts
+
+### Breaking Change: Prefilling Disabled
+
+Opus 4.6 returns a 400 error for assistant message prefilling. Migrate to:
+- `output_config.format` for JSON output structure
+- `json_schema` parameter for structured output validation
+- System prompt instructions for output formatting

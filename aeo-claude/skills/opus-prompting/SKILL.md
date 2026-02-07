@@ -1,44 +1,57 @@
 ---
 name: opus-prompting
 description: |
-  Tune prompts specifically for Claude Opus 4.5's literal instruction-following behavior.
-  Covers system prompt optimization, migration from earlier Claude versions, debugging
-  unexpected outputs, and agentic workflow patterns. Apply when crafting Opus prompts,
-  adapting 3.x/4.0 prompts, or designing autonomous agent instructions.
+  Tune prompts for Claude Opus 4.6's adaptive thinking, 1M context window, and natural
+  instruction-following. Covers migration from 4.5/earlier, agent team patterns, and
+  agentic workflow design. Apply when crafting Opus prompts, adapting existing prompts,
+  or designing autonomous agent instructions.
 ---
 
-# Opus 4.5 Prompting
+# Opus 4.6 Prompting
 
-Opus 4.5 behaves differently from earlier Claude models—more literal, more responsive to system prompts. This skill provides patterns for optimizing prompts accordingly.
+Opus 4.6 builds on the 4.5 prompting philosophy with key additions: adaptive thinking (4 effort levels), 1M token context (beta), 128K output, agent teams, and server-side compaction. The core principle remains—natural language over directives.
 
-## Key Behavioral Changes
+## What Changed from 4.5 to 4.6
+
+| Feature | Opus 4.5 | Opus 4.6 |
+|---------|----------|----------|
+| **Thinking** | Extended thinking (binary on/off + budget_tokens) | Adaptive thinking (low/medium/high/max) |
+| **Context** | 200K tokens | 1M tokens (beta), context rot eliminated |
+| **Output** | 64K tokens | 128K tokens |
+| **Agent architecture** | Single agent, sub-agent delegation | Agent teams (parallel coordination) |
+| **Compaction** | Client-side | Server-side compaction API (beta) |
+| **Prefilling** | Supported | Disabled (400 error), use structured outputs |
+| **"Think" sensitivity** | Highly sensitive | Reduced (adaptive thinking handles calibration) |
+
+## Key Behavioral Patterns
 
 | Behavior | Implication |
 |----------|-------------|
 | **Literal instruction following** | Be explicit about desired behaviors |
-| **Sensitive to "think" word** | Use `consider`, `evaluate`, `reflect` instead |
-| **Highly responsive to system prompt** | Dial back aggressive language |
+| **Adaptive thinking** | Let the model calibrate reasoning depth; specify effort level only when needed |
+| **Highly responsive to system prompt** | Use natural language, not directives |
 | **Tool trigger sensitivity** | Replace `MUST use` with `Use when...` |
-| **Context awareness** | Model tracks remaining token budget |
+| **1M context awareness** | Context rot eliminated; long conversations maintain quality |
 
 ## Quick Migration Checklist
 
-When upgrading prompts from Claude 3.7/4.0:
+When upgrading prompts from 4.5 or earlier:
 
 1. Remove aggressive language (`CRITICAL`, `MUST`, `NEVER`, `ALWAYS`)
-2. Replace `think step by step` with `consider` or `evaluate`
-3. Add context/motivation ("because..." explanations)
-4. Match prompt formatting to desired output style
-5. Remove over-specified examples (trust the model)
-6. Use gentler tool invocation language
-7. Add XML tags for agent workflows (`<current-state>`, `<blocked>`, `<workflow>`)
+2. Replace `budget_tokens` extended thinking with adaptive thinking effort levels
+3. Replace assistant prefilling with `output_config.format` or system prompt instructions
+4. Add context/motivation ("because..." explanations)
+5. Match prompt formatting to desired output style
+6. Trust the model more—reduce over-specification
+7. Use XML tags for agent workflows (`<current-state>`, `<blocked>`, `<workflow>`)
+8. Consider agent teams for parallel workloads instead of sequential sub-agents
 
 ## Reference Files
 
 | File | Use When |
 |------|----------|
-| [patterns.md](references/patterns.md) | Optimizing any prompt—comprehensive transformation rules and examples |
-| [agentic-patterns.md](references/agentic-patterns.md) | Building agents, MCPs, long-horizon workflows with Opus 4.5 |
+| [patterns.md](references/patterns.md) | Optimizing any prompt—transformation rules and examples |
+| [agentic-patterns.md](references/agentic-patterns.md) | Building agents, agent teams, and long-horizon workflows |
 
 ## Utility Script
 
@@ -57,7 +70,7 @@ Configure thresholds in `scripts/config.json`:
 The [patterns.md](references/patterns.md) reference covers:
 
 1. **Aggressive language** — Soften `MUST`, `NEVER`, `CRITICAL`
-2. **Think variants** — Replace when extended thinking disabled
+2. **Think variants** — Less critical with adaptive thinking, but still worth cleaning up
 3. **Tool invocation** — Prevent over-triggering
 4. **Formatting** — Match prompt style to output style
 5. **Context/motivation** — Add "because..." explanations
@@ -69,10 +82,11 @@ The [patterns.md](references/patterns.md) reference covers:
 
 The [agentic-patterns.md](references/agentic-patterns.md) reference covers:
 
-1. **Context management** — Progress summaries at 20% remaining
-2. **Sub-agent delegation** — Preserve main context
-3. **Tool design** — Avoid over-triggering in descriptions
-4. **State tracking** — JSON for structured, text for notes
-5. **Long-horizon workflows** — Incremental progress patterns
-6. **Parallel execution** — When to parallelize vs sequence
-7. **Error handling** — Fail fast, document blockers
+1. **Context management** — 1M context window reduces compaction pressure
+2. **Agent teams** — Parallel coordination for complex projects
+3. **Sub-agent delegation** — Preserve main context for research tasks
+4. **Tool design** — Avoid over-triggering in descriptions
+5. **State tracking** — JSON for structured, text for notes
+6. **Long-horizon workflows** — Incremental progress patterns
+7. **Parallel execution** — When to parallelize vs sequence
+8. **Error handling** — Fail fast, document blockers

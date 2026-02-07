@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Opus 4.5 Prompt Analyzer
+Opus 4.6 Prompt Analyzer
 
 Analyzes prompts for deprecated patterns and suggests optimizations.
 Reads from stdin or file argument, outputs analysis to stdout.
@@ -62,7 +62,7 @@ def analyze_prompt(prompt: str) -> list[dict]:
         issues.append({
             "type": "aggressive_language",
             "description": f"Aggressive language: {', '.join(set(found_aggressive))}",
-            "suggestion": "Opus 4.5 responds well to gentler language. Use 'Use when...' or 'Prefer X because...'",
+            "suggestion": "Opus 4.6 responds well to gentler language. Use 'Use when...' or 'Prefer X because...'",
         })
 
     # Pattern 2: "Think" variants
@@ -116,7 +116,7 @@ def analyze_prompt(prompt: str) -> list[dict]:
         issues.append({
             "type": "missing_context",
             "description": "Commands without explanation",
-            "suggestion": "Add 'because...' to explain why. Opus 4.5 generalizes better with context.",
+            "suggestion": "Add 'because...' to explain why. Opus 4.6 generalizes better with context.",
         })
 
     # Pattern 5: Markdown formatting mismatch
@@ -219,7 +219,7 @@ def format_output(issues: list[dict], optimized: str | None = None, json_output:
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="Analyze prompts for Opus 4.5 compatibility"
+        description="Analyze prompts for Opus 4.6 compatibility"
     )
     parser.add_argument(
         "file",
