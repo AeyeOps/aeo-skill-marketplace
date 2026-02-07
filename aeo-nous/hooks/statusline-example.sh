@@ -40,6 +40,7 @@ else pct_color="\033[31m"; fi
 # --- Token Display ----------------------------------------------------------------
 fmt_tokens() {
     local n=$1
+    [ -z "$n" ] || [ "$n" = "null" ] && n=0
     if [ "$n" -ge 1000 ]; then
         printf "%dK" $((n / 1000))
     else
