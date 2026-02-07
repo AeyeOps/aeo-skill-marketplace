@@ -1,0 +1,17 @@
+{
+  "description": "Ultrareview loop Stop hook - blocks session exit during active review/fix cycles. No-op when no loop is active.",
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/skills/ultrareview-loop/scripts/loop-hook.sh",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  }
+}

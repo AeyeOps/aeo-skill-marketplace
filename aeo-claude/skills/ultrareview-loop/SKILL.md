@@ -4,14 +4,9 @@ description: |
   Automated ultrareview validation loop that cycles between review and fix phases until
   no actionable findings remain. Use when you want continuous validation with automatic
   fix iterations on plans or code changes.
+argument-hint: "[focus_area] [--max-iterations N]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, TaskCreate, TaskUpdate, TaskList, TaskGet
 model: claude-opus-4-6
-hooks:
-  Stop:
-    - matcher: ""
-      hooks:
-        - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/skills/ultrareview-loop/scripts/loop-hook.sh"
 ---
 
 # Ultrareview Loop
