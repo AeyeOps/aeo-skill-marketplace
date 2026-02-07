@@ -1,0 +1,29 @@
+{
+  "description": "Nous: Self-improving context system - extracts learnings/knowledge from sessions, injects at startup, monitors context via statusline",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/nous.py",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/nous.py",
+            "timeout": 5000
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -119,6 +119,13 @@
       "category": "automation",
       "source": "./aeo-n8n",
       "tags": ["n8n", "workflow", "automation", "low-code"]
+    },
+    {
+      "name": "aeo-nous",
+      "description": "Self-improving context system: extracts learnings and knowledge from sessions, injects them at startup, monitors context usage with statusline",
+      "category": "productivity",
+      "source": "./aeo-nous",
+      "tags": ["nous", "memory", "context", "learnings", "knowledge", "statusline"]
     }
   ]
 }
