@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#     "pydantic>=2.0",
+# ]
+# ///
 """
 Nous: Context Compaction + Self-Improvement System
 
@@ -28,7 +34,26 @@ from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
-from pydantic import BaseModel, ValidationError
+try:
+    from pydantic import BaseModel, ValidationError
+except ImportError:
+    # Auto-install pydantic if missing; try pip then uv
+    _installed = False
+    for _cmd in (
+        [sys.executable, "-m", "pip", "install", "--quiet", "pydantic>=2.0"],
+        ["uv", "pip", "install", "--quiet", "pydantic>=2.0"],
+    ):
+        try:
+            subprocess.check_call(_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            _installed = True
+            break
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            continue
+    if not _installed:
+        print("nous: pydantic is required but could not be installed. "
+              "Run: pip install pydantic>=2.0", file=sys.stderr)
+        sys.exit(1)
+    from pydantic import BaseModel, ValidationError
 
 if TYPE_CHECKING:
     from lenses.base import ExtractionLens
