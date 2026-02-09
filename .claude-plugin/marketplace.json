@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "aeo-claude",
-      "description": "Claude development skills: Agent SDK reference, skill creation, slash command creation, and Opus prompting techniques",
+      "description": "Claude development skills: Agent SDK reference, skill creation, slash command creation, Opus 4.6 prompting, ultra validation workflows, and team-coordinated planning",
       "category": "development",
       "source": "./aeo-claude",
       "tags": ["claude", "agent-sdk", "skills", "prompting", "slash-commands"]

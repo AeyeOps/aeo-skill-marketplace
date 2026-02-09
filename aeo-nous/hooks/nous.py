@@ -55,6 +55,19 @@ ISO_TIMESTAMP_PATTERN = re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}
 # Extraction: cursor file tracking last extracted timestamp per project
 CURSOR_FILE = ".claude/nous/extraction_cursor.json"
 
+# Stop hook: context window thresholds (percentage)
+CONTEXT_SKIP_PCT = 10          # Below this: skip entirely
+CONTEXT_EXTRACT_MAX_PCT = 60   # At or below: flush inboxes + fire extractions
+CONTEXT_FLUSH_MAX_PCT = 65     # At or below: flush inboxes only (no extractions)
+                               # Above: flush + block Claude with /clear recommendation
+
+# Extraction: subprocess timeout and model
+WORKER_TIMEOUT_SECONDS = 300   # 5 minutes
+EXTRACTION_MODEL = "opus"
+
+# Extraction: max recent entries for deduplication context
+DEDUP_ENTRY_LIMIT = 20
+
 
 # =============================================================================
 # HookInput - Pydantic model for stdin JSON from Claude Code
@@ -234,7 +247,7 @@ def _is_valid_iso_timestamp(ts: str) -> bool:
 # Encoded File Reading
 # =============================================================================
 
-def read_existing_encoded(lens_encoded_path: Path, project_dir: Path, limit: int = 20) -> list[dict]:
+def read_existing_encoded(lens_encoded_path: Path, project_dir: Path, limit: int = DEDUP_ENTRY_LIMIT) -> list[dict]:
     """
     Read recent entries from encoded file (engram/cortex) for deduplication.
 
@@ -456,7 +469,7 @@ def _fire_extraction_subprocess(
     with open(fragment_file, "w") as f, open(error_file, "w") as ef:
         proc = subprocess.Popen(
             ["timeout", str(WORKER_TIMEOUT_SECONDS), "claude", "--print",
-             "--permission-mode", "bypassPermissions", "--model", "opus", "-p", prompt],
+             "--permission-mode", "bypassPermissions", "--model", EXTRACTION_MODEL, "-p", prompt],
             stdout=f,
             stderr=ef,
             start_new_session=True,  # Detach from parent
@@ -496,8 +509,8 @@ def _stop_hook_worker(
         from lenses import LEARNINGS_LENS, KNOWLEDGE_LENS, flush_inbox
         log("WORKER lenses imported", session=session, project=project)
 
-        if pct < 70:
-            # 10-70%: Flush inboxes + fire extractions
+        if pct <= CONTEXT_EXTRACT_MAX_PCT:
+            # Flush inboxes + fire extractions
             learnings_flushed = flush_inbox(LEARNINGS_LENS, project_dir)
             knowledge_flushed = flush_inbox(KNOWLEDGE_LENS, project_dir)
             log(f"WORKER flushed engram={learnings_flushed} cortex={knowledge_flushed}",
@@ -527,15 +540,15 @@ def _stop_hook_worker(
             write_extraction_cursor(project_dir, current.meta_ts)
             log(f"WORKER cursor_advanced ts={current.meta_ts}", session=session, project=project)
 
-        elif pct < 85:
-            # 70-85%: Only flush inboxes (no new extractions)
+        elif pct <= CONTEXT_FLUSH_MAX_PCT:
+            # Flush inboxes only (no new extractions)
             learnings_flushed = flush_inbox(LEARNINGS_LENS, project_dir)
             knowledge_flushed = flush_inbox(KNOWLEDGE_LENS, project_dir)
             log(f"WORKER flush ctx={pct}% engram={learnings_flushed} cortex={knowledge_flushed}",
                 session=session, project=project)
 
         else:
-            # >= 85%: Just flush (JSON response handled by main hook, not worker)
+            # Above flush threshold: just flush (block handled by main hook)
             learnings_flushed = flush_inbox(LEARNINGS_LENS, project_dir)
             knowledge_flushed = flush_inbox(KNOWLEDGE_LENS, project_dir)
             log(f"WORKER flush_critical ctx={pct}% engram={learnings_flushed} cortex={knowledge_flushed}",
@@ -553,21 +566,16 @@ def _stop_hook_worker(
         shutdown_logger()
 
 
-WORKER_TIMEOUT_SECONDS = 300  # 5 minutes
-
 
 def run_stop_hook(current: "StatuslineEntry", previous: "StatuslineEntry | None") -> Optional[dict]:
     """
     Stop hook: fire-and-forget threshold-based extraction.
 
     All work runs in background subprocess - survives parent exit.
-    Returns JSON response dict for >=85% (blocks Claude, recommends /clear).
+    Returns JSON response dict above CONTEXT_FLUSH_MAX_PCT (blocks Claude, recommends /clear).
 
-    Thresholds:
-    < 10%:  Skip (context too low)
-    10-70%: Flush inboxes + fire extractions
-    70-85%: Flush inboxes only (context too full for new prompts)
-    >= 85%: Flush + block Claude with /clear recommendation
+    Thresholds configured in constants: CONTEXT_SKIP_PCT, CONTEXT_EXTRACT_MAX_PCT,
+    CONTEXT_FLUSH_MAX_PCT.
     """
     pct = current.context_window.used_percentage
     project_dir = Path(current.cwd)
@@ -575,7 +583,7 @@ def run_stop_hook(current: "StatuslineEntry", previous: "StatuslineEntry | None"
     # Entry log - always
     log(f"STOP ctx={pct}%", session=current.session_id, project=current.cwd)
 
-    if pct < 10:
+    if pct < CONTEXT_SKIP_PCT:
         return None
 
     # Fire worker subprocess - survives parent exit, self-terminates after timeout
@@ -587,9 +595,9 @@ def run_stop_hook(current: "StatuslineEntry", previous: "StatuslineEntry | None"
 
     log(f"DISPATCHED ctx={pct}% wpid={worker.pid}", session=current.session_id, project=current.cwd)
 
-    # At >=85%, return JSON to block Claude and recommend /clear
+    # Above flush threshold: block Claude and recommend /clear
     # Note: Stop hooks use top-level fields, not hookSpecificOutput
-    if pct >= 85:
+    if pct > CONTEXT_FLUSH_MAX_PCT:
         return {
             "decision": "block",
             "reason": (
@@ -644,7 +652,7 @@ def main() -> int:
 
             response = run_stop_hook(current, previous)
 
-            # Output JSON response if hook returned one (>=85% case)
+            # Output JSON response if hook returned one (block case)
             if response:
                 print(json.dumps(response))
                 log(f"BLOCK_CLEAR ctx={current.context_window.used_percentage}%",
