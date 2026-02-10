@@ -16,3 +16,6 @@ Thumbs.db
 
 # Local plugin settings
 *.local.md
+
+# Claude Code local state
+.claude/
