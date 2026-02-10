@@ -2,13 +2,57 @@
 
 Team alerting and notification system hooks for Claude Code operations.
 
+**Hooks are disabled by default.** These hooks assume Slack, PagerDuty, and custom analytics webhook infrastructure. Copy the relevant sections into your `hooks.json` selectively after configuring your environment variables.
+
 ## Blocking Behavior Warning
 
-The original hooks used `"blocking": false` to make notifications advisory-only. Claude Code's hooks spec does not support a `blocking` field — **all hooks block by default** if the command exits non-zero. This means if a webhook endpoint is unreachable, the hook will fail and block the operation.
+Claude Code's hooks spec does not support a `blocking` field — **all hooks block by default** if the command exits non-zero. **Always append `|| true` to webhook commands** to prevent unreachable endpoints from blocking operations.
 
-**For production use, append `|| true` to webhook commands** to prevent failures from blocking operations. For example:
-```
-curl -X POST ${SLACK_WEBHOOK} ... || true
+## Reference Configuration
+
+To enable, copy desired entries into the `hooks` object in `hooks.json`. Note: all curl commands include `|| true` to prevent blocking on webhook failures.
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git log -1 --pretty=format:'%h - %s' | xargs -I {} curl -X POST ${SLACK_WEBHOOK} -H 'Content-Type: application/json' -d '{\"text\":\"New commit: {}\", \"channel\":\"#commits\"}' || true",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "test '${command}' = 'rm -rf' && curl -X POST ${SLACK_WEBHOOK} -H 'Content-Type: application/json' -d '{\"text\":\"Dangerous command attempted: ${command}\", \"channel\":\"#security\"}' || true",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"session_id\":\"${SESSION_ID}\",\"duration\":\"${DURATION}\",\"changes\":\"${CHANGES}\"}' | curl -X POST ${ANALYTICS_WEBHOOK} -H 'Content-Type: application/json' -d @- || true",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  }
+}
 ```
 
 ## Event Mapping Caveats
