@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "git log -1 --pretty=format:'%h - %s' | xargs -I {} curl -X POST ${SLACK_WEBHOOK} -H 'Content-Type: application/json' -d '{\"text\":\"New commit: {}\", \"channel\":\"#commits\"}'",
+            "command": "git log -1 --pretty=format:'%h - %s' | xargs -I {} curl -X POST ${SLACK_WEBHOOK} -H 'Content-Type: application/json' -d '{\"text\":\"New commit: {}\", \"channel\":\"#commits\"}' || true",
             "timeout": 10000
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "test '${command}' = 'rm -rf' && curl -X POST ${SLACK_WEBHOOK} -H 'Content-Type: application/json' -d '{\"text\":\"Dangerous command attempted: ${command}\", \"channel\":\"#security\"}'",
+            "command": "test '${command}' = 'rm -rf' && curl -X POST ${SLACK_WEBHOOK} -H 'Content-Type: application/json' -d '{\"text\":\"Dangerous command attempted: ${command}\", \"channel\":\"#security\"}' || true",
             "timeout": 10000
           }
         ]
@@ -31,7 +31,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"session_id\":\"${SESSION_ID}\",\"duration\":\"${DURATION}\",\"changes\":\"${CHANGES}\"}' | curl -X POST ${ANALYTICS_WEBHOOK} -H 'Content-Type: application/json' -d @-",
+            "command": "echo '{\"session_id\":\"${SESSION_ID}\",\"duration\":\"${DURATION}\",\"changes\":\"${CHANGES}\"}' | curl -X POST ${ANALYTICS_WEBHOOK} -H 'Content-Type: application/json' -d @- || true",
             "timeout": 10000
           }
         ]
