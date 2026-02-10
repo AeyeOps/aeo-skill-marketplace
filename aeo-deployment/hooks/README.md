@@ -2,6 +2,52 @@
 
 Ensure regulatory compliance and security standards during Claude Code operations.
 
+**Hooks are disabled by default.** The configuration below runs secret detection, PII checks, license checks, and command validation before every Bash command, plus audit logging on every Read/Edit. This is opinionated and project-specific — copy the relevant sections into your `hooks.json` selectively.
+
+## Reference Configuration
+
+To enable, copy desired entries into the `hooks` object in `hooks.json`:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "detect-secrets scan --baseline .secrets.baseline", "timeout": 30000 },
+          { "type": "command", "command": "grep -r 'TODO:SECURITY' --include='*.py' --include='*.js' && echo 'Security TODOs must be resolved' && exit 1 || true", "timeout": 10000 },
+          { "type": "command", "command": "python scripts/check_pii.py", "timeout": 30000 },
+          { "type": "command", "command": "python scripts/license_check.py", "timeout": 30000 },
+          { "type": "command", "command": "python scripts/validate_command.py '${command}' || (echo 'Command violates security policy' && exit 1)", "timeout": 10000 }
+        ]
+      },
+      {
+        "matcher": "WebSearch",
+        "hooks": [
+          { "type": "command", "command": "echo '$(date -u +%Y-%m-%dT%H:%M:%SZ),WEB_ACCESS,${query},${USER}' >> .claude/external_access.log", "timeout": 5000 }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          { "type": "command", "command": "echo '$(date -u +%Y-%m-%dT%H:%M:%SZ),READ,${file_path},${USER}' >> .claude/access.log", "timeout": 5000 }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          { "type": "command", "command": "echo '$(date -u +%Y-%m-%dT%H:%M:%SZ),MODIFY,${file_path},${USER}' >> .claude/access.log", "timeout": 5000 },
+          { "type": "command", "command": "python scripts/validate_data_retention.py ${file_path}", "timeout": 10000 }
+        ]
+      }
+    ]
+  }
+}
+```
+
 ## Event Mapping Caveats
 
 | Original Event | New Mapping | Notes |

@@ -2,6 +2,39 @@
 
 Pre-commit and code validation quality enforcement hooks for Claude Code operations.
 
+**Hooks are disabled by default.** The configuration below runs a full CI pipeline (black, isort, flake8, mypy, pytest + coverage) before every Bash command — far too heavy for general use. Copy the relevant sections into your `hooks.json` selectively, or add a guard script that checks whether the command is `git commit` before running the suite.
+
+## Reference Configuration
+
+To enable, copy desired entries into the `hooks` object in `hooks.json`:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "black --check .", "timeout": 30000 },
+          { "type": "command", "command": "isort --check-only .", "timeout": 30000 },
+          { "type": "command", "command": "flake8 . --max-line-length=88", "timeout": 30000 },
+          { "type": "command", "command": "mypy . --ignore-missing-imports", "timeout": 60000 },
+          { "type": "command", "command": "pytest tests/ --quiet", "timeout": 120000 },
+          { "type": "command", "command": "pytest --cov=. --cov-report=term-missing --cov-fail-under=80", "timeout": 120000 },
+          { "type": "command", "command": "echo 'Command review: ${command}' | tee -a .claude/command-log.txt", "timeout": 5000 }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          { "type": "command", "command": "test -f ${file_path} && echo 'Overwriting existing file: ${file_path}'", "timeout": 5000 }
+        ]
+      }
+    ]
+  }
+}
+```
+
 ## Event Mapping Caveats
 
 | Original Event | New Mapping | Notes |
