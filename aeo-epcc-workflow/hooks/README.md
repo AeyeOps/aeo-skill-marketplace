@@ -19,7 +19,10 @@ General recovery script that:
 - Resets file permissions on `.sh` files to executable
 - Clears Python `__pycache__` directories
 
+## Blocking Behavior Warning
+
+Claude Code's hooks spec does not support a `blocking` field — **all hooks block by default** if the command exits non-zero. Recovery hooks that should be advisory-only must append `|| true` to their commands to prevent failures from blocking operations.
+
 ## Notes
-- Recovery hooks should be non-blocking to prevent infinite loops
 - Test recovery scripts thoroughly before deployment
 - Monitor error.log for patterns that need addressing

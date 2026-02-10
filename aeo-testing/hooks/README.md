@@ -18,10 +18,13 @@ Pre-commit and code validation quality enforcement hooks for Claude Code operati
 - Security linting for Python (`bandit -r . -f json -o bandit-report.json`)
 - Test coverage verification via `test-generator` agent (`--verify-coverage`)
 
+## Blocking Behavior Warning
+
+Claude Code's hooks spec does not support a `blocking` field — **all hooks block by default** if the command exits non-zero. To make a hook advisory-only (non-blocking), append `|| true` to the command string so it always exits 0.
+
 ## Customization
 
 | Setting | Description |
 |---------|-------------|
-| `blocking` | Set to `false` on individual hooks to convert errors to warnings |
 | `commands` | Adjust commands based on your project's tools and standards |
 | `coverage` | Modify coverage threshold in the pytest `--cov-fail-under` flag (default: 80) |

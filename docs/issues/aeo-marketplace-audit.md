@@ -192,6 +192,20 @@
 
 ---
 
+## ISSUE #11 - Blocking behavior change on remediated hooks
+- **Severity:** Medium — silent behavioral shift for notification/webhook hooks
+- **Problem:** The original hook files used `"blocking": false` on advisory hooks (e.g., Slack notifications, analytics webhooks). The Claude Code hooks spec does not support a `blocking` field — hooks block by default if the command exits non-zero. After remediation, hooks that were intended as advisory (fire-and-forget) now block the operation if they fail. This is especially problematic for notification hooks calling external webhooks (e.g., `curl -X POST ${SLACK_WEBHOOK}`) — if the webhook endpoint is unreachable, the hook fails and blocks the Bash/Stop operation.
+- **Affected plugins:** aeo-agile-tools (Slack/PagerDuty/analytics webhooks), any plugin with external HTTP calls in hooks
+- **Resolution:** Documented in each plugin's `hooks/README.md`. Webhook-calling hooks should append `|| true` to their commands to prevent non-zero exits from blocking operations. Example: `curl -X POST ${SLACK_WEBHOOK} ... || true`. Users deploying these hooks must review and apply this pattern for advisory-only hooks.
+
+---
+
+## Pre-Remediation Analysis
+
+During planning, an architectural analysis established that the custom-named JSON files (e.g., `notifications.json`, `compliance.json`) were **not broken hooks files** but rather **reference implementations containing meaningful plugin configuration data** — compliance frameworks, notification templates, monitoring configs, and recovery scripts. The correct remediation strategy was separation (valid hooks into `hooks.json`, metadata into `README.md`) rather than deletion. This analysis informed the decision to preserve all metadata in companion documentation files.
+
+---
+
 ## PRIORITY ORDER FOR FIXES (pre-remediation reference)
 
 1. **ISSUE #10** (HIGH) - Non-standard filenames = hooks never loaded - 9 files

@@ -2,6 +2,15 @@
 
 Team alerting and notification system hooks for Claude Code operations.
 
+## Blocking Behavior Warning
+
+The original hooks used `"blocking": false` to make notifications advisory-only. Claude Code's hooks spec does not support a `blocking` field — **all hooks block by default** if the command exits non-zero. This means if a webhook endpoint is unreachable, the hook will fail and block the operation.
+
+**For production use, append `|| true` to webhook commands** to prevent failures from blocking operations. For example:
+```
+curl -X POST ${SLACK_WEBHOOK} ... || true
+```
+
 ## Event Mapping Caveats
 
 The following events from the original configuration were remapped or removed:
