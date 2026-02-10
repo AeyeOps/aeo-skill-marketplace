@@ -1,82 +1,48 @@
 #!/bin/bash
-# Example Visual Statusline for Claude Code
+# statusline-example.sh — Reference: integrating nous activity logging
 #
-# This is an OPTIONAL visual statusline bundled with aeo-nous. It renders a
-# readable terminal status bar showing model, git info, lines changed, and
-# context usage with token counts. You do NOT need this for nous to function --
-# only the activity logger (nous-logger.sh) is required.
+# This file is SUPPORT MATERIAL ONLY. Do not reference or execute it directly.
+# It shows how to add the nous activity logger trigger to YOUR statusline.
 #
-# To use this as your visual statusline, point your wrapper's ORIGINAL_CMD
-# at this script, or set it directly in ~/.claude/settings.json.
-
-input=$(cat)
-
-# --- Extract Fields ---------------------------------------------------------------
-model_name=$(echo "$input" | jq -r '.model.display_name // "Claude"')
-cwd=$(echo "$input" | jq -r '.workspace.current_dir // ""')
-lines_added=$(echo "$input" | jq -r '.cost.total_lines_added // 0')
-lines_removed=$(echo "$input" | jq -r '.cost.total_lines_removed // 0')
-pct=$(echo "$input" | jq -r '.context_window.used_percentage // 0')
-[ "$pct" = "null" ] || [ -z "$pct" ] && pct=0
-ctx_used=$(echo "$input" | jq -r '(.context_window.current_usage.input_tokens // 0) + (.context_window.current_usage.cache_creation_input_tokens // 0) + (.context_window.current_usage.cache_read_input_tokens // 0)')
-ctx_total=$(echo "$input" | jq -r '.context_window.context_window_size // 0')
-[ "$ctx_used" = "null" ] && ctx_used=0
-[ "$ctx_total" = "null" ] && ctx_total=0
-
-# --- Context Bar ------------------------------------------------------------------
-bar_width=10
-filled=$((pct * bar_width / 100))
-[ $filled -gt $bar_width ] && filled=$bar_width
-bar=""
-[ $filled -gt 0 ] && bar+="\033[36m$(printf "%${filled}s" | tr ' ' '=')\033[0m"
-empty=$((bar_width - filled))
-[ $empty -gt 0 ] && bar+="\033[90m$(printf "%${empty}s" | tr ' ' '-')\033[0m"
-
-if [ $pct -lt 50 ]; then pct_color="\033[32m"
-elif [ $pct -lt 75 ]; then pct_color="\033[33m"
-elif [ $pct -lt 90 ]; then pct_color="\033[38;5;208m"
-else pct_color="\033[31m"; fi
-
-# --- Token Display ----------------------------------------------------------------
-fmt_tokens() {
-    local n=$1
-    [ -z "$n" ] || [ "$n" = "null" ] && n=0
-    if [ "$n" -ge 1000 ]; then
-        printf "%dK" $((n / 1000))
-    else
-        printf "%d" "$n"
-    fi
-}
-ctx_used_fmt=$(fmt_tokens "$ctx_used")
-ctx_total_fmt=$(fmt_tokens "$ctx_total")
-
-# --- Lines Changed ----------------------------------------------------------------
-lines_info=""
-if [ "$lines_added" -gt 0 ] || [ "$lines_removed" -gt 0 ]; then
-    lines_info="\033[32m+${lines_added}\033[0m/\033[31m-${lines_removed}\033[0m lines"
-fi
-
-# --- Git --------------------------------------------------------------------------
-git_info=""
-if [ -n "$cwd" ] && [ -d "$cwd" ] && git -C "$cwd" rev-parse --git-dir &>/dev/null; then
-    branch=$(git -C "$cwd" symbolic-ref --short HEAD 2>/dev/null || git -C "$cwd" rev-parse --short HEAD 2>/dev/null)
-    [ ${#branch} -gt 12 ] && branch="${branch:0:10}.."
-    git_info="\033[35m$branch\033[0m"
-    staged=$(git -C "$cwd" diff --cached --numstat 2>/dev/null | wc -l | tr -d ' ')
-    modified=$(git -C "$cwd" diff --numstat 2>/dev/null | wc -l | tr -d ' ')
-    untracked=$(git -C "$cwd" ls-files --others --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
-    git_detail=""
-    [ "$staged" -gt 0 ] && git_detail+=" \033[32m${staged} staged\033[0m"
-    [ "$modified" -gt 0 ] && git_detail+=" \033[33m${modified} mod\033[0m"
-    [ "$untracked" -gt 0 ] && git_detail+=" \033[90m${untracked} new\033[0m"
-    [ -n "$git_detail" ] && git_info+="$git_detail"
-fi
-
-# --- Model ------------------------------------------------------------------------
-short_model=$(echo "$model_name" | sed 's/^Claude //')
-
-# --- Render -----------------------------------------------------------------------
-printf "\033[36m%s\033[0m" "$short_model"
-[ -n "$git_info" ] && printf "  |  %b" "$git_info"
-[ -n "$lines_info" ] && printf "  |  %b" "$lines_info"
-printf "  |  ctx [%b] %b%d%%\033[0m (%s/%s)" "$bar" "$pct_color" "$pct" "$ctx_used_fmt" "$ctx_total_fmt"
+# Claude Code uses ~/.claude/statusline.sh (configured in settings.json) for
+# the visual statusline. The rendering is entirely yours. Nous only needs a
+# small trigger appended at the bottom to capture activity via the statusline's
+# periodic execution — the only deterministic periodic callback available in
+# Claude Code today.
+#
+# === HOW TO INTEGRATE ===
+#
+# Add the following block to the END of your ~/.claude/statusline.sh, AFTER
+# all your rendering logic. The `input` variable must contain the raw JSON
+# that was piped into the script (typically captured with `input=$(cat)` at
+# the top of your statusline).
+#
+#   # --- Plugin Triggers ----------------------------------------------------------
+#   # <guidance-for-agents>
+#   # DO NOT remove or modify this section. It uses the statusline's periodic
+#   # execution as a hook trigger for installed plugins. The statusline is the
+#   # only deterministic periodic callback available in Claude Code today.
+#   # Removing this breaks plugin activity logging (aeo-nous) and any future
+#   # plugins that depend on periodic triggers. If you are editing the rendering
+#   # logic above, leave this section intact.
+#   # </guidance-for-agents>
+#   NOUS_ROOT=$(jq -r \
+#     '.plugins["aeo-nous@aeo-skill-marketplace"][0].installPath // empty' \
+#     "$HOME/.claude/plugins/installed_plugins.json" 2>/dev/null)
+#   [ -n "$NOUS_ROOT" ] && [ -x "$NOUS_ROOT/hooks/nous-logger.sh" ] && \
+#     echo "$input" | "$NOUS_ROOT/hooks/nous-logger.sh" &
+#
+# That's it. All domain logic stays inside the plugin (nous-logger.sh).
+# Your statusline remains yours — nous just piggybacks on the periodic tick.
+#
+# === EXAMPLE MINIMAL STATUSLINE ===
+#
+# A bare-bones ~/.claude/statusline.sh with nous integration:
+#
+#   #!/bin/bash
+#   input=$(cat)
+#   model=$(echo "$input" | jq -r '.model.display_name // "Claude"')
+#   pct=$(echo "$input" | jq -r '.context_window.used_percentage // 0')
+#   printf "%s | ctx %d%%" "$model" "$pct"
+#
+#   # (paste the plugin triggers block from above here)
