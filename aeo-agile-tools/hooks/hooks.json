@@ -1,0 +1,4 @@
+{
+  "description": "Team alerting and notification hooks — disabled by default (see README.md for reference configuration)",
+  "hooks": {}
+}

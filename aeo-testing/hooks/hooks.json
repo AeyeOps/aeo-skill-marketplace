@@ -1,0 +1,4 @@
+{
+  "description": "Quality gates for code validation — disabled by default (see README.md for reference configuration)",
+  "hooks": {}
+}

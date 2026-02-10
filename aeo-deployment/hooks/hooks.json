@@ -1,0 +1,4 @@
+{
+  "description": "Compliance and regulatory validation — disabled by default (see README.md for reference configuration)",
+  "hooks": {}
+}

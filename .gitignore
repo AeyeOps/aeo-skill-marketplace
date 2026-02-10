@@ -13,6 +13,10 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+*:Zone.Identifier
 
 # Local plugin settings
 *.local.md
+
+# Claude Code local state
+.claude/
