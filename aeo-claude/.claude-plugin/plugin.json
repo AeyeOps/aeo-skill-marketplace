@@ -1,6 +1,6 @@
 {
   "name": "aeo-claude",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Claude development skills: Agent SDK reference, skill creation, slash command creation, Opus 4.6 prompting, ultra validation workflows, and team-coordinated planning",
   "author": {
     "name": "AeyeOps",

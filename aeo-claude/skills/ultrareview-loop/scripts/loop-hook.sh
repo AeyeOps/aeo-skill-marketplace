@@ -70,12 +70,17 @@ for STATE_FILE in "${STATE_FILES[@]}"; do
 
   # Check session_id
   if [[ "$STORED_SESSION" == "null" ]] || [[ -z "$STORED_SESSION" ]]; then
-    # First run - capture this session as the loop owner
-    TEMP_FILE="${STATE_FILE}.tmp.$$"
-    sed "s/^session_id: .*/session_id: \"$CURRENT_SESSION\"/" "$STATE_FILE" > "$TEMP_FILE"
-    mv "$TEMP_FILE" "$STATE_FILE"
-    MY_STATE_FILE="$STATE_FILE"
-    break
+    # Unclaimed loop — only claim if this session created it (token in transcript)
+    FILE_TOKEN=$(echo "$FRONTMATTER" | grep '^token:' | sed 's/token: *//' | sed 's/^"\(.*\)"$/\1/')
+    if [[ -n "$TRANSCRIPT_PATH" ]] && [[ -f "$TRANSCRIPT_PATH" ]] && grep -q "$FILE_TOKEN" "$TRANSCRIPT_PATH"; then
+      TEMP_FILE="${STATE_FILE}.tmp.$$"
+      sed "s/^session_id: .*/session_id: \"$CURRENT_SESSION\"/" "$STATE_FILE" > "$TEMP_FILE"
+      mv "$TEMP_FILE" "$STATE_FILE"
+      MY_STATE_FILE="$STATE_FILE"
+      break
+    fi
+    # Token not in transcript — not our loop, skip
+    continue
   elif [[ "$CURRENT_SESSION" == "$STORED_SESSION" ]]; then
     # This is our loop
     MY_STATE_FILE="$STATE_FILE"
@@ -170,8 +175,13 @@ if echo "$LAST_OUTPUT" | grep -q '<ultrareview_summary>'; then
     fi
   fi
 else
-  # No summary block found - conservatively assume actionable findings exist
-  HAS_ACTIONABLE=true
+  # No summary block found — only assume actionable if model is engaged with this loop
+  if echo "$LAST_OUTPUT" | grep -q "$TOKEN"; then
+    HAS_ACTIONABLE=true
+  else
+    # Model's last message doesn't reference this loop — allow exit
+    HAS_ACTIONABLE=false
+  fi
 fi
 
 # Decision logic
