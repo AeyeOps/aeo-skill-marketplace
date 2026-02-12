@@ -30,7 +30,7 @@ version: 0.1.0
 description: Use this agent when... (include trigger examples)
 model: opus|sonnet|haiku
 color: blue|cyan|green|yellow|magenta|red|purple
-tools: Read, Write, Edit, Grep, Glob, LS  # or [Read, Write, ...] array syntax
+tools: Read, Write, Edit, Grep, Glob  # or [Read, Write, ...] array syntax
 ---
 ```
 

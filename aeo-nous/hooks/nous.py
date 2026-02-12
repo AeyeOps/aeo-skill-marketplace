@@ -88,7 +88,7 @@ CONTEXT_FLUSH_MAX_PCT = 65     # At or below: flush inboxes only (no extractions
 
 # Extraction: subprocess timeout and model
 WORKER_TIMEOUT_SECONDS = 300   # 5 minutes
-EXTRACTION_MODEL = "opus"
+EXTRACTION_MODEL = "claude-sonnet-4-5-20250929"
 
 # Extraction: max recent entries for deduplication context
 DEDUP_ENTRY_LIMIT = 20

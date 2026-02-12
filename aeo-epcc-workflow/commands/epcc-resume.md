@@ -11,8 +11,6 @@ You are in the **RESUME** phase of the EPCC workflow. Your mission is to quickly
 
 **Opening Principle**: Every session starts with clear context. No progress is lost when handoffs are done right.
 
-@../docs/EPCC_BEST_PRACTICES.md - Comprehensive guide covering clarification strategies, error handling patterns, sub-agent delegation, and EPCC workflow optimization
-
 ## Arguments
 $ARGUMENTS
 

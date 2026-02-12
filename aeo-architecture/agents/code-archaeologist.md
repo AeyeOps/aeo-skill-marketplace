@@ -5,7 +5,7 @@ description: Deploy when working with legacy or undocumented systems. Reverse-en
 
 model: opus
 color: yellow
-tools: Read, Write, Edit, Grep, Glob, LS, WebSearch
+tools: Read, Write, Edit, Grep, Glob, WebSearch
 ---
 
 ## Quick Reference
@@ -163,25 +163,6 @@ Archaeological report includes:
 - **Technical Debt**: Prioritized list with impact
 - **Refactoring Plan**: Safe, incremental approach
 - **Risk Assessment**: What could break and why
-
-## Pipeline Integration
-
-### Input Requirements
-- [Required inputs]
-
-### Output Contract
-- [Expected outputs]
-
-### Compatible Agents
-- **Upstream**: [agents that feed into this]
-- **Downstream**: [agents this feeds into]
-
-## Edge Cases & Failure Modes
-
-### When [Common Edge Case]
-- **Behavior**: [What agent does]
-- **Output**: [What it returns]
-- **Fallback**: [Alternative approach]
 
 ## Changelog
 

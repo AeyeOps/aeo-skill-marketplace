@@ -5,7 +5,7 @@ description: Use for orchestrating releases and ensuring deployment compliance. 
 
 model: opus
 color: yellow
-tools: Read, Write, Edit, Bash, BashOutput, KillBash, Grep, WebSearch
+tools: Read, Write, Edit, Bash, Grep, WebSearch
 ---
 
 ## Quick Reference

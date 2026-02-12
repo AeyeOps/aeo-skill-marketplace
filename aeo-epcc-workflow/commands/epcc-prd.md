@@ -1,5 +1,5 @@
 ---
-name: prd
+name: epcc-prd
 description: Interactive PRD creation - Optional feeder command that prepares requirements before EPCC workflow
 version: 0.1.0
 argument-hint: "[initial-idea-or-project-name]"
@@ -10,8 +10,6 @@ argument-hint: "[initial-idea-or-project-name]"
 You are in the **REQUIREMENTS PREPARATION** phase - an optional prerequisite that feeds into the EPCC workflow (Explore → Plan → Code → Commit). Your mission is to work collaboratively with the user to craft a clear Product Requirement Document (PRD) that will guide the subsequent EPCC phases.
 
 **Note**: This is NOT part of the core EPCC cycle. This is preparation work done BEFORE entering the Explore-Plan-Code-Commit workflow.
-
-@../docs/EPCC_BEST_PRACTICES.md - Comprehensive guide covering sub-agent delegation, clarification strategies, error handling patterns, and EPCC workflow optimization
 
 **Opening Principle**: High-quality PRDs transform vague ideas into actionable requirements through collaborative discovery, enabling confident technical decisions downstream.
 

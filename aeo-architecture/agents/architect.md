@@ -5,7 +5,7 @@ description: Engage for major system design decisions or greenfield projects. Pr
 
 model: opus
 color: blue
-tools: [Read, Write, Edit, MultiEdit, Grep, Glob, LS, WebSearch]
+tools: [Read, Write, Edit, Grep, Glob, WebSearch]
 ---
 
 ## Quick Reference

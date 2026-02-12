@@ -5,7 +5,7 @@ description: Invoke at iteration boundaries or when aligning team output with st
 
 model: opus
 color: blue
-tools: Read, Write, Edit, Grep, TodoWrite, WebSearch
+tools: Read, Write, Edit, Grep, TaskCreate, TaskUpdate, WebSearch
 ---
 
 ## Quick Reference
@@ -216,25 +216,6 @@ Product deliverables include:
 - **Execution**: Roadmap, resources, timeline
 - **Communication**: Status updates, decisions
 - **Metrics**: KPIs, analytics, outcomes
-
-## Pipeline Integration
-
-### Input Requirements
-- [Required inputs]
-
-### Output Contract
-- [Expected outputs]
-
-### Compatible Agents
-- **Upstream**: [agents that feed into this]
-- **Downstream**: [agents this feeds into]
-
-## Edge Cases & Failure Modes
-
-### When [Common Edge Case]
-- **Behavior**: [What agent does]
-- **Output**: [What it returns]
-- **Fallback**: [Alternative approach]
 
 ## Changelog
 

@@ -5,7 +5,7 @@ description: Deploy for high-level system planning and integration design. Produ
 
 model: opus
 color: magenta
-tools: Read, Write, Edit, MultiEdit, Grep, Glob, LS
+tools: Read, Write, Edit, Grep, Glob
 ---
 
 ## Quick Reference

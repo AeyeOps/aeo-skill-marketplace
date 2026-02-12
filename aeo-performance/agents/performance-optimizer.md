@@ -5,7 +5,7 @@ description: Use for systematic performance improvement initiatives. Profiles sy
 
 model: opus
 color: green
-tools: Read, Edit, MultiEdit, Grep, Glob, Bash, BashOutput, WebSearch
+tools: Read, Edit, Grep, Glob, Bash, WebSearch
 ---
 
 ## Quick Reference

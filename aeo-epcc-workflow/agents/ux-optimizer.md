@@ -5,7 +5,7 @@ description: Activate when improving user experience or interface design. Analyz
 
 model: opus
 color: magenta
-tools: Read, Write, Edit, MultiEdit, Grep, Glob, WebSearch, WebFetch
+tools: Read, Write, Edit, Grep, Glob, WebSearch, WebFetch
 ---
 
 ## Quick Reference

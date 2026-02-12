@@ -5,7 +5,7 @@ description: Invoke when writing conceptual documentation that explains why thin
 
 model: opus
 color: magenta
-tools: [Read, Write, Edit, MultiEdit, Grep, Glob, LS]
+tools: [Read, Write, Edit, Grep, Glob]
 ---
 
 ## Quick Reference

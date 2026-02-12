@@ -5,7 +5,7 @@ description: Engage when documentation needs to be accessible to non-technical s
 
 model: opus
 color: blue
-tools: Read, Write, Edit, MultiEdit, Grep, Glob, LS
+tools: Read, Write, Edit, Grep, Glob
 ---
 
 ## Quick Reference

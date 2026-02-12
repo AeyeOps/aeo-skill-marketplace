@@ -5,7 +5,7 @@ description: Activate during early project phases when clarifying stakeholder ne
 
 model: opus
 color: blue
-tools: Read, Write, Edit, Grep, Glob, TodoWrite, WebSearch
+tools: Read, Write, Edit, Grep, Glob, TaskCreate, TaskUpdate, WebSearch
 ---
 
 ## Quick Reference
@@ -191,25 +191,6 @@ Deliverables:
 - Process Flow Diagrams
 - Stakeholder Matrix
 - Success Criteria
-
-## Pipeline Integration
-
-### Input Requirements
-- [Required inputs]
-
-### Output Contract
-- [Expected outputs]
-
-### Compatible Agents
-- **Upstream**: [agents that feed into this]
-- **Downstream**: [agents this feeds into]
-
-## Edge Cases & Failure Modes
-
-### When [Common Edge Case]
-- **Behavior**: [What agent does]
-- **Output**: [What it returns]
-- **Fallback**: [Alternative approach]
 
 ## Changelog
 

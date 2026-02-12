@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/hooks/security_check.py",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/security_check.py",
             "timeout": 10000
           }
         ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/hooks/command_security_check.sh",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/command_security_check.sh",
             "timeout": 10000
           }
         ]

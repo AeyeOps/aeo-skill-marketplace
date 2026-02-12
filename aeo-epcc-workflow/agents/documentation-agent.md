@@ -5,7 +5,7 @@ description: Use as the primary documentation coordinator. Applies the Diataxis 
 
 model: opus
 color: magenta
-tools: Read, Write, Edit, MultiEdit, Grep, Glob, LS
+tools: Read, Write, Edit, Grep, Glob
 ---
 
 ## Quick Reference

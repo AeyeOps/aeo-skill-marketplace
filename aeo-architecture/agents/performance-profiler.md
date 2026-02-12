@@ -5,7 +5,7 @@ description: Activate when investigating system slowdowns or establishing baseli
 
 model: opus
 color: red
-tools: Read, Edit, MultiEdit, Grep, Glob, Bash, BashOutput
+tools: Read, Edit, Grep, Glob, Bash
 ---
 
 ## Quick Reference

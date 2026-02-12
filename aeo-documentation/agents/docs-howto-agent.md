@@ -5,7 +5,7 @@ description: Use for task-focused documentation with step-by-step instructions. 
 
 model: opus
 color: blue
-tools: [Read, Write, Edit, MultiEdit, Grep, Glob, LS]
+tools: [Read, Write, Edit, Grep, Glob]
 ---
 
 ## Quick Reference
@@ -322,25 +322,6 @@ For [high-scale/performance-critical] scenarios:
 - Problems arise that aren't covered in troubleshooting
 - Solution is too generic to be useful
 - User can't adapt solution to their specific needs
-
-## Pipeline Integration
-
-### Input Requirements
-- [Required inputs]
-
-### Output Contract
-- [Expected outputs]
-
-### Compatible Agents
-- **Upstream**: [agents that feed into this]
-- **Downstream**: [agents this feeds into]
-
-## Edge Cases & Failure Modes
-
-### When [Common Edge Case]
-- **Behavior**: [What agent does]
-- **Output**: [What it returns]
-- **Fallback**: [Alternative approach]
 
 ## Changelog
 

@@ -5,7 +5,7 @@ description: Call upon during iteration ceremonies or when delivery cadence need
 
 model: opus
 color: green
-tools: Read, Write, Edit, Grep, TodoWrite, WebSearch
+tools: Read, Write, Edit, Grep, TaskCreate, TaskUpdate, WebSearch
 ---
 
 ## Quick Reference
@@ -220,25 +220,6 @@ Sprint artifacts:
 - Review summaries
 - Retrospective actions
 - Team agreements
-
-## Pipeline Integration
-
-### Input Requirements
-- [Required inputs]
-
-### Output Contract
-- [Expected outputs]
-
-### Compatible Agents
-- **Upstream**: [agents that feed into this]
-- **Downstream**: [agents this feeds into]
-
-## Edge Cases & Failure Modes
-
-### When [Common Edge Case]
-- **Behavior**: [What agent does]
-- **Output**: [What it returns]
-- **Fallback**: [Alternative approach]
 
 ## Changelog
 

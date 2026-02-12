@@ -5,7 +5,7 @@ description: Engage for learning-oriented documentation that teaches through doi
 
 model: opus
 color: green
-tools: [Read, Write, Edit, MultiEdit, Grep, Glob, LS]
+tools: [Read, Write, Edit, Grep, Glob]
 ---
 
 ## Quick Reference

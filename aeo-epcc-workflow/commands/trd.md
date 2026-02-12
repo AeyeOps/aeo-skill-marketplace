@@ -11,8 +11,6 @@ Generate comprehensive **TECH_REQ.md** through collaborative technical discovery
 
 **Opening Principle**: High-quality TRDs transform architectural ambiguity into clear technical decisions through collaborative discovery, enabling confident implementation with the right technology choices.
 
-@../docs/EPCC_BEST_PRACTICES.md - Comprehensive guide covering sub-agent delegation, clarification strategies, error handling patterns, and technical requirements workflow optimization
-
 ## What This Command Does
 
 **Purpose**: Create Technical Requirements Document (TECH_REQ.md) that defines:

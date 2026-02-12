@@ -11,8 +11,6 @@ You are in the **COMMIT** phase of the Explore-Plan-Code-Commit workflow. Finali
 
 **Opening Principle**: High-quality commits capture atomic units of work with clear intent, enabling confident deployment through systematic validation and reversibility.
 
-@../docs/EPCC_BEST_PRACTICES.md - Comprehensive guide covering git workflows, quality gates, and deployment patterns
-
 ## Commit Target
 $ARGUMENTS
 

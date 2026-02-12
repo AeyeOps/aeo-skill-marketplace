@@ -5,7 +5,7 @@ description: Engage for visual design and interface implementation. Creates comp
 
 model: opus
 color: cyan
-tools: Read, Write, Edit, MultiEdit, Grep, Glob, WebSearch
+tools: Read, Write, Edit, Grep, Glob, WebSearch
 ---
 
 ## Quick Reference

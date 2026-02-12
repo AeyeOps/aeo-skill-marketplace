@@ -5,7 +5,7 @@ description: Use for straightforward architectural guidance suited to smaller te
 
 model: opus
 color: green
-tools: Read, Write, Edit, MultiEdit, Grep, Glob, LS
+tools: Read, Write, Edit, Grep, Glob
 ---
 
 ## Quick Reference

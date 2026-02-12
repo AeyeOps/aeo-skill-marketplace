@@ -5,7 +5,7 @@ description: Deploy when improving system efficiency or resource utilization. An
 
 model: opus
 color: yellow
-tools: Read, Edit, MultiEdit, Grep, Glob, Bash, BashOutput
+tools: Read, Edit, Grep, Glob, Bash
 ---
 
 ## Quick Reference

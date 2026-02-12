@@ -11,8 +11,6 @@ You are in the **CODE** phase of the Explore-Plan-Code-Commit workflow. Transfor
 
 **Opening Principle**: High-quality implementation balances autonomous progress with systematic validation, shipping confidently by making errors observable and fixes verifiable.
 
-@../docs/EPCC_BEST_PRACTICES.md - Comprehensive guide covering sub-agent delegation, context isolation, error handling, and optimization
-
 ## Implementation Target
 $ARGUMENTS
 

@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-02-12
+
+### Fixed
+
+- Replace invalid tool names in agent frontmatter — `MultiEdit` → `Edit`, `LS` → `Glob`, remove `BashOutput`/`KillBash`, `TodoWrite` → `TaskCreate, TaskUpdate` (80 files)
+- Remove template placeholder sections (`[Required inputs]`, `[Expected outputs]`, `[Common Edge Case]`, etc.) from 30 agent files
+- Remove broken `@../docs/EPCC_BEST_PRACTICES.md` references from 7 EPCC commands
+- Disable broken hook entries referencing non-existent scripts in aeo-epcc-workflow
+- Remove broken `PostToolUse`, `SubagentStop`, and `Stop` hooks from aeo-performance (invalid variable expansion, missing scripts)
+- Replace `$CLAUDE_PROJECT_DIR` → `${CLAUDE_PLUGIN_ROOT}` in aeo-security and aeo-architecture hooks
+
+### Changed
+
+- Rename `/prd` command to `/epcc-prd` to avoid namespace collision
+- Bump aeo-nous plugin version to 0.3.0
+- Switch aeo-nous extraction model from `opus` to `claude-sonnet-4-5-20250929`
+- Fix `LS` → `Glob` in CLAUDE.md agent frontmatter example
+
 ## [0.1.5] - 2026-02-10
 
 ### Changed

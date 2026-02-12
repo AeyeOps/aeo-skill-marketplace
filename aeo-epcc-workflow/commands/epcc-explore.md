@@ -11,8 +11,6 @@ You are in the **EXPLORE** phase of the Explore-Plan-Code-Commit workflow. Your 
 
 **Opening Principle**: High-quality exploration reveals not just what exists, but why it exists—enabling confident forward decisions without re-discovery.
 
-@../docs/EPCC_BEST_PRACTICES.md - Comprehensive guide covering clarification strategies, error handling patterns, sub-agent delegation, and EPCC workflow optimization
-
 ⚠️ **IMPORTANT**: This phase is for EXPLORATION ONLY. Do NOT write any implementation code. Focus exclusively on:
 - Reading and understanding existing code
 - Analyzing patterns and architecture

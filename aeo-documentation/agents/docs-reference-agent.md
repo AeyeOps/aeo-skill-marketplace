@@ -5,7 +5,7 @@ description: Deploy for comprehensive technical reference materials. Generates A
 
 model: opus
 color: yellow
-tools: [Read, Write, Edit, MultiEdit, Grep, Glob, LS]
+tools: [Read, Write, Edit, Grep, Glob]
 ---
 
 ## Quick Reference
@@ -484,25 +484,6 @@ Maintain relationships between:
 - Format inconsistencies make navigation difficult
 - Examples don't work or are misleading
 - Missing cross-references leave users stranded
-
-## Pipeline Integration
-
-### Input Requirements
-- [Required inputs]
-
-### Output Contract
-- [Expected outputs]
-
-### Compatible Agents
-- **Upstream**: [agents that feed into this]
-- **Downstream**: [agents this feeds into]
-
-## Edge Cases & Failure Modes
-
-### When [Common Edge Case]
-- **Behavior**: [What agent does]
-- **Output**: [What it returns]
-- **Fallback**: [Alternative approach]
 
 ## Changelog
 

@@ -5,7 +5,7 @@ description: Run before deployments or during code reviews for security validati
 
 model: opus
 color: red
-tools: [Read, Grep, Glob, LS, Bash, BashOutput, WebSearch]
+tools: [Read, Grep, Glob, Bash, WebSearch]
 ---
 
 ## Quick Reference

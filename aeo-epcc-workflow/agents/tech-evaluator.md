@@ -5,7 +5,7 @@ description: Engage when assessing technology options or evaluating build-vs-buy
 
 model: opus
 color: yellow
-tools: Read, Write, Edit, MultiEdit, Grep, Glob, WebSearch
+tools: Read, Write, Edit, Grep, Glob, WebSearch
 ---
 
 ## Quick Reference

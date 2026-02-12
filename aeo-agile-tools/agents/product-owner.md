@@ -5,7 +5,7 @@ description: Engage when prioritizing work or preparing for iteration planning. 
 
 model: opus
 color: magenta
-tools: Read, Write, Edit, Grep, TodoWrite, WebSearch
+tools: Read, Write, Edit, Grep, TaskCreate, TaskUpdate, WebSearch
 ---
 
 ## Quick Reference
@@ -193,25 +193,6 @@ Sprint artifacts:
 - Sprint goals aligned to vision
 - Accepted/rejected work
 - Stakeholder updates
-
-## Pipeline Integration
-
-### Input Requirements
-- [Required inputs]
-
-### Output Contract
-- [Expected outputs]
-
-### Compatible Agents
-- **Upstream**: [agents that feed into this]
-- **Downstream**: [agents this feeds into]
-
-## Edge Cases & Failure Modes
-
-### When [Common Edge Case]
-- **Behavior**: [What agent does]
-- **Output**: [What it returns]
-- **Fallback**: [Alternative approach]
 
 ## Changelog
 

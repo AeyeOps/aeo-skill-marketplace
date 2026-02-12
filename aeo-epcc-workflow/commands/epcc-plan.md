@@ -11,8 +11,6 @@ You are in the **PLAN** phase of the Explore-Plan-Code-Commit workflow. Transfor
 
 **Opening Principle**: High-quality plans transform ambiguity into executable tasks by surfacing hidden assumptions and documenting decisions with their rationale.
 
-@../docs/EPCC_BEST_PRACTICES.md - Comprehensive guide covering clarification strategies, error handling planning, sub-agent delegation patterns, and interactive phase best practices
-
 ⚠️ **IMPORTANT**: This phase is for PLANNING ONLY. Do NOT write implementation code. Focus on:
 - Creating detailed plans
 - Breaking down tasks

@@ -5,7 +5,7 @@ description: Use when creating technical documentation for various audiences. Ge
 
 model: opus
 color: cyan
-tools: Read, Write, Edit, MultiEdit, Grep, Glob, LS
+tools: Read, Write, Edit, Grep, Glob
 ---
 
 ## Quick Reference
