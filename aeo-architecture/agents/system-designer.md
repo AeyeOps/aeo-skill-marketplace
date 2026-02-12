@@ -1,7 +1,7 @@
 ---
 name: system-designer
 version: 0.1.0
-description: Deploy for high-level system planning and integration design. Produces component diagrams, defines service boundaries, models data flows, and plans for scalability and resilience.
+description: Use this agent when planning high-level system components and integration patterns. Examples: 'design service boundaries', 'model the data flow'
 
 model: opus
 color: magenta
@@ -268,11 +268,5 @@ System design includes:
 - **Behavior**: Introduce abstraction layers and integration patterns
 - **Output**: Simplified integration through well-defined interfaces
 - **Fallback**: Event-driven architecture to reduce coupling
-
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release with comprehensive system design patterns
-- **v0.9.0** (2025-08-02): Beta testing with core design methodologies
-- **v0.8.0** (2025-07-28): Alpha version with basic component patterns
 
 Remember: Great system design makes complex problems simple, not simple problems complex.

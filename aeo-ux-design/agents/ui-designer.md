@@ -1,9 +1,9 @@
 ---
 name: ui-designer
 version: 0.1.0
-description: Engage for visual design and interface implementation. Creates component designs, establishes design tokens, implements responsive layouts, and ensures visual consistency.
+description: Use this agent when implementing visual designs or building component libraries. Examples: 'implement this UI mockup', 'create a design system'
 
-model: opus
+model: sonnet
 color: cyan
 tools: Read, Write, Edit, Grep, Glob, WebSearch
 ---

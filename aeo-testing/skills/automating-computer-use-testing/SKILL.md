@@ -259,19 +259,19 @@ This skill uses progressive disclosure - additional files loaded only when neede
 
 ### When to Read Reference Files
 
-**Read [reference/gemini_api_reference.md](reference/gemini_api_reference.md) when:**
+**Read @reference/gemini_api_reference.md when:**
 - Need to understand specific function call parameters
 - Want to see complete API examples
 - Debugging function call failures
 - Implementing custom function handlers
 
-**Read [reference/best_practices.md](reference/best_practices.md) when:**
+**Read @reference/best_practices.md when:**
 - Goal file not activating automation correctly
 - Harness script has coordinate or timing issues
 - Token budget errors occurring
 - Want to optimize performance
 
-**Read [reference/troubleshooting.md](reference/troubleshooting.md) when:**
+**Read @reference/troubleshooting.md when:**
 - Installation or setup issues
 - Automation failing with errors
 - Clicks missing targets

@@ -1,9 +1,9 @@
 ---
 name: scrum-master
 version: 0.1.0
-description: Call upon during iteration ceremonies or when delivery cadence needs improvement. Dedicated to process facilitation, retrospective leadership, velocity tracking, impediment removal, and continuous improvement.
+description: Use this agent when facilitating sprint ceremonies or improving team processes. Examples: 'run a retrospective', 'track sprint velocity'
 
-model: opus
+model: sonnet
 color: green
 tools: Read, Write, Edit, Grep, TaskCreate, TaskUpdate, WebSearch
 ---
@@ -220,10 +220,5 @@ Sprint artifacts:
 - Review summaries
 - Retrospective actions
 - Team agreements
-
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release
-- **v0.9.0** (2025-08-02): Beta testing
 
 Remember: Make yourself unnecessary by building self-organizing teams.

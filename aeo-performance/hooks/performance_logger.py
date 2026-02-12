@@ -36,7 +36,7 @@ def main():
         elif tool_name == 'Bash':
             command = tool_input.get('command', '')
             log_entry['command_length'] = len(command)
-        elif tool_name in ['Edit', 'Write', 'MultiEdit']:
+        elif tool_name in ['Edit', 'Write']:
             file_path = tool_input.get('file_path', '')
             content = tool_input.get('content', '')
             log_entry['file_path'] = file_path

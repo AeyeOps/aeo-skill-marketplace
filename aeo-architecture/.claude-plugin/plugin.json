@@ -1,7 +1,7 @@
 {
   "name": "aeo-architecture",
-  "version": "0.1.0",
-  "description": "Design and documentation toolkit with agents for creating system architectures, C4 diagrams, ADRs, and conducting quality analysis",
+  "version": "0.2.0",
+  "description": "Design and documentation toolkit with agents for creating system architectures, C4 diagrams, ADRs, and conducting quality analysis. Requires companion plugins: aeo-testing, aeo-performance, aeo-security",
   "author": {
     "name": "AeyeOps",
     "url": "https://github.com/AeyeOps"

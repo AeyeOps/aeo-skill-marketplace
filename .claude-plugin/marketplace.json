@@ -13,7 +13,7 @@
       "description": "Claude development skills: Agent SDK reference, skill creation, slash command creation, Opus 4.6 prompting, ultra validation workflows, and team-coordinated planning",
       "category": "development",
       "source": "./aeo-claude",
-      "tags": ["claude", "agent-sdk", "skills", "prompting", "slash-commands"]
+      "tags": ["claude", "agent-sdk", "skills", "prompting", "slash-commands", "ultrareview", "teams", "validation"]
     },
     {
       "name": "aeo-agile-tools",
@@ -27,14 +27,7 @@
       "description": "Design and documentation toolkit with agents for creating system architectures, C4 diagrams, ADRs, and conducting quality analysis",
       "category": "development",
       "source": "./aeo-architecture",
-      "tags": ["architecture", "c4", "adr", "design"]
-    },
-    {
-      "name": "aeo-code-analysis",
-      "description": "Tools for examining legacy codebases, assessing technical debt, evaluating technology options, and documenting undocumented systems",
-      "category": "development",
-      "source": "./aeo-code-analysis",
-      "tags": ["code-analysis", "legacy", "technical-debt"]
+      "tags": ["architecture", "c4", "adr", "design", "code-review", "refactoring"]
     },
     {
       "name": "aeo-deployment",
@@ -55,7 +48,7 @@
       "description": "Structured development methodology agents supporting the Explore-Plan-Code-Commit cycle from initial discovery through final delivery",
       "category": "development",
       "source": "./aeo-epcc-workflow",
-      "tags": ["workflow", "epcc", "development-process"]
+      "tags": ["workflow", "epcc", "development-process", "prd", "trd"]
     },
     {
       "name": "aeo-performance",
@@ -90,7 +83,7 @@
       "description": "Quality assurance agents for test planning, automated validation, quality gate enforcement, and coverage analysis",
       "category": "testing",
       "source": "./aeo-testing",
-      "tags": ["testing", "qa", "quality-gates"]
+      "tags": ["testing", "qa", "quality-gates", "hooks", "black", "ruff"]
     },
     {
       "name": "aeo-troubleshooting",
@@ -125,7 +118,7 @@
       "description": "Self-improving context system: extracts learnings and knowledge from sessions, injects them at startup, monitors context usage with statusline",
       "category": "productivity",
       "source": "./aeo-nous",
-      "tags": ["nous", "memory", "context", "learnings", "knowledge", "statusline"]
+      "tags": ["nous", "memory", "context", "learnings", "knowledge", "statusline", "hooks"]
     }
   ]
 }

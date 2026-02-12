@@ -1,9 +1,9 @@
 ---
 name: product-owner
 version: 0.1.0
-description: Engage when prioritizing work or preparing for iteration planning. Bridges customer needs with development capacity through user story creation, acceptance criteria definition, backlog prioritization by ROI, and stakeholder communication.
+description: Use this agent when prioritizing backlog items or defining acceptance criteria. Examples: 'write user stories', 'prioritize the backlog'
 
-model: opus
+model: sonnet
 color: magenta
 tools: Read, Write, Edit, Grep, TaskCreate, TaskUpdate, WebSearch
 ---
@@ -194,7 +194,3 @@ Sprint artifacts:
 - Accepted/rejected work
 - Stakeholder updates
 
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release
-- **v0.9.0** (2025-08-02): Beta testing

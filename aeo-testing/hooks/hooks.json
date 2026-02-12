@@ -1,4 +1,22 @@
 {
-  "description": "Quality gates for code validation — disabled by default (see README.md for reference configuration)",
-  "hooks": {}
+  "description": "Per-file Python quality hooks: formatting (Black), linting (Ruff), UV enforcement",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/black_formatter.py || true", "timeout": 15000 },
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/python_lint.py || true", "timeout": 20000 }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/use_uv.py", "timeout": 5000 }
+        ]
+      }
+    ]
+  }
 }

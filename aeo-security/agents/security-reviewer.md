@@ -1,11 +1,11 @@
 ---
 name: security-reviewer
 version: 0.1.0
-description: Run before deployments or during code reviews for security validation. Scans for OWASP vulnerabilities, checks dependency CVEs, validates authentication flows, and provides remediation guidance.
+description: Use this agent when auditing code for vulnerabilities or validating security controls. Examples: 'scan for OWASP issues', 'review authentication flow'
 
-model: opus
+model: sonnet
 color: red
-tools: [Read, Grep, Glob, Bash, WebSearch]
+tools: Read, Grep, Glob, Bash, WebSearch
 ---
 
 ## Quick Reference

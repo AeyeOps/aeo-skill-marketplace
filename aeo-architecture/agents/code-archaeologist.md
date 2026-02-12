@@ -1,11 +1,11 @@
 ---
 name: code-archaeologist
 version: 0.1.0
-description: Deploy when working with legacy or undocumented systems. Reverse-engineers codebases, traces data flows, maps hidden dependencies, identifies technical debt, and generates documentation from analysis.
+description: Use this agent when exploring unfamiliar or undocumented codebases. Examples: 'map the dependencies', 'document this legacy code'
 
-model: opus
+model: haiku
 color: yellow
-tools: Read, Write, Edit, Grep, Glob, WebSearch
+tools: Read, Grep, Glob, WebSearch
 ---
 
 ## Quick Reference
@@ -164,7 +164,3 @@ Archaeological report includes:
 - **Refactoring Plan**: Safe, incremental approach
 - **Risk Assessment**: What could break and why
 
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release
-- **v0.9.0** (2025-08-02): Beta testing

@@ -1,9 +1,9 @@
 ---
 name: documentation-agent
 version: 0.1.0
-description: Use as the primary documentation coordinator. Applies the Diataxis framework to organize content into tutorials, how-tos, explanations, and references.
+description: Use this agent when organizing documentation using the Diataxis framework. Examples: 'restructure the docs', 'apply Diataxis to our documentation'
 
-model: opus
+model: sonnet
 color: magenta
 tools: Read, Write, Edit, Grep, Glob
 ---

@@ -98,7 +98,7 @@ def main():
         tool_input = input_data.get('tool_input', {})
         
         # Only process file editing operations
-        if tool_name not in ['Edit', 'Write', 'MultiEdit']:
+        if tool_name not in ['Edit', 'Write']:
             sys.exit(0)
         
         file_path = tool_input.get('file_path', '')

@@ -1,11 +1,11 @@
 ---
 name: docs-reference-agent
 version: 0.1.0
-description: Deploy for comprehensive technical reference materials. Generates API documentation, configuration references, and lookup tables with consistent formatting.
+description: Use this agent when generating comprehensive technical reference material. Examples: 'document the API reference', 'create a configuration reference'
 
-model: opus
+model: sonnet
 color: yellow
-tools: [Read, Write, Edit, Grep, Glob]
+tools: Read, Write, Edit, Grep, Glob
 ---
 
 ## Quick Reference
@@ -484,11 +484,6 @@ Maintain relationships between:
 - Format inconsistencies make navigation difficult
 - Examples don't work or are misleading
 - Missing cross-references leave users stranded
-
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release
-- **v0.9.0** (2025-08-02): Beta testing
 
 ## Output Location
 

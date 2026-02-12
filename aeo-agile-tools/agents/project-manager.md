@@ -1,9 +1,9 @@
 ---
 name: project-manager
 version: 0.1.0
-description: Invoke at iteration boundaries or when aligning team output with strategic goals. Handles delivery planning, roadmap creation, feature prioritization using value frameworks, and stakeholder alignment.
+description: Use this agent when planning delivery roadmaps or aligning team priorities. Examples: 'create a project plan', 'prioritize features with RICE'
 
-model: opus
+model: sonnet
 color: blue
 tools: Read, Write, Edit, Grep, TaskCreate, TaskUpdate, WebSearch
 ---
@@ -216,10 +216,5 @@ Product deliverables include:
 - **Execution**: Roadmap, resources, timeline
 - **Communication**: Status updates, decisions
 - **Metrics**: KPIs, analytics, outcomes
-
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release
-- **v0.9.0** (2025-08-02): Beta testing
 
 Remember: Build the right thing, not just build things right.

@@ -14,7 +14,7 @@ You are in the **COMMIT** phase of the Explore-Plan-Code-Commit workflow. Finali
 ## Commit Target
 $ARGUMENTS
 
-## 🎯 Commit Philosophy
+## Commit Philosophy
 
 **Core Principle**: Validate quality → Git commit with safety → Document completion. Execute autonomously, only ask when genuinely blocked.
 
@@ -22,14 +22,12 @@ $ARGUMENTS
 
 Parse mode from arguments:
 - **Default**: Standard commit (quality checks → commit → document)
-- **`--amend`**: Amend previous commit (use carefully - verify authorship first)
+- **`--amend`**: Amend previous commit (verify authorship first)
 - **`--squash`**: Squash commits (interactive rebase preparation)
 
 ## Execution-First Pattern (Critical)
 
 **This phase is heavily AUTOMATED. Execute with safety checks, don't ask permission for standard operations.**
-
-### Auto-Execute Pattern
 
 1. **Run quality checks** → Tests, coverage, linting, type checking, security
 2. **Auto-fix** → Formatting, linting, simple bugs
@@ -39,580 +37,44 @@ Parse mode from arguments:
 6. **Document** → Generate EPCC_COMMIT.md
 7. **Ask only if blocked** → Quality gates failed after fixes, or user input needed
 
-### When to Ask vs Execute
+**Ask when**: Critical security vulnerabilities, tests failing after multiple fixes, breaking changes, PR creation, commit message unclear.
 
-**✅ Ask when:**
-- Critical/High security vulnerabilities can't be auto-fixed
-- Tests failing after multiple fix attempts (can't resolve)
-- Breaking changes detected (user needs to approve)
-- PR creation (user decides whether to push/create PR)
-- Commit message unclear from context (what to describe?)
+**Don't ask when**: Quality checks failed with clear errors (auto-fix), linting/formatting issues, standard git operations, generating commit message.
 
-**❌ Don't ask when:**
-- Quality checks failed with clear errors (auto-fix)
-- Linting/formatting issues (run auto-fix tools)
-- Coverage slightly below target (document in commit)
-- Standard git operations (execute with safety checks)
-- Generating commit message (draft from EPCC_PLAN.md + changes)
+## Quality Validation
 
-## Quality Validation Workflow
+@reference/review-checklists.md
 
-### Phase 1: Run Quality Checks
+## Git Workflow
 
-Execute checks from EPCC_EXPLORE.md (or sensible defaults if greenfield):
-
-```bash
-# Tests
-[test-command]  # pytest, npm test, cargo test, etc.
-
-# Coverage
-[coverage-command]  # pytest --cov, npm run coverage, etc.
-
-# Linting
-[linter-command]  # ruff check, eslint, clippy, etc.
-
-# Type checking
-[type-check-command]  # mypy, tsc, etc.
-
-# Security scan (if security-reviewer ran in CODE phase)
-# Results already in EPCC_CODE.md
-```
-
-**Auto-fix pattern**: Run → fix issues → re-run → proceed when all pass
-
-**Quality gates** (must pass before commit):
-- ✅ All tests passing
-- ✅ Coverage meets target (from EPCC_EXPLORE.md or ≥80% default)
-- ✅ No linting errors (warnings OK)
-- ✅ Type checking clean
-- ✅ No CRITICAL/HIGH security vulnerabilities
-
-### Phase 2: Handle Failures
-
-**Automatic fixes** (no user input):
-- Formatting issues → Run formatter (black, prettier, rustfmt)
-- Import issues → Run import organizer
-- Linting auto-fixes → Run linter with --fix
-- Simple type errors → Add type annotations
-
-**Ask user when:**
-- Can't fix after 2-3 attempts
-- Fix requires changing requirements/approach
-- Security vulnerability needs architectural change
-- Tests fail with unclear root cause
-
-### Commit Blockers
-
-**🛑 Never commit when:**
-- CRITICAL or HIGH security vulnerabilities unfixed
-- Tests failing (even if "just flaky" - fix or skip properly with markers)
-- On main/master branch (create feature branch first)
-- Committing to someone else's commit without permission (check authorship)
-
-**⏸️ Pause to fix when:**
-- Coverage dropped below target (add tests or document why)
-- Multiple TODO/FIXME/DEBUG statements (clean up or track as issues)
-- Linting failures (auto-fix or suppress with comments explaining why)
-- Type errors (add annotations or use proper types)
-
-**Principle**: Don't commit broken code. Fix or block commit.
-
-## Git Workflow Decision Heuristics
-
-**Never:**
-- Commit to main/master without PR (creates deployment risk)
-- Use `git add .` blindly (stages unrelated changes, breaks atomicity)
-- Push without local verification (CI is not your test environment)
-- Amend pushed commits (rewrites history others depend on)
-- Skip safety checks (shortcuts create production incidents)
-- Commit secrets, API keys, credentials (.env files, config with keys)
-
-### Stage Explicitly, Not Globally
-
-**When to stage:**
-- After reviewing changes with `git diff` (understand what you're committing)
-- Files that share a logical change unit (related functionality)
-- When you can describe the change in one sentence (atomicity test)
-
-**Staging heuristic**: Stage files by purpose, not by convenience. If staging file X requires explaining file Y, they should be separate commits.
-
-**Anti-patterns to avoid**:
-- ❌ `git add .` (stages everything—debug code, temp files, unrelated changes)
-- ❌ Staging unrelated changes together (breaks atomic commit principle)
-- ❌ Staging without reviewing diff (commits things you didn't intend)
-
-**Pattern**: `git add path/to/related/file1.py path/to/related/file2.py`, then `git diff --staged` to verify.
-
-### Commit When Atomic and Complete
-
-**Commit heuristic**: Can you describe the change in one sentence? Would reverting this commit leave the codebase in a working state? If yes to both, commit.
-
-**When to commit:**
-- Change completes one logical unit (feature, fix, refactor)
-- Build and tests pass after this commit (verify before committing)
-- Message can be drafted from context (EPCC_PLAN.md + EPCC_CODE.md + git diff)
-- All quality gates passed (or explicitly deferred with reasoning)
-
-**Commit message pattern** (Conventional Commits or project convention):
-```
-type(scope): what changed
-
-why it matters (not how—code shows how)
-
-Refs: EPCC_PLAN.md, EPCC_CODE.md
-Closes #123
-```
-
-**Draft message from**:
-- EPCC_PLAN.md: Feature description, user value
-- EPCC_CODE.md: Implementation decisions, tradeoffs
-- `git diff`: Files changed, their purposes
-- User requirements: What problem this solves
-
-**Types**: feat (new feature), fix (bug fix), refactor (no behavior change), docs, test, perf, chore
-
-### Push After Local Verification
-
-**When to push:**
-- After verifying commit locally (tests pass, no obvious issues)
-- User approves push (ask: "Push to remote?" or "Push and create PR?")
-- On feature branch, never main/master (safety check)
-- Remote tracking configured (first push: `git push -u origin branch-name`)
-
-**Push heuristic**: Push when commits tell a coherent story. If you wouldn't want team to see this commit history, squash or amend locally first.
-
-**Safety verification before push**:
-- ✅ `git branch --show-current` ≠ main/master (block if true)
-- ✅ Tests pass locally (don't use CI as test environment)
-- ✅ No secrets in diff (`git diff` check for API keys, passwords)
-- ✅ Commit message is clear (teammates can understand intent)
-
-**Ask user pattern**:
-```
-✅ Commit succeeded: [SHA]
-
-Options:
-1. Push to remote and create PR
-2. Push to remote only
-3. Leave local (manual push later)
-```
-
-### Create PR When Story is Coherent
-
-**When to create PR:**
-- User requests it (don't assume—ask first)
-- Commits tell coherent story (not "wip", "fix", "fix2", "actually fix")
-- Quality metrics documented (coverage, tests, security scan)
-- PR body can be drafted from EPCC context
-
-**PR body dimensions** (draft from EPCC_CODE.md):
-- **Summary**: What changed, why it matters (1-2 sentences from EPCC_PLAN.md)
-- **Changes**: Key files modified, new functionality (from EPCC_CODE.md)
-- **Testing**: Test results, coverage metrics (from quality validation)
-- **Quality**: Security scan, linting, type checking results
-
-**PR title pattern**: `[type](scope): brief description` (matches commit message)
-
-**Use `gh` CLI**: `gh pr create --title "..." --body "$(cat <<'EOF' ... EOF)"`
-
-### Safety Checks Are Non-Negotiable
-
-**Before commit**:
-- ✅ On feature branch (`git branch --show-current`)
-- ✅ No secrets in diff (`git diff | grep -i "api_key\|password\|secret"`)
-- ✅ Tests pass (`pytest` or equivalent)
-- ✅ Changes are relevant (no accidental debug code, temp files)
-
-**Before push**:
-- ✅ Not pushing to main/master (warn and block)
-- ✅ Commits are atomic (each commit = working codebase state)
-- ✅ Remote tracking exists (`git branch -vv`)
-
-**Before PR**:
-- ✅ Quality gates passed (tests, coverage, security)
-- ✅ PR body documents changes and testing
-- ✅ Commit history is clean (squash "fix typo" commits if needed)
-
-### Git Command Reference (Appendix)
-
-**Review**: `git status`, `git diff`, `git diff --staged`, `git branch --show-current`
-**Stage**: `git add path/to/file.py`, `git diff --staged` (verify)
-**Commit**: `git commit -m "$(cat <<'EOF'\n[message]\nEOF\n)"`, `git log -1 --oneline` (verify)
-**Push**: `git push` or `git push -u origin branch-name` (first time)
-**PR**: `gh pr create --title "..." --body "..."` (via heredoc for multi-line)
-
-**See**: Git documentation for command details. These heuristics focus on when/why, not command syntax.
+@reference/commit-conventions.md
 
 ## Documentation
 
-### Phase 9: Generate EPCC_COMMIT.md
+Generate EPCC_COMMIT.md with depth matching commit significance. See review checklists above for output template.
 
-**Forbidden patterns**:
-- ❌ Comprehensive report for trivial commits (typo fix ≠ detailed documentation)
-- ❌ Documenting passed quality checks in detail (default: all passed, only document failures or notable findings)
-- ❌ Ceremonial "Next Steps" for simple commits (default: merge when approved)
-- ❌ PR information when PR not created (omit section if not applicable)
+## Feature Verification Gate
 
-**Documentation structure - 4 core dimensions**:
+See review checklists above for feature verification steps.
 
-```markdown
-# Commit: [Feature Name]
+## Common Pitfalls
 
-**SHA**: [SHA] | **Branch**: [branch] | **Status**: [Committed/Pushed/PR]
-
-## 1. Summary ([X files], [+Y -Z lines])
-[1-2 sentences: what changed and why]
-
-**Files**: [file:line] - [Purpose]
-**Commit**: [type(scope): subject]
-
-## 2. Validation (Tests [X%] | Quality [Clean/Findings] | Security [Clean/Findings])
-**Tests**: [Status and coverage] - [X unit, Y integration]
-**Quality**: [Linting/typing/formatting status]
-**Security**: [Scan results or "Clean"]
-
-## 3. Changes Detail
-[Only for non-trivial commits - what's different from before]
-
-**Behavioral changes**: [New functionality or modified behavior]
-**Breaking changes**: [None / Describe]
-
-## 4. Completion
-**PR**: [URL if created, otherwise "Local commit only"]
-**Next**: [Deploy / Merge / Review / Specific action needed]
-```
-
-**Depth heuristic**:
-- **Trivial commit** (~100-200 tokens): Typo, formatting, simple fix
-  - Example: "Fixed typo in README (1 file, +1 -1 lines). SHA: abc123. All checks passed."
-
-- **Standard commit** (~250-400 tokens): Feature, bug fix, refactor
-  - Example: All 4 dimensions with moderate detail - summary + validation results + key files + completion status
-
-- **Complex commit** (~500-700 tokens): Multi-file feature, architecture change
-  - Example: All 4 dimensions with comprehensive detail - full file breakdown + detailed validation + behavioral changes + PR information
-
-**Completeness heuristic**: Documentation is sufficient when you can answer:
-- ✅ What was committed? (Summary with SHA)
-- ✅ Does it meet quality gates? (Validation results)
-- ✅ What changed specifically? (File breakdown)
-- ✅ What happens next? (Completion status)
-
-**Anti-patterns**:
-- ❌ **Typo fix with 600-token report** → Violates proportionality
-- ❌ **Major feature with 150-token summary** → Missing critical detail
-- ❌ **Listing every quality check when all passed** → Document only failures or notable items
-- ❌ **"Next: Standard deployment process"** → Generic, specify actual next action
-
----
-
-**Remember**: Match documentation depth to commit significance. Skip for trivial commits, comprehensive for complex ones.
-
-## Feature Verification Gate (Long-Running Project Support)
-
-If `epcc-features.json` exists, apply additional verification gates for feature completion.
-
-### Pre-Commit Feature Check
-
-Before committing, verify feature completion status:
-
-```bash
-if [ -f "epcc-features.json" ]; then
-    # Check which feature is being committed
-    # Verify all subtasks complete
-    # Verify acceptance criteria met
-    # Verify E2E tests passing
-fi
-```
-
-### Feature Verification Rules
-
-**For P0 (Must Have) features:**
-
-| Requirement | Action if Not Met |
-|-------------|-------------------|
-| All subtasks complete | 🛑 **BLOCK COMMIT** - Complete subtasks first |
-| All acceptance criteria verified | 🛑 **BLOCK COMMIT** - Run E2E verification |
-| `passes: true` in epcc-features.json | 🛑 **BLOCK COMMIT** - Verify before marking |
-| Test evidence documented | ⚠️ **WARN** - Add screenshot/output reference |
-
-**For P1/P2 features:**
-
-| Requirement | Action if Not Met |
-|-------------|-------------------|
-| Feature incomplete | ⚠️ **WARN** - Allow commit but document in message |
-| Some subtasks pending | ⚠️ **WARN** - Track as deferred work |
-
-### Update Feature Status on Commit
-
-When committing a verified feature:
-
-```json
-{
-  "features": [
-    {
-      "id": "F001",
-      "status": "verified",
-      "passes": true,
-      "verifiedAt": "[ISO timestamp]",
-      "commit": "[SHA]",
-      "subtasks": [
-        {"name": "...", "status": "complete"},
-        {"name": "...", "status": "complete"}
-      ]
-    }
-  ]
-}
-```
-
-**Update fields:**
-- `status`: "verified"
-- `passes`: true
-- `verifiedAt`: Current timestamp
-- `commit`: Commit SHA
-- `subtasks[].status`: "complete" for all
-
-### Update Progress Log on Commit
-
-Append commit entry to `epcc-progress.md`:
-
-```markdown
----
-
-## Commit: feat(F001) - [Date Time]
-
-### Feature Completed
-- **F001**: User Authentication - VERIFIED
-
-### Quality Gates
-| Gate | Status |
-|------|--------|
-| Tests | ✅ 45/45 passing |
-| Coverage | ✅ 92% (target: 80%) |
-| Linting | ✅ No errors |
-| Type Check | ✅ Clean |
-| Security | ✅ No vulnerabilities |
-
-### Commit Details
-- **SHA**: [abc123]
-- **Message**: feat(F001): Add user authentication - E2E verified
-- **Files**: 12 files changed, +450 -25
-
-### Progress Update
-- **Before**: 2/8 features (25%)
-- **After**: 3/8 features (37.5%)
-- **Next**: F002 - Task CRUD
-
----
-```
-
-### Feature Completion Summary in EPCC_COMMIT.md
-
-Add feature completion section to EPCC_COMMIT.md:
-
-```markdown
-## 5. Feature Completion Status
-
-| Feature | E2E Status | Commit |
-|---------|------------|--------|
-| F001: User Authentication | ✅ VERIFIED | abc123 |
-| F002: Task CRUD | ✅ VERIFIED | def456 |
-| F003: Task List View | 🔄 IN PROGRESS | - |
-
-**Progress**: 3/8 features (37.5%)
-- P0 completed: 3/4
-- P1 completed: 0/2
-- P2 completed: 0/2
-
-**Deferred to next session**:
-- F003: Task List View (2/5 subtasks complete)
-```
-
-### Commit Message Pattern for Features
-
-Include feature reference in commit message:
-
-```bash
-git commit -m "feat(F001): Add user authentication - E2E verified
-
-Summary:
-- Implemented JWT-based authentication
-- Added login/logout endpoints
-- Created auth middleware
-- All acceptance criteria verified
-
-Quality:
-- Tests: 45 passing (12 new)
-- Coverage: 92%
-- Security: No vulnerabilities
-
-Refs: epcc-features.json#F001"
-```
-
-### Progress Reporting After Commit
-
-After successful commit, report progress:
-
-```markdown
-## Commit Successful
-
-✅ **Committed**: [SHA] - feat(F001): Add user authentication
-
-### Feature Status Updated
-- F001: User Authentication → VERIFIED
-
-### Progress
-- **Before**: 2/8 features (25%)
-- **After**: 3/8 features (37.5%)
-
-### Next Feature
-**Recommended**: F002 - Task CRUD (highest priority pending)
-
-Start with: `/epcc-code F002`
-```
-
-### All Features Complete
-
-When all features pass:
-
-```markdown
-## 🎉 Project Complete!
-
-All features verified and passing:
-| Feature | Status |
-|---------|--------|
-| F001: User Auth | ✅ VERIFIED |
-| F002: Task CRUD | ✅ VERIFIED |
-| F003: Task List | ✅ VERIFIED |
-| ... | ... |
-
-**Total**: 8/8 features (100%)
-**Ready for**: Deployment / PR merge / Release
-
-### Final Quality Summary
-- Tests: 120/120 passing
-- Coverage: 94%
-- Security: No vulnerabilities
-- All E2E acceptance criteria verified
-
-### Recommended Next Steps
-1. Create release tag: `git tag v1.0.0`
-2. Merge to main: `gh pr merge`
-3. Deploy to production
-```
-
-## Common Pitfalls (Anti-Patterns)
-
-### ❌ Asking About Every Quality Failure
-**Don't**: "Tests failed, should I fix?" → **Do**: Auto-fix and re-run
-
-### ❌ Following Template Rigidly
-**Don't**: Generate 200-line doc for 1-line fix → **Do**: Match detail to change size
-
-### ❌ Over-Documenting Simple Commits
-**Don't**: Essay about typo fix → **Do**: Brief commit message, skip EPCC_COMMIT.md for trivial changes
-
-### ❌ Asking About Standard Git Operations
-**Don't**: "Should I run git status?" → **Do**: Execute with safety checks
-
-### ❌ Committing Without Quality Checks
-**Don't**: Skip tests to "ship faster" → **Do**: Run checks, fix failures, then commit
-
-### ❌ Using git add . Blindly
-**Don't**: Stage everything → **Do**: Review and stage specific files
+- **Asking About Every Quality Failure**: Auto-fix and re-run
+- **Following Template Rigidly**: Match detail to change size
+- **Over-Documenting Simple Commits**: Brief commit message, skip EPCC_COMMIT.md for trivial changes
+- **Asking About Standard Git Operations**: Execute with safety checks
+- **Committing Without Quality Checks**: Run checks, fix failures, then commit
+- **Using git add . Blindly**: Review and stage specific files
 
 ## Second-Order Convergence Warnings
 
 Even with this guidance, you may default to:
-
-- ❌ **Asking about every quality check failure** (auto-fix first - linting, formatting, simple bugs)
-- ❌ **Following template structure rigidly** (adapt to change size - typo ≠ feature)
-- ❌ **Over-documenting simple commits** (1-line fix doesn't need comprehensive EPCC_COMMIT.md)
-- ❌ **Asking permission for standard git operations** (execute with safety checks - git status, git diff, git commit)
-- ❌ **Stopping at first test pass** (verify coverage, check for regression in other tests)
-- ❌ **Committing on main/master** (always feature branch - warn if attempting main commit)
-
-## Error Recovery
-
-### Tests Failed
-
-```bash
-# Run tests to see failures
-[test-command]
-
-# Read error messages carefully
-# Common auto-fixes:
-# - Import errors → fix imports
-# - Syntax errors → fix syntax
-# - Type errors → add annotations
-# - Assertion failures → fix logic or update expected values
-
-# Re-run after fix
-[test-command]
-
-# If still failing after 2-3 attempts, ask user
-```
-
-### Coverage Below Target
-
-```bash
-# Generate coverage report
-[coverage-command]
-
-# Identify uncovered lines
-# Add tests for critical paths
-# Or document why coverage acceptable in EPCC_COMMIT.md
-
-# Re-run coverage
-[coverage-command]
-```
-
-### Linting/Formatting Issues
-
-```bash
-# Auto-fix
-[linter-command] --fix
-[formatter-command]
-
-# Re-run checks
-[linter-command]
-
-# If failures persist, check if legitimate exceptions
-# Add suppression comments with explanations
-```
-
-### Security Vulnerabilities
-
-```bash
-# Review findings from CODE phase (in EPCC_CODE.md)
-# If new vulnerabilities detected:
-
-# Low/Medium: Document, create follow-up issue
-# High: Fix before commit
-# Critical: Block commit, fix immediately
-
-# Re-run security scan if fixes applied
-```
-
-## Git Safety Principles
-
-**Before committing**:
-- ✅ Verify on feature branch (not main/master)
-- ✅ Review staged changes (git diff --staged)
-- ✅ Check for sensitive data (no passwords, API keys, tokens)
-- ✅ Stage relevant files only (explicit paths, not git add .)
-
-**Before pushing**:
-- ✅ Verify not pushing to protected branch
-- ✅ Create remote tracking if new branch (git push -u origin branch)
-- ✅ Verify push succeeded (git status shows "up to date")
-
-**Before amending**:
-- ✅ Check authorship (git log -1 --format='%an %ae' - only amend your own commits)
-- ✅ Check not pushed (git status shows "ahead" not "up to date with origin")
-- ✅ Never amend commits from other developers
-
-**Use git commands with safety checks**. Don't push to main/master without explicit user approval and warning.
+- Asking about every quality check failure (auto-fix first)
+- Following template structure rigidly (adapt to change size)
+- Over-documenting simple commits (1-line fix doesn't need comprehensive doc)
+- Asking permission for standard git operations (execute with safety checks)
+- Stopping at first test pass (verify coverage, check for regression)
+- Committing on main/master (always feature branch)
 
 ## Remember
 
@@ -624,6 +86,4 @@ Even with this guidance, you may default to:
 
 **Git safety**: Feature branch, review changes, stage explicitly, commit with clear message.
 
-**Flexibility**: Adapt documentation detail to change size. Simple fix = simple commit.
-
-🎯 **Commit finalized. Implementation complete. Ready for review or deployment.**
+**Commit finalized. Implementation complete. Ready for review or deployment.**

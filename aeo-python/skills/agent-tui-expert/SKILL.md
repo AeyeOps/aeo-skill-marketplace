@@ -9,7 +9,7 @@ Expert guidance for building professional Terminal User Interfaces in Python.
 
 ## CRITICAL: WSL2 Users Read First
 
-**If developing in WSL2, read [references/wsl2-platform-issues.md](references/wsl2-platform-issues.md) BEFORE starting.**
+**If developing in WSL2, read @references/wsl2-platform-issues.md BEFORE starting.**
 
 WSL2 has a critical bug (Microsoft/WSL#1001) where horizontal terminal resize does not propagate SIGWINCH signals. This breaks Textual resize handling and requires a specific workaround using `ioctl TIOCGWINSZ` polling. The reference file contains battle-tested solutions that took 12+ hours to discover.
 
@@ -90,13 +90,13 @@ while True:
 
 | File | Purpose |
 |------|---------|
-| [references/wsl2-platform-issues.md](references/wsl2-platform-issues.md) | **READ FIRST** - WSL2 resize bugs, ioctl workarounds, layout gotchas |
-| [references/textual-patterns.md](references/textual-patterns.md) | App lifecycle, containers, CSS styling, messages, widgets |
-| [references/prompt-toolkit-patterns.md](references/prompt-toolkit-patterns.md) | Prompts, history, completions, key bindings, validation |
-| [references/testing-guide.md](references/testing-guide.md) | Pilot API, snapshot testing, buffer/completer testing |
-| [references/themes-and-colors.md](references/themes-and-colors.md) | Built-in themes, color variables, theme switching |
-| [references/integration-patterns.md](references/integration-patterns.md) | MCP servers, sub-agents, CLAUDE.md patterns |
-| [references/workflow-examples.md](references/workflow-examples.md) | Agent IDE, data dashboard, REPL workflows |
+| @references/wsl2-platform-issues.md | **READ FIRST** - WSL2 resize bugs, ioctl workarounds, layout gotchas |
+| @references/textual-patterns.md | App lifecycle, containers, CSS styling, messages, widgets |
+| @references/prompt-toolkit-patterns.md | Prompts, history, completions, key bindings, validation |
+| @references/testing-guide.md | Pilot API, snapshot testing, buffer/completer testing |
+| @references/themes-and-colors.md | Built-in themes, color variables, theme switching |
+| @references/integration-patterns.md | MCP servers, sub-agents, CLAUDE.md patterns |
+| @references/workflow-examples.md | Agent IDE, data dashboard, REPL workflows |
 
 ### Examples (Canonical Code)
 
@@ -173,7 +173,7 @@ Theme variables: `$primary`, `$surface`, `$text`, `$accent`, `$warning`, `$error
 
 Shade variations: `$primary-lighten-1`, `$primary-darken-2`, etc.
 
-See [references/themes-and-colors.md](references/themes-and-colors.md) for full details.
+See @references/themes-and-colors.md for full details.
 
 ## Prompt Toolkit Key Concepts
 
@@ -271,7 +271,7 @@ async def on_input_submitted(self, event: Input.Submitted) -> None:
         self.query_one("#output", RichLog).write(chunk.content)
 ```
 
-See [references/integration-patterns.md](references/integration-patterns.md) and [references/workflow-examples.md](references/workflow-examples.md) for complete examples.
+See @references/integration-patterns.md and @references/workflow-examples.md for complete examples.
 
 ## Version Requirements
 

@@ -1,9 +1,9 @@
 ---
 name: test-generator
 version: 0.1.0
-description: Activate to enforce test-driven development practices. Writes failing tests before implementation, follows red-green-refactor methodology, and targets comprehensive coverage.
+description: Use this agent when writing tests following TDD methodology. Examples: 'write tests for this function', 'generate a test suite'
 
-model: opus
+model: sonnet
 color: yellow
 tools: Read, Write, Edit, Grep, Glob, Bash
 ---
@@ -132,7 +132,3 @@ Test suite includes:
 - **Assertions**: Key validations
 - **Performance**: Tests run time targets
 
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release
-- **v0.9.0** (2025-08-02): Beta testing

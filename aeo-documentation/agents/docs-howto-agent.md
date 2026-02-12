@@ -1,11 +1,11 @@
 ---
 name: docs-howto-agent
 version: 0.1.0
-description: Use for task-focused documentation with step-by-step instructions. Produces practical guides for specific goals with clear prerequisites, numbered steps, and expected outcomes.
+description: Use this agent when creating task-focused guides with step-by-step instructions. Examples: 'write a how-to for deploying', 'create a migration guide'
 
-model: opus
+model: sonnet
 color: blue
-tools: [Read, Write, Edit, Grep, Glob]
+tools: Read, Write, Edit, Grep, Glob
 ---
 
 ## Quick Reference
@@ -322,11 +322,6 @@ For [high-scale/performance-critical] scenarios:
 - Problems arise that aren't covered in troubleshooting
 - Solution is too generic to be useful
 - User can't adapt solution to their specific needs
-
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release
-- **v0.9.0** (2025-08-02): Beta testing
 
 ## Output Location
 

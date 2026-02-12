@@ -1,6 +1,6 @@
 ---
 name: setup
-version: 0.4.0
+version: 0.3.0
 description: Configure nous activity logging by appending a trigger to the user's statusline
 ---
 

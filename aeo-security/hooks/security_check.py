@@ -2,7 +2,7 @@
 """
 Security validation hook for file operations.
 
-This hook validates Write/Edit/MultiEdit operations for security compliance:
+This hook validates Write/Edit operations for security compliance:
 - Blocks writes to sensitive files (.env, .key, etc.)
 - Scans content for potential secrets/API keys
 - Validates file permissions and paths

@@ -1,7 +1,6 @@
 ---
 name: python-cli-engineering
 description: Engineer production-grade Python CLI tools with UV for package management, Ruff for linting, Pyright for strict typing, Typer for commands, and Rich for polished output. Addresses fail-fast patterns, pydantic-settings configuration, modular code organization, and professional UX conventions. Apply when creating admin utilities, data processors, or developer tooling.
-allowed-tools: Read, Write, Edit, Bash
 ---
 
 # Python CLI Engineering
@@ -38,7 +37,7 @@ uv add typer rich       # Add dependencies
 ```
 
 **For complete tool guides, configuration examples, and advanced patterns:**
-See [references/tech-stack.md](references/tech-stack.md)
+See @references/tech-stack.md
 
 ---
 
@@ -117,7 +116,7 @@ my_cli/
 ```
 
 **For complete architecture patterns, module organization, and size management:**
-See [references/architecture.md](references/architecture.md)
+See @references/architecture.md
 
 ---
 
@@ -165,7 +164,7 @@ API_KEY=abc123
 ```
 
 **For complete configuration patterns, validation, and advanced examples:**
-See [references/configuration.md](references/configuration.md)
+See @references/configuration.md
 
 ---
 
@@ -245,7 +244,7 @@ make check
 **PostgreSQL JSONB**: See [patterns/postgresql-jsonb.md](patterns/postgresql-jsonb.md) - Flexible schema with JSONB columns
 **Pydantic flexibility**: See [patterns/pydantic-flexible.md](patterns/pydantic-flexible.md) - Handle dynamic/unknown fields
 **Schema resilience**: See [patterns/schema-resilience.md](patterns/schema-resilience.md) - Robust API schema handling
-**Database migrations**: See [reference/database-migrations.md](reference/database-migrations.md) - Alembic migration patterns
+**Database migrations**: See @reference/database-migrations.md - Alembic migration patterns
 
 ### CLI Command with Config
 
@@ -417,7 +416,7 @@ my-cli hello World       # Now available as command
 
 ---
 
-**For detailed guides:** See [references/](references/) directory
-**For project templates:** See [templates/](templates/) directory
+**For detailed guides:** See the `references/` directory
+**For project templates:** See the `templates/` directory
 
 **End of Skill**

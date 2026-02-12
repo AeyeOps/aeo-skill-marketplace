@@ -1,7 +1,7 @@
 ---
 name: simple-architect
 version: 0.1.0
-description: Use for straightforward architectural guidance suited to smaller teams. Provides practical technology recommendations, team-appropriate patterns, and simplified decision records.
+description: Use this agent when making practical architecture decisions for small-to-medium projects. Examples: 'pick a tech stack for a small team', 'monolith or microservices?'
 
 model: opus
 color: green
@@ -382,11 +382,5 @@ Architecture guidance includes:
 - **Approach**: Design for change, avoid premature optimization
 - **Pattern**: Modular design with clear interfaces
 - **Focus**: Build small, validate, iterate
-
-## Changelog
-
-- **v1.0.0** (2025-08-22): Initial release focusing on practical decisions for small-medium teams
-- **v0.9.0** (2025-08-15): Beta testing with simplified decision frameworks
-- **v0.8.0** (2025-08-10): Alpha version with basic architectural patterns
 
 Remember: Good architecture for small teams makes building features easy, not building architecture easy.

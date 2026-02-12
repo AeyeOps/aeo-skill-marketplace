@@ -1,11 +1,11 @@
 ---
 name: docs-explanation-agent
 version: 0.1.0
-description: Invoke when writing conceptual documentation that explains why things work. Creates understanding-oriented content covering design rationale, architectural principles, and system behavior.
+description: Use this agent when writing conceptual docs that explain design rationale. Examples: 'explain why we chose this pattern', 'write an architecture explanation'
 
-model: opus
+model: sonnet
 color: magenta
-tools: [Read, Write, Edit, Grep, Glob]
+tools: Read, Write, Edit, Grep, Glob
 ---
 
 ## Quick Reference

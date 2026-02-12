@@ -5,6 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-02-12
+
+### Added
+- 10 new skills across 5 plugins: requirements-elicitation, build-vs-buy (aeo-requirements); red-green-refactor, test-design-patterns (aeo-tdd-workflow); systematic-debugging, common-failure-patterns (aeo-troubleshooting); owasp-top-10, secure-coding (aeo-security); profiling-guide, optimization-patterns (aeo-performance)
+- 4 new commands: /sprint-planning, /retrospective (aeo-agile-tools); /deploy-checklist, /release-notes (aeo-deployment)
+- 16 EPCC reference files for progressive disclosure of templates and patterns
+
+### Changed
+- Bump 14 plugin versions from 0.1.0 to 0.2.0 to reflect rounds 1–3 changes
+- Restructure 7 EPCC commands from 628–1376 lines to under 400 lines each via @reference extraction
+- Restructure react-pwa-designer skill from 676 to 167 lines using existing reference files
+- Replace markdown links with @reference syntax in 4 skill files (31 replacements)
+- Enrich marketplace.json tags for feature discoverability
+
+### Fixed
+- Sync aeo-nous version to 0.3.0 across plugin.json and setup command
+- Remove unsupported `allowed-tools` field from python-cli-engineering skill
+- Fix orphaned markdown fence in aeo-requirements tech-req command
+- Fix `/prd` → `/epcc-prd` in usage examples (stale from v0.2.0 rename)
+- Deduplicate @reference calls across 7 EPCC commands
+
+### Removed
+- Placeholder changelog sections with fake version numbers from 16 agent files
+
+## [0.3.0] - 2026-02-12
+
+### Removed
+
+- 40 duplicate agent files across 12 plugins; each agent now exists in exactly one canonical plugin
+- aeo-code-analysis plugin (zero unique content after deduplication)
+- Empty agents/ directories from aeo-epcc-workflow, aeo-tdd-workflow, aeo-troubleshooting
+
+### Changed
+
+- Agent model tiering: opus for complex reasoning (architect, simple-architect, system-designer, performance-optimizer), haiku for read-only analysis (code-archaeologist), sonnet for all others
+- Standardize all 25 agent descriptions to "Use this agent when [scenario]. Examples: ..." pattern
+- Normalize tools field format from array syntax to comma-separated across all agents
+
+### Fixed
+
+- Wire aeo-testing hooks to existing quality scripts (black_formatter.py, python_lint.py, use_uv.py)
+- Remove residual `MultiEdit` from aeo-security hooks matcher and aeo-testing hook scripts
+
+### Added
+
+- Cross-plugin companion requirements in plugin.json for 6 plugins that reference agents in other plugins
+
 ## [0.2.0] - 2026-02-12
 
 ### Fixed

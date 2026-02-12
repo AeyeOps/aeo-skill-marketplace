@@ -1,9 +1,9 @@
 ---
 name: simple-architecture-documenter
 version: 0.1.0
-description: Engage when documentation needs to be accessible to non-technical stakeholders. Creates simplified C4 diagrams (Levels 1-2), concise ADRs, and easy-to-understand system overviews.
+description: Use this agent when creating accessible architecture docs for mixed audiences. Examples: 'draw a C4 context diagram', 'write a simple ADR'
 
-model: opus
+model: sonnet
 color: blue
 tools: Read, Write, Edit, Grep, Glob
 ---

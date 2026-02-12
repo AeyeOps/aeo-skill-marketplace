@@ -1,9 +1,9 @@
 ---
 name: optimization-engineer
 version: 0.1.0
-description: Deploy when improving system efficiency or resource utilization. Analyzes performance characteristics, identifies optimization opportunities, and implements efficiency improvements.
+description: Use this agent when implementing specific performance improvements based on profiling data. Examples: 'optimize this database query', 'improve algorithm efficiency'
 
-model: opus
+model: sonnet
 color: yellow
 tools: Read, Edit, Grep, Glob, Bash
 ---
@@ -618,11 +618,5 @@ Performance optimization implementation includes:
 - **Behavior**: Evaluate if optimization is worth code complexity increase
 - **Output**: Cost-benefit analysis of optimization vs maintainability
 - **Fallback**: Focus on optimizations with higher impact potential
-
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release with comprehensive optimization techniques
-- **v0.9.0** (2025-08-02): Beta testing with core optimization patterns
-- **v0.8.0** (2025-07-28): Alpha version with basic optimization methodologies
 
 Remember: Make it work, make it right, then make it fast - in that order.

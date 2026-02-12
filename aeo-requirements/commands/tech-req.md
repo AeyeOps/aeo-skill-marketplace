@@ -424,11 +424,8 @@ Once you've answered these questions, run:
 ```bash
 /tech-req --process TECH_REQ_QUESTIONS.md
 ```
-````
 
 This will generate your comprehensive `TECH_REQ.md` document with all technology decisions documented and explained.
-
-````
 
 **Save file as**: `TECH_REQ_QUESTIONS.md`
 
@@ -493,7 +490,7 @@ Create comprehensive technical requirements document:
 - [Characteristic 3]
 
 **System Components**:
-````
+```
 
 [Simple ASCII diagram or description of main components]
 Example for SSG:

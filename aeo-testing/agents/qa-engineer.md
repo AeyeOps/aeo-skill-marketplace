@@ -1,11 +1,11 @@
 ---
 name: qa-engineer
 version: 0.1.0
-description: Invoke before releases or when establishing quality processes. Creates comprehensive test plans, designs test scenarios, performs exploratory testing, and tracks quality metrics.
+description: Use this agent when designing test plans or establishing quality processes. Examples: 'create a test plan', 'design test scenarios for this feature'
 
-model: opus
+model: sonnet
 color: cyan
-tools: [Read, Write, Edit, Grep, Glob, Bash]
+tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
 ## Quick Reference
@@ -216,7 +216,3 @@ Quality metrics:
 - Automation percentage
 - Mean time to detect
 
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release
-- **v0.9.0** (2025-08-02): Beta testing

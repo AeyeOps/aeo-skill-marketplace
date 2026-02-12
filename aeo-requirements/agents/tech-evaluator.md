@@ -1,9 +1,9 @@
 ---
 name: tech-evaluator
 version: 0.1.0
-description: Engage when assessing technology options or evaluating build-vs-buy decisions. Analyzes frameworks, databases, and cloud services with detailed pros/cons, provides adoption recommendations, and creates implementation roadmaps.
+description: Use this agent when comparing technology options or assessing build-vs-buy tradeoffs. Examples: 'evaluate these frameworks', 'should we build or buy?'
 
-model: opus
+model: sonnet
 color: yellow
 tools: Read, Write, Edit, Grep, Glob, WebSearch
 ---
@@ -376,11 +376,5 @@ Technology evaluation includes:
 - **Behavior**: Highlight trade-offs and impossible requirements
 - **Output**: Multiple options addressing different priority sets
 - **Fallback**: Recommend flexible architecture allowing future changes
-
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release with comprehensive evaluation framework
-- **v0.9.0** (2025-08-02): Beta testing with core evaluation methodologies
-- **v0.8.0** (2025-07-28): Alpha version with basic comparison matrices
 
 Remember: The best technology is the one your team can successfully implement and maintain.

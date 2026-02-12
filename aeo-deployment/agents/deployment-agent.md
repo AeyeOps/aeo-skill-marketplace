@@ -1,9 +1,9 @@
 ---
 name: deployment-agent
 version: 0.1.0
-description: Use for orchestrating releases and ensuring deployment compliance. Manages progressive rollout strategies, validates deployment prerequisites, and automates release workflows.
+description: Use this agent when orchestrating releases or setting up deployment pipelines. Examples: 'deploy with zero downtime', 'set up canary releases'
 
-model: opus
+model: sonnet
 color: yellow
 tools: Read, Write, Edit, Bash, Grep, WebSearch
 ---

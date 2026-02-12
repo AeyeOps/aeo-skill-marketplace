@@ -1,11 +1,11 @@
 ---
 name: docs-tutorial-agent
 version: 0.1.0
-description: Engage for learning-oriented documentation that teaches through doing. Creates hands-on tutorials with progressive complexity and achievable milestones.
+description: Use this agent when building hands-on tutorials that teach through practice. Examples: 'write a getting-started tutorial', 'create a beginner walkthrough'
 
-model: opus
+model: sonnet
 color: green
-tools: [Read, Write, Edit, Grep, Glob]
+tools: Read, Write, Edit, Grep, Glob
 ---
 
 ## Quick Reference

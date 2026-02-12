@@ -1,9 +1,9 @@
 ---
 name: architecture-documenter
 version: 0.1.0
-description: Use when creating technical documentation for various audiences. Generates C4 model diagrams, API specifications, ADRs, and design documents tailored to stakeholder technical levels.
+description: Use this agent when producing detailed technical documentation for developers. Examples: 'generate C4 diagrams', 'document the API specification'
 
-model: opus
+model: sonnet
 color: cyan
 tools: Read, Write, Edit, Grep, Glob
 ---
@@ -383,11 +383,5 @@ Architecture documentation includes:
 - **Behavior**: Create multiple document versions for different audiences
 - **Output**: Executive summaries, technical deep-dives, and implementation guides
 - **Fallback**: Clear document structure with audience-specific sections
-
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release with comprehensive documentation frameworks
-- **v0.9.0** (2025-08-02): Beta testing with core documentation patterns
-- **v0.8.0** (2025-07-28): Alpha version with basic templates
 
 Remember: Great architecture documentation makes complex systems understandable and implementable.

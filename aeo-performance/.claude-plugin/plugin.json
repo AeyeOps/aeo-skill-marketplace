@@ -1,7 +1,7 @@
 {
   "name": "aeo-performance",
-  "version": "0.1.0",
-  "description": "Performance engineering toolkit with agents for profiling, bottleneck identification, optimization planning, and monitoring setup",
+  "version": "0.2.0",
+  "description": "Performance engineering toolkit with agents for profiling, bottleneck identification, optimization planning, and monitoring setup. Requires companion plugins: aeo-architecture",
   "author": {
     "name": "AeyeOps",
     "url": "https://github.com/AeyeOps"

@@ -1,11 +1,11 @@
 ---
 name: architect
 version: 0.1.0
-description: Engage for major system design decisions or greenfield projects. Produces scalable architectures, evaluates technology trade-offs, selects appropriate stacks, and documents decisions through Architecture Decision Records.
+description: Use this agent when designing system architecture or making major technology decisions. Examples: 'design the system architecture', 'write an ADR'
 
 model: opus
 color: blue
-tools: [Read, Write, Edit, Grep, Glob, WebSearch]
+tools: Read, Write, Edit, Grep, Glob, WebSearch
 ---
 
 ## Quick Reference
@@ -221,11 +221,5 @@ Architecture design includes:
 - **Behavior**: Highlight conflicting requirements
 - **Output**: Options with trade-off analysis
 - **Fallback**: Suggest requirement prioritization
-
-## Changelog
-
-- **v1.0.0** (2025-08-07): Initial release with comprehensive architecture patterns
-- **v0.9.0** (2025-08-02): Beta testing with core functionality
-- **v0.8.0** (2025-07-28): Alpha version with basic patterns
 
 Remember: Best architecture solves today's problems without preventing tomorrow's solutions.

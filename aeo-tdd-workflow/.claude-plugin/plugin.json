@@ -1,7 +1,7 @@
 {
   "name": "aeo-tdd-workflow",
-  "version": "0.1.0",
-  "description": "Test-driven development agents enforcing red-green-refactor methodology with comprehensive test generation and quality validation",
+  "version": "0.2.0",
+  "description": "Test-driven development commands enforcing red-green-refactor methodology with comprehensive test generation and quality validation. Requires companion plugins: aeo-testing, aeo-architecture, aeo-agile-tools, aeo-performance, aeo-security",
   "author": {
     "name": "AeyeOps",
     "url": "https://github.com/AeyeOps"
