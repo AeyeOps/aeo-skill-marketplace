@@ -1,6 +1,6 @@
 {
   "name": "aeo-documentation",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Documentation suite implementing the Diataxis framework with dedicated agents for tutorials, how-to guides, explanations, and reference materials. Requires companion plugins: aeo-testing, aeo-architecture, aeo-agile-tools, aeo-performance, aeo-ux-design",
   "author": {
     "name": "AeyeOps",

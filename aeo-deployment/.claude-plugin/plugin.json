@@ -1,6 +1,6 @@
 {
   "name": "aeo-deployment",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Release management agents for orchestrating deployments, ensuring compliance, and implementing progressive rollout strategies",
   "author": {
     "name": "AeyeOps",

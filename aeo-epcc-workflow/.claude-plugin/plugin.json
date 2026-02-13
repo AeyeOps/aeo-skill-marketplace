@@ -1,6 +1,6 @@
 {
   "name": "aeo-epcc-workflow",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Structured development methodology supporting the Explore-Plan-Code-Commit cycle from initial discovery through final delivery. Requires companion plugins: aeo-architecture, aeo-agile-tools, aeo-testing, aeo-security, aeo-documentation, aeo-performance, aeo-ux-design",
   "author": {
     "name": "AeyeOps",

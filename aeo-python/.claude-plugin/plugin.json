@@ -1,6 +1,6 @@
 {
   "name": "aeo-python",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Python development skills covering CLI engineering, data pipelines, and terminal UI development with Textual",
   "author": {
     "name": "AeyeOps",
