@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.3] - 2026-02-17
+
+### Changed
+
+- **aeo-nous**: Move Stop hook context blocking to dedicated sync guard script (`nous-stop-guard.sh`)
+- **aeo-nous**: Make `nous.py` Stop hook async to avoid blocking UI during extraction
+- **aeo-nous**: Modernize typing (`Optional[X]` → `X | None`), remove unused `multiprocessing` import
+- **aeo-nous**: Filter `CLAUDECODE` env var from subprocess spawning to prevent hook recursion
+
+### Added
+
+- **aeo-nous**: Add `nous-stop-guard.sh` — fast sync guard that checks context >65% and emits block decision
+
 ## [0.4.2] - 2026-02-13
 
 ### Changed

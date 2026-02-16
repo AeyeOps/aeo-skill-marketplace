@@ -24,8 +24,14 @@
         "hooks": [
           {
             "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/nous-stop-guard.sh",
+            "timeout": 2000
+          },
+          {
+            "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/nous.py",
-            "timeout": 5000
+            "timeout": 30000,
+            "async": true
           },
           {
             "type": "command",

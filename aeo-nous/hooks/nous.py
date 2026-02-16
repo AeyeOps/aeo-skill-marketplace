@@ -10,11 +10,9 @@ Nous: Context Compaction + Self-Improvement System
 
 Dual-purpose hook entry point:
 
-SessionStart: Injects context (CLAUDE.md files + recent learnings/knowledge)
-Stop: Monitors context usage, extracts learnings/knowledge at thresholds
-
-SessionStart outputs to stdout (injected into Claude context).
-Stop runs silently - logs to nous.log.
+SessionStart (sync): Injects context (recent learnings/knowledge) via stdout.
+Stop (async): Flushes inboxes, fires extraction subprocesses at thresholds.
+  Blocking decision (>65% context) handled by nous-stop-guard.sh (sync).
 """
 
 from __future__ import annotations
@@ -26,13 +24,13 @@ import queue
 import re
 import subprocess
 import sys
-import multiprocessing
 import threading
+import time
 from collections import deque
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 try:
     from pydantic import BaseModel, ValidationError
@@ -83,8 +81,7 @@ CURSOR_FILE = ".claude/nous/extraction_cursor.json"
 # Stop hook: context window thresholds (percentage)
 CONTEXT_SKIP_PCT = 10          # Below this: skip entirely
 CONTEXT_EXTRACT_MAX_PCT = 60   # At or below: flush inboxes + fire extractions
-CONTEXT_FLUSH_MAX_PCT = 65     # At or below: flush inboxes only (no extractions)
-                               # Above: flush + block Claude with /clear recommendation
+                               # Above: flush only (blocking handled by nous-stop-guard.sh at 65%)
 
 # Extraction: subprocess timeout and model
 WORKER_TIMEOUT_SECONDS = 300   # 5 minutes
@@ -120,9 +117,9 @@ class SessionStartInput(BaseModel):
     cwd: str
     hook_event_name: str
     source: SessionSource
-    permission_mode: Optional[PermissionMode] = None  # Docs say required, verify in practice
-    model: Optional[str] = None  # Not always provided (e.g., resume, clear)
-    agent_type: Optional[str] = None
+    permission_mode: PermissionMode | None = None  # Docs say required, verify in practice
+    model: str | None = None  # Not always provided (e.g., resume, clear)
+    agent_type: str | None = None
 
 
 class StopInput(BaseModel):
@@ -131,7 +128,7 @@ class StopInput(BaseModel):
     transcript_path: str
     cwd: str
     hook_event_name: str
-    permission_mode: Optional[PermissionMode] = None  # Defensive: may not always be sent
+    permission_mode: PermissionMode | None = None  # Defensive: may not always be sent
     stop_hook_active: bool
 
 
@@ -139,8 +136,8 @@ class StopInput(BaseModel):
 # Nous Logger - Async, non-blocking logging (separate from statusline)
 # =============================================================================
 
-_log_queue: queue.Queue[Optional[str]] = queue.Queue()
-_log_thread: Optional[threading.Thread] = None
+_log_queue: queue.Queue[str | None] = queue.Queue()
+_log_thread: threading.Thread | None = None
 _log_started = False
 
 
@@ -181,15 +178,6 @@ def shutdown_logger() -> None:
         _log_queue.put(None)
         if _log_thread:
             _log_thread.join(timeout=1.0)
-
-
-def reset_logger_for_subprocess() -> None:
-    """Reset logger state for use in forked subprocess."""
-    global _log_thread, _log_started, _log_queue
-    _log_thread = None
-    _log_started = False
-    # Create fresh queue - parent's queue isn't usable after fork
-    _log_queue = queue.Queue()
 
 
 # =============================================================================
@@ -471,8 +459,6 @@ def _fire_extraction_subprocess(
     The extraction agent reads the transcript file directly using the Read tool,
     filtering to entries within [start_ts, end_ts] window.
     """
-    import time
-
     from lenses import build_extraction_prompt
 
     prompt = build_extraction_prompt(lens, current, previous, start_ts, end_ts, existing)
@@ -499,141 +485,63 @@ def _fire_extraction_subprocess(
             stderr=ef,
             start_new_session=True,  # Detach from parent
             env={
-                **os.environ,
+                **{k: v for k, v in os.environ.items() if k != "CLAUDECODE"},
                 "NOUS_SUBPROCESS": "1",
                 "NOUS_SESSION": current.session_id,
                 "NOUS_PROJECT": current.cwd,
-            },  # Prevent hook recursion
+            },  # Unset CLAUDECODE to prevent hook recursion in nested claude --print
         )
         log(f"SPAWN_PID lens={lens.name} pid={proc.pid}", session=current.session_id, project=current.cwd)
 
 
-def _stop_hook_worker(
-    current: "StatuslineEntry",
-    previous: "StatuslineEntry | None",
-    pct: int,
-    project_dir: Path,
-) -> None:
+def run_stop_hook(current: "StatuslineEntry", previous: "StatuslineEntry | None") -> None:
     """
-    Background worker for Stop hook - does all blocking I/O in subprocess.
+    Stop hook: threshold-based extraction.
 
-    Runs in separate process (survives parent exit), logs errors but never raises.
-    """
-    # Reset logger for subprocess - parent's thread doesn't survive fork
-    reset_logger_for_subprocess()
-
-    session = current.session_id
-    project = current.cwd
-
-    try:
-        log(f"WORKER started ctx={pct}% pid={os.getpid()}", session=session, project=project)
-
-        if str(SCRIPT_DIR) not in sys.path:
-            sys.path.insert(0, str(SCRIPT_DIR))
-
-        from lenses import LEARNINGS_LENS, KNOWLEDGE_LENS, flush_inbox
-        log("WORKER lenses imported", session=session, project=project)
-
-        if pct <= CONTEXT_EXTRACT_MAX_PCT:
-            # Flush inboxes + fire extractions
-            learnings_flushed = flush_inbox(LEARNINGS_LENS, project_dir)
-            knowledge_flushed = flush_inbox(KNOWLEDGE_LENS, project_dir)
-            log(f"WORKER flushed engram={learnings_flushed} cortex={knowledge_flushed}",
-                session=session, project=project)
-
-            start_ts = get_extraction_cursor(project_dir)
-            end_ts = current.meta_ts
-            log(f"WORKER extraction window start={start_ts} end={end_ts}", session=session, project=project)
-
-            # Pre-flight check: verify transcript exists before spawning subprocesses
-            transcript = Path(current.transcript_path)
-            if not transcript.exists():
-                log(f"WORKER skip_extraction transcript_missing={current.transcript_path}", session=session, project=project)
-                shutdown_logger()
-                return
-
-            existing_learnings = read_existing_encoded(LEARNINGS_LENS.encoded_path, project_dir)
-            existing_knowledge = read_existing_encoded(KNOWLEDGE_LENS.encoded_path, project_dir)
-            log(f"WORKER existing learnings={len(existing_learnings)} knowledge={len(existing_knowledge)}", session=session, project=project)
-
-            log(f"WORKER spawning learnings+knowledge ctx={pct}%", session=session, project=project)
-            _fire_extraction_subprocess(LEARNINGS_LENS, current, previous, start_ts, end_ts, existing_learnings, project_dir)
-            _fire_extraction_subprocess(KNOWLEDGE_LENS, current, previous, start_ts, end_ts, existing_knowledge, project_dir)
-            log(f"WORKER spawned start={start_ts} end={end_ts}", session=session, project=project)
-
-            # Advance cursor only after successful spawn
-            write_extraction_cursor(project_dir, current.meta_ts)
-            log(f"WORKER cursor_advanced ts={current.meta_ts}", session=session, project=project)
-
-        elif pct <= CONTEXT_FLUSH_MAX_PCT:
-            # Flush inboxes only (no new extractions)
-            learnings_flushed = flush_inbox(LEARNINGS_LENS, project_dir)
-            knowledge_flushed = flush_inbox(KNOWLEDGE_LENS, project_dir)
-            log(f"WORKER flush ctx={pct}% engram={learnings_flushed} cortex={knowledge_flushed}",
-                session=session, project=project)
-
-        else:
-            # Above flush threshold: just flush (block handled by main hook)
-            learnings_flushed = flush_inbox(LEARNINGS_LENS, project_dir)
-            knowledge_flushed = flush_inbox(KNOWLEDGE_LENS, project_dir)
-            log(f"WORKER flush_critical ctx={pct}% engram={learnings_flushed} cortex={knowledge_flushed}",
-                session=session, project=project)
-
-        log(f"WORKER complete ctx={pct}% pid={os.getpid()}", session=session, project=project)
-
-    except Exception as e:
-        import traceback
-        tb = traceback.format_exc()
-        log(f"WORKER error: {type(e).__name__}: {e}", session=session, project=project)
-        log(f"WORKER traceback: {tb[:500]}", session=session, project=project)
-
-    finally:
-        shutdown_logger()
-
-
-
-def run_stop_hook(current: "StatuslineEntry", previous: "StatuslineEntry | None") -> Optional[dict]:
-    """
-    Stop hook: fire-and-forget threshold-based extraction.
-
-    All work runs in background subprocess - survives parent exit.
-    Returns JSON response dict above CONTEXT_FLUSH_MAX_PCT (blocks Claude, recommends /clear).
-
-    Thresholds configured in constants: CONTEXT_SKIP_PCT, CONTEXT_EXTRACT_MAX_PCT,
-    CONTEXT_FLUSH_MAX_PCT.
+    Runs directly in the async hook process (hooks.json has "async": true).
+    Blocking decision is handled by nous-stop-guard.sh (sync).
+    Extraction subprocesses (claude --print) are fire-and-forget via Popen.
     """
     pct = current.context_window.used_percentage
     project_dir = Path(current.cwd)
+    session = current.session_id
+    project = current.cwd
 
-    # Entry log - always
-    log(f"STOP ctx={pct}%", session=current.session_id, project=current.cwd)
+    log(f"STOP ctx={pct}%", session=session, project=project)
 
     if pct < CONTEXT_SKIP_PCT:
-        return None
+        return
 
-    # Fire worker subprocess - survives parent exit, self-terminates after timeout
-    worker = multiprocessing.Process(
-        target=_stop_hook_worker,
-        args=(current, previous, pct, project_dir),
-    )
-    worker.start()
+    if str(SCRIPT_DIR) not in sys.path:
+        sys.path.insert(0, str(SCRIPT_DIR))
 
-    log(f"DISPATCHED ctx={pct}% wpid={worker.pid}", session=current.session_id, project=current.cwd)
+    from lenses import LEARNINGS_LENS, KNOWLEDGE_LENS, flush_inbox
 
-    # Above flush threshold: block Claude and recommend /clear
-    # Note: Stop hooks use top-level fields, not hookSpecificOutput
-    if pct > CONTEXT_FLUSH_MAX_PCT:
-        return {
-            "decision": "block",
-            "reason": (
-                f"Context at {pct}%. Run /clear (not /compact) to start fresh. "
-                "Learnings have been extracted and will be injected automatically.\n\n"
-                "Optional: Before clearing, ask Claude for a concise continuation prompt "
-                "that captures current task state - copy it, /clear, then paste to resume."
-            )
-        }
+    # Always flush inboxes
+    learnings_flushed = flush_inbox(LEARNINGS_LENS, project_dir)
+    knowledge_flushed = flush_inbox(KNOWLEDGE_LENS, project_dir)
+    log(f"FLUSHED ctx={pct}% engram={learnings_flushed} cortex={knowledge_flushed}",
+        session=session, project=project)
 
-    return None
+    # Fire extractions only at lower context usage
+    if pct <= CONTEXT_EXTRACT_MAX_PCT:
+        start_ts = get_extraction_cursor(project_dir)
+        end_ts = current.meta_ts
+        log(f"EXTRACT window start={start_ts} end={end_ts}", session=session, project=project)
+
+        transcript = Path(current.transcript_path)
+        if not transcript.exists():
+            log(f"SKIP transcript_missing={current.transcript_path}", session=session, project=project)
+            return
+
+        existing_learnings = read_existing_encoded(LEARNINGS_LENS.encoded_path, project_dir)
+        existing_knowledge = read_existing_encoded(KNOWLEDGE_LENS.encoded_path, project_dir)
+
+        _fire_extraction_subprocess(LEARNINGS_LENS, current, previous, start_ts, end_ts, existing_learnings, project_dir)
+        _fire_extraction_subprocess(KNOWLEDGE_LENS, current, previous, start_ts, end_ts, existing_knowledge, project_dir)
+
+        write_extraction_cursor(project_dir, current.meta_ts)
+        log(f"CURSOR_ADVANCED ts={current.meta_ts}", session=session, project=project)
 
 
 # =============================================================================
@@ -675,24 +583,20 @@ def main() -> int:
                 log(f"WARN no_statusline_entry session={session_id[:8]}", session=session_id, project=project)
                 return 0
 
-            response = run_stop_hook(current, previous)
-
-            # Output JSON response if hook returned one (block case)
-            if response:
-                print(json.dumps(response))
-                log(f"BLOCK_CLEAR ctx={current.context_window.used_percentage}%",
-                    session=session_id, project=project)
+            run_stop_hook(current, previous)
 
             total_ms = int((datetime.now() - start_time).total_seconds() * 1000)
             log(f"END {total_ms}ms", session=session_id, project=project)
-            return 0  # Exit 0 required for JSON processing
+            return 0
 
         else:
             log(f"SKIP unknown_event={event_name}", session=session_id, project=project)
             return 0
 
     except Exception as e:
+        import traceback
         log(f"ERROR {type(e).__name__}: {e}", session=session_id, project=project)
+        log(f"TRACEBACK {traceback.format_exc()[:500]}", session=session_id, project=project)
         return 0  # Best-effort: don't block on error
 
     finally:
