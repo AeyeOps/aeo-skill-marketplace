@@ -23,13 +23,15 @@ graph LR
 
 | Category | Plugins | What You Get |
 |----------|---------|--------------|
-| **Development** | 8 plugins | Architecture, code analysis, documentation, troubleshooting |
+| **Architecture** | 2 plugins | System design, C4 diagrams, ADRs, Diataxis documentation |
 | **Testing** | 3 plugins | TDD workflows, QA agents, security scanning |
-| **Automation** | 2 plugins | n8n workflows, Python tooling |
-| **Productivity** | 2 plugins | Agile roles, requirements gathering |
+| **Automation** | 3 plugins | EPCC workflow, n8n workflows, Python tooling |
+| **Productivity** | 3 plugins | Agile roles, requirements gathering, troubleshooting |
+| **Developer Tools** | 4 plugins | Claude skills, deployment, performance, self-improving memory |
 | **Design** | 1 plugin | UX optimization, React PWA patterns |
+| **Infrastructure** | 1 plugin | AWS CLI operations, cloud resource management |
 
-**Total:** 16 plugins · 18 skills · 65 agents · 24 commands
+**Total:** 17 plugins · 35 skills · 25 agents · 45 commands
 
 ---
 
@@ -60,7 +62,6 @@ Design systems, document decisions, and maintain quality.
 |--------|-------------|
 | [**aeo-architecture**](./aeo-architecture) | 10 agents for system design, C4 diagrams, ADRs, and architecture review |
 | [**aeo-documentation**](./aeo-documentation) | Diataxis framework implementation with tutorial, how-to, reference, and explanation agents |
-| [**aeo-code-analysis**](./aeo-code-analysis) | Code archaeology for legacy systems, technical debt assessment, technology evaluation |
 
 **Skills included:** MCP server design, Mermaid diagram creation
 
@@ -90,7 +91,7 @@ Structured methodologies for complex development tasks.
 | [**aeo-n8n**](./aeo-n8n) | 7 skills for n8n workflow automation — expressions, nodes, validation, patterns |
 | [**aeo-python**](./aeo-python) | CLI engineering, data pipelines, terminal UI development |
 
-**Commands:** `/epcc-explore`, `/epcc-plan`, `/epcc-code`, `/epcc-commit`, `/prd`, `/trd`
+**Commands:** `/epcc-explore`, `/epcc-plan`, `/epcc-code`, `/epcc-commit`, `/epcc-prd`, `/trd`
 
 ---
 
@@ -104,7 +105,7 @@ Agents that embody specific roles and responsibilities.
 | [**aeo-requirements**](./aeo-requirements) | Product discovery, technical specifications, build-vs-buy analysis |
 | [**aeo-troubleshooting**](./aeo-troubleshooting) | Systematic debugging with escalation mechanisms |
 
-**Commands:** `/prd`, `/tech-req`, `/troubleshoot`
+**Commands:** `/tech-req`, `/troubleshoot`
 
 ---
 
@@ -129,8 +130,21 @@ Skills for building AI-powered tooling.
 | [**aeo-claude**](./aeo-claude) | Agent SDK reference, skill creation, slash command creation, Opus prompting |
 | [**aeo-deployment**](./aeo-deployment) | Release orchestration, compliance automation, progressive rollouts |
 | [**aeo-performance**](./aeo-performance) | Profiling, bottleneck identification, optimization planning |
+| [**aeo-nous**](./aeo-nous) | Self-improving memory — extracts learnings from sessions, injects context at startup |
 
 **Skills included:** Agent SDK patterns, skill authoring, command development, prompt engineering
+
+---
+
+## Infrastructure
+
+Cloud operations and resource management.
+
+| Plugin | Description |
+|--------|-------------|
+| [**aeo-infra**](./aeo-infra) | AWS CLI v2 operations — authentication, credential management, service patterns, dangerous command awareness |
+
+**Skills included:** AWS CLI operations with JMESPath, S3 transfers, VPC/Lambda/DynamoDB/RDS/CloudWatch patterns
 
 ---
 
@@ -209,11 +223,12 @@ aeo-skill-marketplace/
 ├── aeo-agile-tools/        # Agile team roles
 ├── aeo-architecture/       # System design
 ├── aeo-claude/             # Developer tools
-├── aeo-code-analysis/      # Legacy systems
 ├── aeo-deployment/         # Release management
 ├── aeo-documentation/      # Diataxis framework
 ├── aeo-epcc-workflow/      # Development methodology
+├── aeo-infra/              # AWS infrastructure
 ├── aeo-n8n/                # Workflow automation
+├── aeo-nous/               # Self-improving memory
 ├── aeo-performance/        # Profiling & optimization
 ├── aeo-python/             # Python tooling
 ├── aeo-requirements/       # Requirements gathering

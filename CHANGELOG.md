@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.4] - 2026-02-17
+
+### Added
+
+- **aeo-infra**: Add AWS infrastructure operations plugin (v0.2.0) with aws-cli-operations skill covering CLI v2 authentication, credential management, JMESPath queries, service patterns (VPC, Lambda, DynamoDB, RDS, CloudWatch, SSM), dangerous command awareness, and S3 transfer optimization
+- **aeo-infra**: Add 3 reference modules — dangerous-commands, service-patterns, advanced-patterns
+
+### Changed
+
+- **CLAUDE.md**: Rewrite project documentation with validation commands, loading instructions, hook exit code semantics, `${CLAUDE_PLUGIN_ROOT}` usage, key subsystems (Nous, Ultrareview-loop, EPCC), cross-cutting architecture patterns, and contributing guide
+- Update marketplace.json with aeo-infra plugin entry and infrastructure category
+
 ## [0.4.3] - 2026-02-17
 
 ### Changed

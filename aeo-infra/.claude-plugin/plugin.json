@@ -1,0 +1,11 @@
+{
+  "name": "aeo-infra",
+  "version": "0.2.0",
+  "description": "AWS infrastructure operations skills covering AWS CLI v2 mastery, credential management (aws login, SSO, assume-role), service patterns, and cloud operations best practices",
+  "author": {
+    "name": "AeyeOps",
+    "url": "https://github.com/AeyeOps"
+  },
+  "license": "MIT",
+  "keywords": ["aws", "aws-cli", "infrastructure", "cloud", "s3", "ec2", "iam", "credentials", "sso", "jmespath", "operations", "vpc", "lambda", "dynamodb", "rds", "cloudwatch"]
+}
