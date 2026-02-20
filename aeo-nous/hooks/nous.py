@@ -19,13 +19,13 @@ from __future__ import annotations
 
 import fcntl
 import json
+import logging
 import os
-import queue
 import re
 import subprocess
 import sys
-import threading
 import time
+from logging.handlers import RotatingFileHandler
 from collections import deque
 from datetime import datetime, timezone
 from enum import Enum
@@ -63,11 +63,13 @@ if TYPE_CHECKING:
 # =============================================================================
 
 SCRIPT_DIR = Path(__file__).parent
-LOG_PATH = Path.home() / ".claude" / "nous.log"
+LOG_PATH = Path.home() / ".claude" / "aeo-nous.log"
+LOG_MAX_BYTES = 2_097_152   # 2 MB per file (generous for JSONL overhead)
+LOG_BACKUP_COUNT = 3        # keep aeo-nous.log + 3 rotated files
 STATUSLINE_PATH = Path.home() / ".claude" / "statusline-activity.jsonl"
 
 # SessionStart: how many recent entries to inject from each encoded file
-INJECT_RECENT_COUNT = 10
+INJECT_RECENT_COUNT = 20
 
 # Statusline: max lines to read (matches LOG_ROTATE_AT in statusline.sh)
 STATUSLINE_MAX_LINES = 100
@@ -85,7 +87,7 @@ CONTEXT_EXTRACT_MAX_PCT = 60   # At or below: flush inboxes + fire extractions
 
 # Extraction: subprocess timeout and model
 WORKER_TIMEOUT_SECONDS = 300   # 5 minutes
-EXTRACTION_MODEL = "claude-sonnet-4-5-20250929"
+EXTRACTION_MODEL = "sonnet"
 
 # Extraction: max recent entries for deduplication context
 DEDUP_ENTRY_LIMIT = 20
@@ -133,51 +135,60 @@ class StopInput(BaseModel):
 
 
 # =============================================================================
-# Nous Logger - Async, non-blocking logging (separate from statusline)
+# Nous Logger - Process-safe JSONL rotating log
 # =============================================================================
 
-_log_queue: queue.Queue[str | None] = queue.Queue()
-_log_thread: threading.Thread | None = None
-_log_started = False
+
+class _ProcessSafeRotatingHandler(RotatingFileHandler):
+    """RotatingFileHandler with fcntl.flock for multi-process safety."""
+
+    def emit(self, record: logging.LogRecord) -> None:
+        try:
+            with open(self.baseFilename + ".lock", "a") as lf:
+                fcntl.flock(lf, fcntl.LOCK_EX)
+                try:
+                    super().emit(record)
+                finally:
+                    fcntl.flock(lf, fcntl.LOCK_UN)
+        except Exception:
+            self.handleError(record)
 
 
-def _log_worker() -> None:
-    """Background thread that writes log messages to file."""
-    with open(LOG_PATH, "a") as f:
-        while True:
-            msg = _log_queue.get()
-            if msg is None:
-                break
-            f.write(msg + "\n")
-            f.flush()
+_logger: logging.Logger | None = None
 
 
-def _ensure_log_thread() -> None:
-    """Start the log worker thread if not already running."""
-    global _log_thread, _log_started
-    if not _log_started:
-        _log_thread = threading.Thread(target=_log_worker, daemon=True)
-        _log_thread.start()
-        _log_started = True
+def _get_logger() -> logging.Logger:
+    global _logger
+    if _logger is None:
+        _logger = logging.getLogger("nous")
+        _logger.setLevel(logging.DEBUG)
+        _logger.propagate = False
+        handler = _ProcessSafeRotatingHandler(
+            LOG_PATH, maxBytes=LOG_MAX_BYTES, backupCount=LOG_BACKUP_COUNT
+        )
+        handler.setFormatter(logging.Formatter("%(message)s"))
+        _logger.addHandler(handler)
+    return _logger
 
 
-def log(msg: str, session: str = "?", project: str = "?") -> None:
-    """
-    Log a message asynchronously to nous.log.
-
-    Format: yyMMddHHMMSS.mmm session project_path message
-    """
-    _ensure_log_thread()
-    ts = datetime.now().strftime("%y%m%d%H%M%S.%f")[:17]  # yyMMddHHMMSS.mmm
-    _log_queue.put(f"{ts} {session} {project} {msg}")
+def log(msg: str, session: str = "?", project: str = "?",
+        role: str = "hook") -> None:
+    """Log a JSONL line to aeo-nous.log."""
+    entry = json.dumps({
+        "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z",
+        "pid": os.getpid(),
+        "sid": session[:8] if session != "?" else "?",
+        "project": project,
+        "role": role,
+        "event": msg,
+    }, separators=(",", ":"))
+    _get_logger().info(entry)
 
 
 def shutdown_logger() -> None:
-    """Gracefully shutdown the logger thread."""
-    if _log_started:
-        _log_queue.put(None)
-        if _log_thread:
-            _log_thread.join(timeout=1.0)
+    if _logger:
+        for h in _logger.handlers:
+            h.flush()
 
 
 # =============================================================================
@@ -469,28 +480,33 @@ def _fire_extraction_subprocess(
     # Unique fragment: inbox.jsonl.{timestamp}_{pid}_{random}
     fragment_id = f"{int(time.time())}_{os.getpid()}_{os.urandom(4).hex()}"
     fragment_file = inbox_base.parent / f"{inbox_base.name}.{fragment_id}"
-    error_file = inbox_base.parent / f"{inbox_base.name}.{fragment_id}.stderr"
-
     log(f"SPAWN lens={lens.name} fragment={fragment_id} prompt_bytes={len(prompt)} transcript={current.transcript_path}",
         session=current.session_id, project=current.cwd)
 
     # Fire and forget - stdout goes to unique fragment file
     # Use timeout(1) to kill claude if it runs too long
     # --permission-mode bypassPermissions required for Read tool in non-interactive --print mode
-    with open(fragment_file, "w") as f, open(error_file, "w") as ef:
-        proc = subprocess.Popen(
-            ["timeout", str(WORKER_TIMEOUT_SECONDS), "claude", "--print",
-             "--permission-mode", "bypassPermissions", "--model", EXTRACTION_MODEL, "-p", prompt],
-            stdout=f,
-            stderr=ef,
-            start_new_session=True,  # Detach from parent
-            env={
-                **{k: v for k, v in os.environ.items() if k != "CLAUDECODE"},
-                "NOUS_SUBPROCESS": "1",
-                "NOUS_SESSION": current.session_id,
-                "NOUS_PROJECT": current.cwd,
-            },  # Unset CLAUDECODE to prevent hook recursion in nested claude --print
-        )
+    with open(fragment_file, "w") as f:
+        _log_fh = open(LOG_PATH, "a")
+        try:
+            proc = subprocess.Popen(
+                ["timeout", str(WORKER_TIMEOUT_SECONDS), "claude", "--print",
+                 "--no-session-persistence",
+                 "--permission-mode", "bypassPermissions", "--model", EXTRACTION_MODEL, "-p", prompt],
+                stdout=f,
+                stderr=_log_fh,
+                start_new_session=True,  # Detach from parent
+                env={
+                    **{k: v for k, v in os.environ.items() if k != "CLAUDECODE"},
+                    "NOUS_SUBPROCESS": "1",
+                    "NOUS_SESSION": current.session_id,
+                    "NOUS_PROJECT": current.cwd,
+                },  # Unset CLAUDECODE to prevent hook recursion in nested claude --print
+            )
+        except OSError:
+            _log_fh.close()
+            raise
+        _log_fh.close()  # Popen dups the fd; closing parent copy is safe
         log(f"SPAWN_PID lens={lens.name} pid={proc.pid}", session=current.session_id, project=current.cwd)
 
 
