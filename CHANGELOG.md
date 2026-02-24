@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.5] - 2026-02-24
+
+### Added
+
+- **aeo-claude**: Add `/aeo-retro` session retrospective command — extracts durable insights from session transcripts, reconciles stale guidance in CLAUDE.md/SKILL.md files and nous entries, routes findings to appropriate destinations with user approval
+
+### Fixed
+
+- **aeo-claude**: Remove stray blank line in ultrareview-loop `loop-hook.sh`
+
 ## [0.4.4] - 2026-02-17
 
 ### Added

@@ -1,6 +1,6 @@
 # AEO Claude Plugin
 
-Claude development skills: Agent SDK reference, skill creation, slash command creation, and Opus prompting techniques.
+Claude development skills: Agent SDK reference, skill creation, slash command creation, Opus prompting techniques, and session retrospectives.
 
 ## Installation
 
@@ -113,6 +113,18 @@ The skills activate when you ask about:
 - Planning complex multi-step projects (ultraplan, ultraplan-teams)
 - Validating plans, code changes, or configurations (ultrareview)
 - Fixing review findings automatically (ultrareview-fix, ultrareview-loop)
+- Running session retrospectives to extract and persist learnings (aeo-retro)
+
+## Commands
+
+### /aeo-retro
+
+Session retrospective that extracts improvements and reconciles stale guidance in CLAUDE.md files and project skills:
+
+- Analyzes session transcript for durable insights (corrections, discoveries, process improvements)
+- Reconciles current knowledge against saved CLAUDE.md/SKILL.md content and nous entries
+- Routes findings to the appropriate destination (project CLAUDE.md, user CLAUDE.md, project skill, nous)
+- Presents proposals with diff format for user approval before applying
 
 ## License
 

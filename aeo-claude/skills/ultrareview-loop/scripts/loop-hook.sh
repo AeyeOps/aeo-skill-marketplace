@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Ultrareview Loop Stop Hook
 # Prevents session exit when an ultrareview-loop is active
 # Alternates between ultrareview and ultrareview-fix phases
