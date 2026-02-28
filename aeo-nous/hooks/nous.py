@@ -81,8 +81,8 @@ ISO_TIMESTAMP_PATTERN = re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}
 CURSOR_FILE = ".claude/nous/extraction_cursor.json"
 
 # Stop hook: context window thresholds (percentage)
-CONTEXT_SKIP_PCT = 10          # Below this: skip entirely
-CONTEXT_EXTRACT_MAX_PCT = 60   # At or below: flush inboxes + fire extractions
+CONTEXT_SKIP_PCT = 20          # Below this: skip entirely
+CONTEXT_EXTRACT_MAX_PCT = 80   # At or below: flush inboxes + fire extractions
                                # Above: flush only (blocking handled by nous-stop-guard.sh at 65%)
 
 # Extraction: subprocess timeout and model
