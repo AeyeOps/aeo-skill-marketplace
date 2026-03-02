@@ -1,6 +1,6 @@
-# Agentic Patterns for Opus 4.6
+# Agentic Patterns
 
-Best practices for building agents, agent teams, MCPs, and long-horizon workflows with Opus 4.6.
+Best practices for building agents, agent teams, MCPs, and long-horizon workflows.
 
 ## Table of Contents
 
@@ -18,7 +18,7 @@ Best practices for building agents, agent teams, MCPs, and long-horizon workflow
 
 ## 1. Context Management
 
-Opus 4.6 has a standard 200K context window with 1M available in beta. Server-side compaction is now available, reducing client-side context management burden.
+Claude has a 200K token context window (1M available in beta for tier 4 orgs). Server-side compaction is available, reducing client-side context management burden.
 
 ### Key Patterns
 
@@ -32,9 +32,9 @@ When approaching context limits (~20% remaining), create a progress summary:
 Then clear context and resume with the summary.
 ```
 
-**Server-Side Compaction (4.6 Beta)**
+**Server-Side Compaction**
 ```
-Opus 4.6 supports server-side context summarization via the Compaction API.
+Claude supports server-side context summarization via the Compaction API.
 Older messages are automatically summarized when approaching limits—no
 additional API calls required. This enables effectively infinite conversations.
 ```
@@ -42,7 +42,7 @@ additional API calls required. This enables effectively infinite conversations.
 **Fresh Starts vs Compaction**
 ```
 Consider starting with a fresh context window rather than compaction.
-Opus 4.6 effectively discovers state from local filesystems.
+Claude effectively discovers state from local filesystems.
 
 On fresh start:
 1. Call pwd to establish location
@@ -55,7 +55,7 @@ On fresh start:
 
 ## 2. Agent Teams
 
-Opus 4.6 introduces agent teams—parallel agents coordinating on complex projects.
+Claude Code supports agent teams—parallel agents coordinating on complex projects. This is a Claude Code CLI feature, not an API-level primitive.
 
 ### When to Use Teams
 
@@ -120,7 +120,7 @@ a separate agent with a new context window.
 
 ## 4. Tool Design
 
-Opus 4.5+ responds strongly to tool descriptions. Design carefully.
+Claude responds strongly to tool descriptions. Design carefully.
 
 ### Tool Description Pattern
 
@@ -199,7 +199,7 @@ On session start, check git status and recent commits.
 
 ## 6. Long-Horizon Workflows
 
-Opus 4.6 excels at sustained reasoning across extended tasks, now with up to 128K output tokens.
+Claude excels at sustained reasoning across extended tasks, with up to 128K output tokens.
 
 ### Incremental Progress
 
@@ -244,7 +244,7 @@ These reduce cognitive load across sessions.
 
 ## 7. Parallel Execution
 
-Opus 4.6 excels at parallel tool execution.
+Claude excels at parallel tool execution.
 
 ### Encourage Parallelism
 
@@ -292,10 +292,10 @@ If you encounter an error you cannot resolve:
 
 ### Prompt Injection Resistance
 
-Opus 4.6 has improved prompt injection resistance, but:
+Claude has improved prompt injection resistance, but:
 
 ```
-- Still vulnerable (~33% success rate with 10 attempts)
+- Still vulnerable to sophisticated attempts
 - Defensive application design remains essential
 - Validate untrusted inputs
 - Sandbox tool execution
@@ -346,7 +346,7 @@ Keep your context focused on the current implementation.
 
 ## 9. Adaptive Thinking
 
-Opus 4.6 replaces extended thinking with adaptive thinking—4 effort levels that dynamically adjust reasoning depth.
+Claude uses adaptive thinking—4 effort levels that dynamically adjust reasoning depth.
 
 ### Effort Levels
 
@@ -357,27 +357,24 @@ Opus 4.6 replaces extended thinking with adaptive thinking—4 effort levels tha
 | `high` | Complex reasoning, architecture (default) | Full deliberation |
 | `max` | Hardest problems, novel research | Peak reasoning capability |
 
-### Migration from Extended Thinking
+### API Usage
 
-```
-# Before (Opus 4.5)
-"thinking": {"type": "enabled", "budget_tokens": 10000}
-
-# After (Opus 4.6)
-"thinking": {"type": "enabled", "effort": "high"}
+```json
+"thinking": {"type": "adaptive"},
+"output_config": {"effort": "high"}
 ```
 
-The `budget_tokens` parameter is deprecated. Opus 4.6 auto-calibrates reasoning depth within each effort level.
+Claude auto-calibrates reasoning depth within each effort level. The `budget_tokens` parameter is deprecated.
 
 ### Prompting Implications
 
-- The "think" word sensitivity from 4.5 is reduced since adaptive thinking handles reasoning calibration
 - Avoid explicitly requesting reasoning depth ("think harder")—instead, set the effort level via API
 - For Claude Code skills: the model selects effort automatically; no need to specify in skill prompts
+- "Think" word sensitivity is reduced since adaptive thinking handles reasoning calibration
 
-### Breaking Change: Prefilling Disabled
+### Prefilling Deprecated
 
-Opus 4.6 returns a 400 error for assistant message prefilling. Migrate to:
+Assistant message prefilling is deprecated and unsupported. Use instead:
 - `output_config.format` for JSON output structure
 - `json_schema` parameter for structured output validation
 - System prompt instructions for output formatting

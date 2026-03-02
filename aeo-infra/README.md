@@ -1,6 +1,6 @@
 # aeo-infra
 
-AWS infrastructure operations skills for Claude Code.
+Infrastructure operations skills for Claude Code — AWS CLI v2 and Azure CLI.
 
 ## Skills
 
@@ -21,6 +21,24 @@ AWS CLI v2 expert covering cloud operations, resource management, and automation
 - Dangerous command awareness and safe alternatives
 - v1-to-v2 migration (`aws-cli-migrate` tool)
 - Scripting best practices
+
+### az-cli-operations
+
+Azure CLI expert covering cloud operations, resource management, and automation scripting.
+
+**Trigger phrases:** "az cli", "azure cli", "az login", "az account", "service principal", "managed identity", "az vm", "az storage", "az aks", "az keyvault", "az webapp", "az rest", "az graph query", "az bicep", "az role assignment", "cost management", "resource locks"
+
+**What it covers:**
+- Pre-flight safety checks (subscription and identity verification)
+- Authentication: interactive, device code, managed identity, service principal, federated credentials (OIDC)
+- JMESPath queries and output formatting
+- `az wait` patterns and parallel operations
+- `az rest` for direct REST API calls and cost management queries
+- `az graph` (KQL) for cross-subscription resource inventory
+- Service patterns: VMs, Storage, VNets/NSGs, Key Vault, App Service, AKS, RBAC
+- Dangerous command awareness with tiered risk levels and safer alternatives
+- `az bicep` commands and deployment what-if
+- Multi-subscription loops and scripting best practices
 
 ## Installation
 

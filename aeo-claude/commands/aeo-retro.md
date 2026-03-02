@@ -1,9 +1,13 @@
 ---
 description: Session retrospective that extracts improvements and reconciles stale guidance in CLAUDE.md files and project skills
+argument-hint: "[--approve-all]"
 allowed-tools: Read, Edit, Write, Glob, Grep, Bash, Skill
 ---
 
 # Session Retrospective
+
+**Flags** (detected from `$ARGUMENTS`):
+- **--approve-all**: If present, skip interactive approval in Step 7 and apply all proposals automatically. Use in automated pipelines (e.g., process-year post-stage) where pausing for input is not desired.
 
 Analyze the current session for improvement opportunities. Extract durable insights and codify them into the right destination: project SKILL.md, project CLAUDE.md (any level), or user CLAUDE.md.
 
@@ -228,7 +232,9 @@ Show all proposals before applying anything. Present corrections before addition
 
 ## Step 7: Apply with Approval
 
-Ask the user which proposals to apply. Accept:
+**If `--approve-all`**: Skip the interactive prompt. Apply all proposals (both additions and "certain"-confidence corrections) automatically. Log each applied change. Do not apply "likely"-confidence corrections — log them as skipped for manual review.
+
+**Otherwise**: Ask the user which proposals to apply. Accept:
 - "all" -- apply everything
 - "skip <destination>" -- skip a whole destination
 - Numbered selections -- apply specific items only

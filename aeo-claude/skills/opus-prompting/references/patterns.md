@@ -1,6 +1,6 @@
-# Opus 4.6 Pattern Transformations
+# Prompt Pattern Transformations
 
-Comprehensive reference of deprecated patterns and their Opus 4.6 equivalents. These patterns evolved in 4.5 and remain relevant in 4.6.
+Comprehensive reference of deprecated patterns and their current equivalents.
 
 ## Table of Contents
 
@@ -17,7 +17,7 @@ Comprehensive reference of deprecated patterns and their Opus 4.6 equivalents. T
 
 ## 1. Aggressive Language
 
-Opus 4.5+ is more responsive to system prompts. Aggressive language that was needed to ensure compliance in earlier models now causes over-triggering.
+Claude is highly responsive to system prompts. Aggressive language that was needed to ensure compliance in earlier models now causes over-triggering.
 
 ### Before/After Examples
 
@@ -45,7 +45,7 @@ Prefer absolute dates over relative terms like "yesterday".
 
 ### Transformation Rules
 
-| Deprecated | Opus 4.5+ Equivalent |
+| Deprecated | Current Equivalent |
 |------------|---------------------|
 | `CRITICAL:` | (remove) |
 | `IMPORTANT:` | (remove) |
@@ -60,7 +60,7 @@ Prefer absolute dates over relative terms like "yesterday".
 
 ## 2. Think Variants
 
-In Opus 4.5, the model was particularly sensitive to the word "think" when extended thinking was disabled. Opus 4.6 replaces extended thinking with adaptive thinking (4 effort levels: low/medium/high/max), reducing this sensitivity. These transformations are still good practice for cleaner prompts.
+Earlier models were particularly sensitive to the word "think" when extended thinking was disabled. Adaptive thinking (4 effort levels: low/medium/high/max) reduces this sensitivity. These transformations are still good practice for cleaner prompts.
 
 ### Before/After Examples
 
@@ -88,7 +88,7 @@ Analyze the architecture thoroughly.
 
 ### Transformation Rules
 
-| Deprecated | Opus 4.5+ Equivalent |
+| Deprecated | Current Equivalent |
 |------------|---------------------|
 | `think step by step` | `consider systematically` |
 | `think carefully` | `evaluate carefully` |
@@ -127,7 +127,7 @@ For file-related questions, use file_read to examine the content.
 
 ### Transformation Rules
 
-| Deprecated | Opus 4.5+ Equivalent |
+| Deprecated | Current Equivalent |
 |------------|---------------------|
 | `MUST use [tool]` | `use [tool]` |
 | `ALWAYS call [tool]` | `call [tool] when...` |
@@ -176,7 +176,7 @@ List the top 5 programming languages:
 
 ## 5. Context and Motivation
 
-Opus 4.5+ generalizes better when you explain why. Add "because..." to commands.
+Claude generalizes better when you explain why. Add "because..." to commands.
 
 ### Before/After Examples
 
@@ -210,7 +210,7 @@ Keep responses under 100 words because users are reading on mobile devices with 
 
 ## 6. Over-Specification
 
-Opus 4.5+ follows instructions more literally. Over-specified examples can constrain unnecessarily.
+Claude follows instructions more literally than earlier models. Over-specified examples can constrain unnecessarily.
 
 ### Before/After Examples
 
@@ -251,7 +251,7 @@ Return JSON with status, data, and optional meta fields.
 
 ### Principles
 
-1. **Trust the model**: Opus 4.5 understands conventions
+1. **Trust the model**: Claude understands conventions
 2. **Fewer examples**: One good example > many redundant ones
 3. **Guidelines over templates**: Describe intent, not exact format
 4. **Avoid exhaustive lists**: Summarize patterns instead
@@ -260,7 +260,7 @@ Return JSON with status, data, and optional meta fields.
 
 ## 7. Verbosity
 
-Opus 4.5+ generates more tokens than some alternatives. Optimize for conciseness.
+Claude generates more tokens than some alternatives. Optimize for conciseness.
 
 ### Before/After Examples
 
@@ -291,7 +291,7 @@ Explain the auth flow: credentials to access token.
 
 ## 8. XML Structure
 
-XML tags help Opus 4.5+ parse document structure, identify mutable vs. reference sections, and follow workflows. Use XML for any prompt that will be read by agents across sessions.
+XML tags help Claude parse document structure, identify mutable vs. reference sections, and follow workflows. Use XML for any prompt that will be read by agents across sessions.
 
 ### Use Cases
 
@@ -385,3 +385,4 @@ then look at what's blocked, then proceed with available tasks.
 | Over-spec | Exhaustive examples | Trust the model |
 | Verbose | Long requests | Direct, concise |
 | Structure | Flat markdown for agents | Use XML tags |
+| Prefill | Prefilled assistant turn | Use system prompt instructions or output_config.format |

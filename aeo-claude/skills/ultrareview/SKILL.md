@@ -41,9 +41,23 @@ Identify what you're validating:
 Adapt your validation approach accordingly.
 </context_detection>
 
-<investigate_before_answering>
-Read relevant files before making claims. If uncertain, state what you need to investigate.
-</investigate_before_answering>
+### Step 0.5: Source Reading
+
+<source_reading>
+Before evaluating, identify and read every primary source file in scope.
+
+When the focus area references a command template that calls a script, that script is a
+primary source — read it, because the template's description of what the script does may
+be incomplete or outdated. The same applies to configs, schemas, and any file referenced
+by another file you've read.
+
+Follow reference chains, because a script that calls another script makes both relevant
+to your findings: if file A calls file B which reads file C, all three are in scope.
+
+Build a file inventory as you go. Any finding that references a file you haven't read
+belongs in NEEDS_VALIDATION, not ERRORS — because you're reasoning from description
+rather than source.
+</source_reading>
 
 ### Step 1: Assumption Inventory
 List every assumption in the preceding context. For each:
@@ -93,13 +107,22 @@ Compare against existing patterns:
 ## Output Format
 
 **CRITICAL** (Resolve before proceeding)
+- Location: [file:line, section, or concept]
+- Evidence: [direct observation — what you read in the source that confirms this]
 - Risk: [why critical]
 - Action: [specific next step]
 
+If your evidence is an inference about behavior in a file you haven't read, this belongs
+in NEEDS_VALIDATION until you read that file.
+
 **ERRORS FOUND** (Severity: HIGH/MEDIUM/LOW)
 - Location: [file:line, section, or concept]
+- Evidence: [direct observation — what you read in the source that confirms this]
 - Impact: [what breaks or fails]
 - Fix: [concrete solution]
+
+If your evidence is an inference about behavior in a file you haven't read, this belongs
+in NEEDS_VALIDATION until you read that file.
 
 **ALIGNMENT ISSUES** (Conflicts with codebase or conventions)
 - Current: [what exists]
@@ -112,7 +135,21 @@ Compare against existing patterns:
 
 **VALIDATED** (Confirmed with citations)
 
-**NEEDS VALIDATION** (Requires investigation)
+**NEEDS VALIDATION** (Default category for unverified concerns)
+
+Use this for any concern where:
+- You identified a potential issue but haven't read the implementation files to confirm
+- The evidence comes from documentation/comments rather than source code
+- You're reasoning about behavior across components without verifying the integration point
+
+Promote to ERRORS only after reading the relevant source and confirming the problem exists.
+
+## Artifact Inventory
+
+List every file you read during this review, because this allows the reader to verify
+your coverage and identify files you may have missed.
+
+- `path/to/file.py` — relevant to: [what aspect of the review it informed]
 
 ## Scorecard
 

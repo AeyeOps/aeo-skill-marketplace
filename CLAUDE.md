@@ -141,4 +141,4 @@ Each phase writes artifact files to project root: `EPCC_EXPLORE.md`, `EPCC_PLAN.
 
 ## Changelog
 
-Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Current version: v0.4.4. See `CHANGELOG.md` for full history.
+Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Current version: v0.4.6. See `CHANGELOG.md` for full history.

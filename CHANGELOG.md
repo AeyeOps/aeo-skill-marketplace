@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.6] - 2026-03-02
+
+### Added
+
+- **aeo-infra**: Add az-cli-operations skill (v0.3.0) covering Azure CLI authentication, credential chain, JMESPath queries, service patterns (VMs, Storage, VNets, Key Vault, App Service, AKS, RBAC), dangerous command awareness, cost management via `az rest`, and Resource Graph (KQL)
+- **aeo-infra**: Add 3 Azure reference modules — dangerous-commands, service-patterns, advanced-patterns
+
+### Changed
+
+- **aeo-claude**: Restore ultrareview source-reading protocol, evidence fields, NEEDS_VALIDATION detail, and artifact inventory sections (v0.4.3)
+- **aeo-claude**: Rewrite opus-prompting as artifact-type writing assistant with per-context guidance (CLAUDE.md, skills, commands, agents) and self-check workflow
+- **aeo-claude**: Genericize opus-prompting references from model-specific "Opus 4.6" to future-proof "Claude" phrasing, add Prefill row to patterns quick reference
+- **aeo-claude**: Add `--approve-all` flag to aeo-retro command for automated pipeline usage
+- Update marketplace.json with Azure CLI tags and description for aeo-infra
+
 ## [0.4.5] - 2026-02-24
 
 ### Added
