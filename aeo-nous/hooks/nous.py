@@ -81,8 +81,8 @@ ISO_TIMESTAMP_PATTERN = re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}
 CURSOR_FILE = ".claude/nous/extraction_cursor.json"
 
 # Stop hook: context window thresholds (percentage)
-CONTEXT_SKIP_PCT = 20          # Below this: skip entirely
-CONTEXT_EXTRACT_MAX_PCT = 80   # At or below: flush inboxes + fire extractions
+CONTEXT_SKIP_PCT = 10          # Below this: skip entirely
+CONTEXT_EXTRACT_MAX_PCT = 60   # At or below: flush inboxes + fire extractions
                                # Above: flush only (blocking handled by nous-stop-guard.sh at 65%)
 
 # Extraction: subprocess timeout and model
@@ -91,6 +91,87 @@ EXTRACTION_MODEL = "sonnet"
 
 # Extraction: max recent entries for deduplication context
 DEDUP_ENTRY_LIMIT = 20
+
+# =============================================================================
+# Entry Weighting - Scoring constants and rubric
+# =============================================================================
+
+DISCARD_THRESHOLD = 0.15
+HALF_LIFE_DAYS = 60
+UNSCORED_DEFAULT = 0.4
+WEIGHT_FLOOR = 0.6
+FRESHNESS_BAND = 0.4
+
+WEIGHT_RUBRIC = {
+    "constants": {
+        "discard_threshold": DISCARD_THRESHOLD,
+        "half_life_days": HALF_LIFE_DAYS,
+        "unscored_default": UNSCORED_DEFAULT,
+        "weight_floor": WEIGHT_FLOOR,
+        "freshness_band": FRESHNESS_BAND,
+    },
+    "bands": [
+        {
+            "name": "foundational",
+            "range": [0.85, 1.0],
+            "guidance": "Verified correct, universally useful, stable, unique coverage, actionable. Foundational facts: entity ownership, account structure, core architecture, environment constants.",
+        },
+        {
+            "name": "solid",
+            "range": [0.65, 0.84],
+            "guidance": "Verified correct, broadly useful. Solid tooling facts, pipeline behaviors, common patterns, key debugging insights.",
+        },
+        {
+            "name": "moderate",
+            "range": [0.45, 0.64],
+            "guidance": "Verified correct, moderately scoped. Specific script behaviors, edge cases, workflow tips with limited audience.",
+        },
+        {
+            "name": "narrow",
+            "range": [0.25, 0.44],
+            "guidance": "Correct but narrow. Task-specific insights, version-specific behavior, limited future utility. Not wrong but consumes injection budget without much return.",
+        },
+        {
+            "name": "marginal",
+            "range": [0.16, 0.24],
+            "guidance": "Near-duplicates of better entries, very narrow scope, unverifiable claims. One more demotion crosses the discard floor.",
+        },
+        {
+            "name": "discard",
+            "range": [0.00, 0.15],
+            "guidance": "Verified incorrect, fully superseded, harmful if injected, or duplication noise.",
+        },
+    ],
+    "promotion_signals": [
+        "Verified correct against current project state via Glob/Read/Grep",
+        "Universally useful — any session benefits, not just specific tasks",
+        "Stable / durable — fact unlikely to change with normal project evolution",
+        "Unique coverage — no other entry or CLAUDE.md section covers this topic",
+        "Actionable — reading this entry changes agent behavior for the better",
+    ],
+    "demotion_signals": [
+        "Superseded — a newer entry covers the same ground more completely",
+        "Redundant with CLAUDE.md — already documented in project instructions",
+        "Narrowly scoped — useful only for one specific task or completed phase",
+        "Volatile subject — references counts, versions, or states that change frequently",
+        "Unverifiable — can't confirm or deny against current state",
+        "Project drift — claim is technically true but decreasingly relevant as the project evolves",
+    ],
+    "rules": [
+        "Verified incorrect → w = 0.0. No graduated demotion for wrong information.",
+        "Content is immutable — only w and w_at change, even on entries the agent previously created as consolidations.",
+        "Prior weight is informational context, not a binding constraint. A previously high-weight entry that has gone stale should be demoted without hesitation.",
+    ],
+}
+
+
+def get_weight_rubric() -> dict:
+    """Return the weight rubric for agent consumption.
+
+    Called by reconciliation agents during grounding to get weight bands,
+    scoring constants, promotion/demotion signals, and assignment rules.
+    """
+    return WEIGHT_RUBRIC
 
 
 # =============================================================================
@@ -377,11 +458,11 @@ def write_extraction_cursor(project_dir: Path, ts: str) -> None:
 # SessionStart - Context Injection
 # =============================================================================
 
-def read_last_n_jsonl(path: Path, n: int) -> list[dict]:
-    """Read the last N entries from a JSONL file."""
+
+def read_all_jsonl(path: Path) -> list[dict]:
+    """Read all entries from a JSONL file."""
     if not path.exists():
         return []
-
     entries = []
     try:
         with open(path, "r") as f:
@@ -395,8 +476,34 @@ def read_last_n_jsonl(path: Path, n: int) -> list[dict]:
                     continue
     except OSError:
         return []
+    return entries
 
-    return entries[-n:] if len(entries) > n else entries
+
+def effective_score(entry: dict, now: datetime) -> float:
+    """Compute injection priority score for an entry.
+
+    Combines stored weight with a freshness signal. Weight sets the ceiling
+    (quality dimension). Freshness modulates within that ceiling (temporal
+    dimension). Multiplicative: w=0 is always zero regardless of age.
+    """
+    w = entry.get('w')
+    w_at = entry.get('w_at')
+    ts = entry.get('ts', '')
+
+    w_eff = UNSCORED_DEFAULT if w is None else w
+
+    ref_ts = ts if w_at is None else max(ts, w_at)
+    if not ref_ts:
+        return w_eff * WEIGHT_FLOOR
+
+    try:
+        ref = datetime.fromisoformat(ref_ts.replace('Z', '+00:00'))
+    except (ValueError, AttributeError):
+        return w_eff * WEIGHT_FLOOR
+
+    age_days = (now - ref).total_seconds() / 86400
+    freshness = 1.0 / (1.0 + age_days / HALF_LIFE_DAYS)
+    return w_eff * (WEIGHT_FLOOR + FRESHNESS_BAND * freshness)
 
 
 def handle_session_start(hook: SessionStartInput) -> int:
@@ -420,17 +527,27 @@ def handle_session_start(hook: SessionStartInput) -> int:
 
     output_parts = []
 
-    # 1. Recent learnings (engram)
-    learnings = read_last_n_jsonl(engram_path, INJECT_RECENT_COUNT)
-    if learnings:
+    now = datetime.now(timezone.utc)
+
+    # 1. Learnings (engram) — top N by effective score
+    all_learnings = read_all_jsonl(engram_path)
+    if all_learnings:
+        scored = sorted(all_learnings, key=lambda e: effective_score(e, now), reverse=True)
+        learnings = scored[:INJECT_RECENT_COUNT]
         learnings_text = "\n".join(json.dumps(e) for e in learnings)
         output_parts.append(f"<recent_learnings>\n{learnings_text}\n</recent_learnings>")
+    else:
+        learnings = []
 
-    # 2. Recent knowledge (cortex)
-    knowledge = read_last_n_jsonl(cortex_path, INJECT_RECENT_COUNT)
-    if knowledge:
+    # 2. Knowledge (cortex) — top N by effective score
+    all_knowledge = read_all_jsonl(cortex_path)
+    if all_knowledge:
+        scored = sorted(all_knowledge, key=lambda e: effective_score(e, now), reverse=True)
+        knowledge = scored[:INJECT_RECENT_COUNT]
         knowledge_text = "\n".join(json.dumps(e) for e in knowledge)
         output_parts.append(f"<recent_knowledge>\n{knowledge_text}\n</recent_knowledge>")
+    else:
+        knowledge = []
 
     # 3. Instruction to share injected context
     if learnings or knowledge:
@@ -448,6 +565,63 @@ def handle_session_start(hook: SessionStartInput) -> int:
 
 
 # =============================================================================
+# Reconciliation - Post-agent cleanup
+# =============================================================================
+
+
+def reconcile_nous_entries(project_dir: Path, session: str = "?") -> dict:
+    """Sweep low-weight entries from encoded stores to discard files.
+
+    Called by the reconciliation coordinator after agents finish assigning
+    weights. Deterministic: reads w from each entry, moves w <= DISCARD_THRESHOLD
+    to the corresponding .discarded.jsonl file.
+
+    Returns {"cortex": {"swept": N, "kept": M}, "engram": {"swept": N, "kept": M}}.
+    """
+    results = {}
+
+    stores = [
+        ("cortex", project_dir / ".claude/nous/knowledge/cortex.jsonl",
+         project_dir / ".claude/nous/knowledge/cortex.discarded.jsonl"),
+        ("engram", project_dir / ".claude/nous/learnings/engram.jsonl",
+         project_dir / ".claude/nous/learnings/engram.discarded.jsonl"),
+    ]
+
+    for name, store_path, discard_path in stores:
+        if not store_path.exists():
+            results[name] = {"swept": 0, "kept": 0}
+            continue
+
+        entries = read_all_jsonl(store_path)
+        keep = []
+        sweep = []
+
+        for entry in entries:
+            w = entry.get('w')
+            if w is not None and w <= DISCARD_THRESHOLD:
+                sweep.append(entry)
+            else:
+                keep.append(entry)
+
+        if sweep:
+            discard_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(discard_path, "a") as df:
+                for entry in sweep:
+                    df.write(json.dumps(entry) + "\n")
+
+            with open(store_path, "w") as sf:
+                for entry in keep:
+                    sf.write(json.dumps(entry) + "\n")
+
+            log(f"RECONCILE_SWEEP store={name} swept={len(sweep)} kept={len(keep)}",
+                session=session, project=str(project_dir))
+
+        results[name] = {"swept": len(sweep), "kept": len(keep)}
+
+    return results
+
+
+# =============================================================================
 # Stop Hook - Fire-and-forget extraction (all async, no blocking)
 # =============================================================================
 
@@ -460,12 +634,13 @@ def _fire_extraction_subprocess(
     end_ts: str,
     existing: list[dict],
     project_dir: Path,
-) -> None:
+) -> bool:
     """
-    Fire extraction subprocess - no wait, stdout goes to unique fragment file.
+    Fire extraction subprocess, poll briefly for immediate API failure.
 
     Each extraction writes to inbox_path.{timestamp}_{random} to avoid races.
     flush_inbox() globs for these fragments and processes them atomically.
+    Returns False if the subprocess died immediately (403/throttle), True otherwise.
 
     The extraction agent reads the transcript file directly using the Read tool,
     filtering to entries within [start_ts, end_ts] window.
@@ -508,6 +683,23 @@ def _fire_extraction_subprocess(
             raise
         _log_fh.close()  # Popen dups the fd; closing parent copy is safe
         log(f"SPAWN_PID lens={lens.name} pid={proc.pid}", session=current.session_id, project=current.cwd)
+
+    # Poll for immediate API failure (403/Cloudflare challenges die within seconds)
+    time.sleep(2)
+    exit_code = proc.poll()
+    if exit_code is not None and exit_code != 0:
+        try:
+            content = fragment_file.read_text()[:500]
+        except OSError:
+            content = ""
+        is_throttled = "<!DOCTYPE" in content or "<html" in content or "API Error:" in content
+        label = "SKIP_THROTTLED" if is_throttled else "SKIP_FAILED"
+        log(f"{label} lens={lens.name} exit={exit_code}",
+            session=current.session_id, project=current.cwd)
+        fragment_file.unlink(missing_ok=True)
+        return False
+
+    return True
 
 
 def run_stop_hook(current: "StatuslineEntry", previous: "StatuslineEntry | None") -> None:
@@ -553,11 +745,13 @@ def run_stop_hook(current: "StatuslineEntry", previous: "StatuslineEntry | None"
         existing_learnings = read_existing_encoded(LEARNINGS_LENS.encoded_path, project_dir)
         existing_knowledge = read_existing_encoded(KNOWLEDGE_LENS.encoded_path, project_dir)
 
-        _fire_extraction_subprocess(LEARNINGS_LENS, current, previous, start_ts, end_ts, existing_learnings, project_dir)
-        _fire_extraction_subprocess(KNOWLEDGE_LENS, current, previous, start_ts, end_ts, existing_knowledge, project_dir)
-
-        write_extraction_cursor(project_dir, current.meta_ts)
-        log(f"CURSOR_ADVANCED ts={current.meta_ts}", session=session, project=project)
+        ok = _fire_extraction_subprocess(LEARNINGS_LENS, current, previous, start_ts, end_ts, existing_learnings, project_dir)
+        if ok:
+            _fire_extraction_subprocess(KNOWLEDGE_LENS, current, previous, start_ts, end_ts, existing_knowledge, project_dir)
+            write_extraction_cursor(project_dir, current.meta_ts)
+            log(f"CURSOR_ADVANCED ts={current.meta_ts}", session=session, project=project)
+        else:
+            log("SKIP_THROTTLED all_lenses api_unavailable", session=session, project=project)
 
 
 # =============================================================================

@@ -25,11 +25,13 @@ See <transcript_instructions> below for the file path and how to extract only th
 
 What should future Claude sessions do differently because of what happened in this window?
 
+Capture what to do differently, not what exists. System facts belong in knowledge.
+
 Look for:
 - Errors and workarounds: Tool failures that led to successful alternatives
 - Missing guidance: Issues caused by incomplete instructions
-- New patterns: Techniques that worked well
-- Edge cases: Unexpected behaviors worth documenting
+- New patterns: Approaches that should replace previous defaults
+- Edge cases: Unexpected behaviors that change how to approach a task
 - Corrections: User redirected Claude's approach
 - Rules: User stated a principle beyond this task
 

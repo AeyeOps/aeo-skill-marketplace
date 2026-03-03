@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.7] - 2026-03-04
+
+### Added
+
+- **aeo-nous**: Add `/aeo-reconcile` slash command for curating nous stores — prunes stale entries, resolves conflicts, deduplicates, and handles cross-store lens bleed (v0.4.2)
+- **aeo-nous**: Add `flush_inbox.sh` and `reconcile_nous_entries.sh` scripts for command-driven reconciliation
+- **aeo-nous**: Add `reconcile_nous_entries()` function and `WEIGHT_RUBRIC` to nous.py for weighted entry management and deterministic sweep
+
+### Changed
+
+- **aeo-nous**: Pass paths via env vars in shell scripts instead of interpolating into Python string literals (injection fix)
+- **aeo-nous**: Add `flush_inbox()` to ExtractionLens base for draining inbox fragments before reconciliation
+- **aeo-claude**: Add explore-before-create PreToolUse prompt hook gating new file/function/class creation (v0.4.4)
+
 ## [0.4.6] - 2026-03-02
 
 ### Added

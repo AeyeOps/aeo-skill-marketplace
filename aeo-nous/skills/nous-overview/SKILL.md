@@ -87,6 +87,10 @@ The Stop hook reads the current context window percentage and applies these rule
 | **70-85%** | Flush inbox only -- context too full for safe extraction worker spawning |
 | **>=85%** | Flush inbox + block with `/clear` recommendation -- context nearly exhausted |
 
+## Reconciliation
+
+As stores grow, entries go stale, conflict, or duplicate each other. Run `/nous:aeo-reconcile` to curate both stores — it launches parallel agents that scan entries against current project state, flag issues, and apply approved pruning/consolidation. Pruning raises signal quality in the injection window (last 20 entries per lens).
+
 ## Statusline Dependency
 
 The activity logger is **required** for nous to function. It provides the context window percentage that drives all threshold decisions. Without it, the Stop hook cannot determine whether extraction should run.

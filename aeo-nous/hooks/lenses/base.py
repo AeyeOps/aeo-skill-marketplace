@@ -155,6 +155,14 @@ def flush_inbox(lens: ExtractionLens, project_dir: Path) -> int:
                 except OSError:
                     pass
 
+            # Detect API error / Cloudflare challenge (not JSONL)
+            if content and ("<!DOCTYPE" in content[:500] or "API Error:" in content[:500]):
+                print(f"[nous] discarding throttled fragment {fragment.name}", file=sys.stderr)
+                fragment.unlink()
+                if stderr_file.exists():
+                    stderr_file.unlink()
+                continue
+
             if not content:
                 # Log if stderr has content (extraction may have failed)
                 if stderr_content:
@@ -183,6 +191,8 @@ def flush_inbox(lens: ExtractionLens, project_dir: Path) -> int:
                 fcntl.flock(ef.fileno(), fcntl.LOCK_EX)  # Lock for append
                 try:
                     for entry in entries:
+                        entry.setdefault('w', None)
+                        entry.setdefault('w_at', None)
                         ef.write(json.dumps(entry) + "\n")
                 finally:
                     fcntl.flock(ef.fileno(), fcntl.LOCK_UN)

@@ -1,6 +1,18 @@
 {
-  "description": "Ultrareview loop Stop hook - blocks session exit during active review/fix cycles. No-op when no loop is active.",
+  "description": "aeo-claude hooks: explore-before-create gate (PreToolUse) and ultrareview loop stop hook (Stop).",
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "You judge whether a file edit creates something new versus modifying something existing.\n\nTool call: $ARGUMENTS\n\nRespond {\"ok\":true} if this edit modifies, fixes, updates, removes, or extends existing content.\n\nRespond {\"ok\":false,\"reason\":\"EXPLORE-BEFORE-CREATE: You are creating [new thing] but may not have checked what already exists. Before retrying this edit, search the project for existing structures that could serve this purpose. Name what you found, explain why it doesn't fit, and show the user both options.\"} if the edit introduces a new file, function, class, schema section, config block, or abstraction — especially when the new content doesn't reference or build on anything already in the target file.\n\nWhen uncertain, allow.",
+            "timeout": 15000
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",

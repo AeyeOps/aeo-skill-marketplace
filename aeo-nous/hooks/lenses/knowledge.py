@@ -23,8 +23,9 @@ See <transcript_instructions> below for the file path and how to extract only th
 
 What facts about this project should future Claude sessions know?
 
-Knowledge = what exists (architecture, patterns, domain concepts, dependencies, gotchas).
-Learnings = how to work (captured by the other lens).
+Knowledge = what exists and how it works — true regardless of what happened this session.
+Includes: architecture, environment, tool capabilities, paths, domain rules, configurations.
+Not knowledge: instructions on what to do (corrections, workarounds, preferences, process rules).
 
 Use your judgment. Non-obvious discoveries save future investigation time.
 
