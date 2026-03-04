@@ -10,6 +10,11 @@ LOG_KEEP=500
 
 input=$(cat)
 
+# Skip entries where context window is not yet populated (session startup)
+if echo "$input" | jq -e '.context_window.used_percentage == null' >/dev/null 2>&1; then
+    exit 0
+fi
+
 # Enrich and append
 ts=$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)
 host=$(hostname)

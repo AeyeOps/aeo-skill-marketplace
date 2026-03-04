@@ -82,12 +82,15 @@ CURSOR_FILE = ".claude/nous/extraction_cursor.json"
 
 # Stop hook: context window thresholds (percentage)
 CONTEXT_SKIP_PCT = 10          # Below this: skip entirely
-CONTEXT_EXTRACT_MAX_PCT = 60   # At or below: flush inboxes + fire extractions
+CONTEXT_EXTRACT_MAX_PCT = 70   # At or below: flush inboxes + fire extractions
                                # Above: flush only (blocking handled by nous-stop-guard.sh at 65%)
 
 # Extraction: subprocess timeout and model
 WORKER_TIMEOUT_SECONDS = 300   # 5 minutes
 EXTRACTION_MODEL = "sonnet"
+
+# Extraction: minimum transcript lines since last checkpoint to justify spawning
+MIN_WINDOW_LINES = 20
 
 # Extraction: max recent entries for deduplication context
 DEDUP_ENTRY_LIMIT = 20
@@ -114,32 +117,38 @@ WEIGHT_RUBRIC = {
         {
             "name": "foundational",
             "range": [0.85, 1.0],
-            "guidance": "Verified correct, universally useful, stable, unique coverage, actionable. Foundational facts: entity ownership, account structure, core architecture, environment constants.",
+            "verification": "required — must cite the tool call that confirmed the claim",
+            "scope": "Universally useful, stable, unique coverage, actionable. Entity ownership, account structure, core architecture, environment constants.",
         },
         {
             "name": "solid",
             "range": [0.65, 0.84],
-            "guidance": "Verified correct, broadly useful. Solid tooling facts, pipeline behaviors, common patterns, key debugging insights.",
+            "verification": "required — must cite the tool call that confirmed the claim",
+            "scope": "Broadly useful. Tooling facts, pipeline behaviors, common patterns, key debugging insights.",
         },
         {
             "name": "moderate",
             "range": [0.45, 0.64],
-            "guidance": "Verified correct, moderately scoped. Specific script behaviors, edge cases, workflow tips with limited audience.",
+            "verification": "required — must cite the tool call that confirmed the claim",
+            "scope": "Moderately scoped. Specific script behaviors, edge cases, workflow tips with limited audience.",
         },
         {
             "name": "narrow",
             "range": [0.25, 0.44],
-            "guidance": "Correct but narrow. Task-specific insights, version-specific behavior, limited future utility. Not wrong but consumes injection budget without much return.",
+            "verification": "not required — plausible from context is sufficient",
+            "scope": "Task-specific insights, version-specific behavior, limited future utility. Not wrong but consumes injection budget without much return.",
         },
         {
             "name": "marginal",
             "range": [0.16, 0.24],
-            "guidance": "Near-duplicates of better entries, very narrow scope, unverifiable claims. One more demotion crosses the discard floor.",
+            "verification": "not required",
+            "scope": "Near-duplicates of better entries, very narrow scope, unverifiable claims. One more demotion crosses the discard floor.",
         },
         {
             "name": "discard",
             "range": [0.00, 0.15],
-            "guidance": "Verified incorrect, fully superseded, harmful if injected, or duplication noise.",
+            "verification": "not required — discard on any strong signal",
+            "scope": "Verified incorrect, fully superseded, harmful if injected, or duplication noise.",
         },
     ],
     "promotion_signals": [
@@ -161,6 +170,8 @@ WEIGHT_RUBRIC = {
         "Verified incorrect → w = 0.0. No graduated demotion for wrong information.",
         "Content is immutable — only w and w_at change, even on entries the agent previously created as consolidations.",
         "Prior weight is informational context, not a binding constraint. A previously high-weight entry that has gone stale should be demoted without hesitation.",
+        "Verification gate: entries assigned w >= 0.45 MUST have a corresponding tool verification (Read/Grep/Glob on the file, path, or value the entry claims). If you cannot verify, cap at w = 0.35 (narrow band ceiling).",
+        "w_at freshness integrity: only update w_at on entries you individually verified with a tool call. Unverified entries keep their existing w_at — do not stamp a fresh timestamp on entries scored by plausibility alone.",
     ],
 }
 
@@ -626,6 +637,34 @@ def reconcile_nous_entries(project_dir: Path, session: str = "?") -> dict:
 # =============================================================================
 
 
+def _count_window_lines(transcript: Path, start_ts: str,
+                        session: str = "?", project: str = "?") -> int:
+    """Count transcript JSONL lines from start_ts onward.
+
+    Transcript is chronologically ordered — once we cross into the window,
+    stop parsing JSON and just count raw lines.
+    """
+    count = 0
+    in_window = False
+    try:
+        with open(transcript) as f:
+            for line in f:
+                if in_window:
+                    count += 1
+                else:
+                    try:
+                        if json.loads(line).get('timestamp', '') >= start_ts:
+                            in_window = True
+                            count = 1
+                    except (json.JSONDecodeError, ValueError):
+                        log(f"WARN window_count parse_error line={line[:80]}",
+                            session=session, project=project)
+    except OSError as e:
+        log(f"ERROR window_count transcript={transcript}: {e}",
+            session=session, project=project)
+    return count
+
+
 def _fire_extraction_subprocess(
     lens: "ExtractionLens",
     current: "StatuslineEntry",
@@ -740,6 +779,13 @@ def run_stop_hook(current: "StatuslineEntry", previous: "StatuslineEntry | None"
         transcript = Path(current.transcript_path)
         if not transcript.exists():
             log(f"SKIP transcript_missing={current.transcript_path}", session=session, project=project)
+            return
+
+        window_lines = _count_window_lines(transcript, start_ts,
+                                           session=session, project=project)
+        if window_lines < MIN_WINDOW_LINES:
+            log(f"SKIP_THIN window_lines={window_lines} min={MIN_WINDOW_LINES}",
+                session=session, project=project)
             return
 
         existing_learnings = read_existing_encoded(LEARNINGS_LENS.encoded_path, project_dir)

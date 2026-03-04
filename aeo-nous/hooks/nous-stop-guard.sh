@@ -4,7 +4,7 @@
 LOG="$HOME/.claude/aeo-nous.log"
 [ -n "$NOUS_SUBPROCESS" ] && exit 0
 STATUSLINE="$HOME/.claude/statusline-activity.jsonl"
-THRESHOLD=65  # Authoritative block threshold; nous.py handles extraction thresholds independently
+THRESHOLD=80  # Authoritative block threshold; nous.py handles extraction thresholds independently
 
 input=$(cat)
 

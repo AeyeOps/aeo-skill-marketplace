@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.8] - 2026-03-05
+
+### Changed
+
+- **aeo-nous**: Raise stop-guard block threshold from 65% to 80% context usage (v0.4.3)
+- **aeo-nous**: Raise extraction ceiling from 60% to 70% context usage
+- **aeo-nous**: Add thin-window skip — suppress extraction when transcript window has fewer than 20 lines since last checkpoint
+- **aeo-nous**: Restructure weight rubric bands with explicit verification requirements per band and w_at freshness integrity rules
+- **aeo-nous**: Improve aeo-reconcile command with plugin path resolution, verification ledger, jq recipes, lift-and-shift lens bleed handling, and cross-cursor dedup checks
+
+### Fixed
+
+- **aeo-nous**: Filter null-context statusline entries in nous-logger.sh before writing to activity JSONL — eliminates ValidationError warnings when nous.py reads entries emitted during session startup
+
 ## [0.4.7] - 2026-03-04
 
 ### Added
