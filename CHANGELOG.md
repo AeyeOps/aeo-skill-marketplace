@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.8] - 2026-03-05
 
+### Added
+
+- **aeo-claude**: Add patched skill-creator skill from official Claude marketplace — temporary fork to fix subscription gate bug filed 2026-03-05; will remove once upstream fix lands (v0.4.5)
+
 ### Changed
 
 - **aeo-nous**: Raise stop-guard block threshold from 65% to 80% context usage (v0.4.3)
