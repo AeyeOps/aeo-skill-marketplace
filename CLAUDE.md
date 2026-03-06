@@ -119,9 +119,9 @@ Plugins with aggressive hooks document reference configurations in `hooks/README
 ## Key Subsystems
 
 ### Nous (aeo-nous) — self-improving memory
-Most complex plugin. Three-script hook system:
-- `nous-stop-guard.sh` (sync): blocks session exit when context >65%, prompts `/clear`
-- `nous.py` (async): on SessionStart injects recent learnings/knowledge from JSONL files; on Stop extracts new learnings via `claude --print` subprocesses (strips `CLAUDECODE` env var to prevent hook recursion)
+Most complex plugin. Hook system:
+- `nous-stop-guard.sh` (sync): blocks session exit at high context usage, prompts `/clear`
+- `nous.py` (async): on SessionStart injects recent learnings/knowledge from JSONL files; on Stop extracts new learnings via `claude --print` subprocesses (strips `CLAUDECODE` env var to suppress hooks in child process)
 - `nous-logger.sh`: enriches statusline data, appends to `~/.claude/statusline-activity.jsonl` with auto-rotation at 1000 lines
 
 Storage: per-project `.claude/nous/` — `learnings/engram.jsonl`, `knowledge/cortex.jsonl`, `extraction_cursor.json`.

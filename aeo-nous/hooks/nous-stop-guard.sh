@@ -1,5 +1,5 @@
 #!/bin/bash
-# Fast sync guard for Stop hook — checks context threshold, blocks if >65%
+# Fast sync guard for Stop hook — checks context threshold, blocks if high
 # All other Stop work (extraction, flush) runs async in nous.py
 LOG="$HOME/.claude/aeo-nous.log"
 [ -z "$CLAUDECODE" ] && exit 0
