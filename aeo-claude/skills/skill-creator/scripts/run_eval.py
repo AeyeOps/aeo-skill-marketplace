@@ -83,7 +83,6 @@ def run_single_query(
         # Claude Code session. The guard is for interactive terminal conflicts;
         # programmatic subprocess usage is safe.
         env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
-        env["NOUS_SUBPROCESS"] = "1"
 
         process = subprocess.Popen(
             cmd,

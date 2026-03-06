@@ -712,9 +712,6 @@ def _fire_extraction_subprocess(
                 start_new_session=True,  # Detach from parent
                 env={
                     **{k: v for k, v in os.environ.items() if k != "CLAUDECODE"},
-                    "NOUS_SUBPROCESS": "1",
-                    "NOUS_SESSION": current.session_id,
-                    "NOUS_PROJECT": current.cwd,
                 },  # Unset CLAUDECODE to prevent hook recursion in nested claude --print
             )
         except OSError:
@@ -806,7 +803,7 @@ def run_stop_hook(current: "StatuslineEntry", previous: "StatuslineEntry | None"
 
 def main() -> int:
     """Hook entry point. Fire-and-forget, always returns 0."""
-    if os.environ.get("NOUS_SUBPROCESS"):
+    if not os.environ.get("CLAUDECODE"):
         return 0
 
     start_time = datetime.now()

@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.10] - 2026-03-07
+
+### Changed
+
+- **aeo-nous**: Replace bespoke `NOUS_SUBPROCESS` env var with `CLAUDECODE` absence check for subprocess detection — `claude --print` does not re-set `CLAUDECODE` in child process, so stripping it is sufficient to suppress hooks in subprocesses (v0.4.4)
+- **aeo-claude**: Remove `NOUS_SUBPROCESS` from skill-creator subprocess env setup — CLAUDECODE stripping already provides the signal (v0.4.6)
+
+### Removed
+
+- **aeo-nous**: Remove `hook-profiler.sh` and all profiler-only hook event registrations (SessionEnd, PreCompact, SubagentStop, Notification, UserPromptSubmit)
+- **aeo-nous**: Remove dead `NOUS_SESSION` and `NOUS_PROJECT` env vars from extraction subprocess spawning
+
 ## [0.4.9] - 2026-03-06
 
 ### Fixed

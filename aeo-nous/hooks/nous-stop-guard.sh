@@ -2,7 +2,7 @@
 # Fast sync guard for Stop hook — checks context threshold, blocks if >65%
 # All other Stop work (extraction, flush) runs async in nous.py
 LOG="$HOME/.claude/aeo-nous.log"
-[ -n "$NOUS_SUBPROCESS" ] && exit 0
+[ -z "$CLAUDECODE" ] && exit 0
 STATUSLINE="$HOME/.claude/statusline-activity.jsonl"
 THRESHOLD=80  # Authoritative block threshold; nous.py handles extraction thresholds independently
 
