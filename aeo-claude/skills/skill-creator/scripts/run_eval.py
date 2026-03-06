@@ -9,6 +9,7 @@ import argparse
 import json
 import os
 import select
+import shutil
 import subprocess
 import sys
 import time
@@ -42,30 +43,31 @@ def run_single_query(
 ) -> bool:
     """Run a single query and return whether the skill was triggered.
 
-    Creates a command file in .claude/commands/ so it appears in Claude's
-    available_skills list, then runs `claude -p` with the raw query.
+    Creates a skill in .claude/skills/ so it appears in Claude's skills
+    list (not just slash_commands), then runs `claude -p` with the raw query.
     Uses --include-partial-messages to detect triggering early from
     stream events (content_block_start) rather than waiting for the
     full assistant message, which only arrives after tool execution.
     """
     unique_id = uuid.uuid4().hex[:8]
     clean_name = f"{skill_name}-skill-{unique_id}"
-    project_commands_dir = Path(project_root) / ".claude" / "commands"
-    command_file = project_commands_dir / f"{clean_name}.md"
+    skill_dir = Path(project_root) / ".claude" / "skills" / clean_name
+    skill_file = skill_dir / "SKILL.md"
 
     try:
-        project_commands_dir.mkdir(parents=True, exist_ok=True)
+        skill_dir.mkdir(parents=True, exist_ok=True)
         # Use YAML block scalar to avoid breaking on quotes in description
         indented_desc = "\n  ".join(skill_description.split("\n"))
-        command_content = (
+        skill_content = (
             f"---\n"
+            f"name: {clean_name}\n"
             f"description: |\n"
             f"  {indented_desc}\n"
             f"---\n\n"
             f"# {skill_name}\n\n"
             f"This skill handles: {skill_description}\n"
         )
-        command_file.write_text(command_content)
+        skill_file.write_text(skill_content)
 
         cmd = [
             "claude",
@@ -81,6 +83,7 @@ def run_single_query(
         # Claude Code session. The guard is for interactive terminal conflicts;
         # programmatic subprocess usage is safe.
         env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
+        env["NOUS_SUBPROCESS"] = "1"
 
         process = subprocess.Popen(
             cmd,
@@ -137,6 +140,8 @@ def run_single_query(
                                 if tool_name in ("Skill", "Read"):
                                     pending_tool_name = tool_name
                                     accumulated_json = ""
+                                elif tool_name == "ToolSearch":
+                                    pass  # ToolSearch loads deferred tools before Skill; allow it
                                 else:
                                     return False
 
@@ -148,10 +153,11 @@ def run_single_query(
                                     return True
 
                         elif se_type in ("content_block_stop", "message_stop"):
-                            if pending_tool_name:
-                                return clean_name in accumulated_json
-                            if se_type == "message_stop":
-                                return False
+                            if pending_tool_name and se_type == "content_block_stop":
+                                if clean_name in accumulated_json:
+                                    return True
+                                pending_tool_name = None
+                                accumulated_json = ""
 
                     # Fallback: full assistant message
                     elif event.get("type") == "assistant":
@@ -162,10 +168,11 @@ def run_single_query(
                             tool_name = content_item.get("name", "")
                             tool_input = content_item.get("input", {})
                             if tool_name == "Skill" and clean_name in tool_input.get("skill", ""):
-                                triggered = True
+                                return True
                             elif tool_name == "Read" and clean_name in tool_input.get("file_path", ""):
-                                triggered = True
-                            return triggered
+                                return True
+                            elif tool_name == "ToolSearch":
+                                continue  # pass-through for deferred tool loading
 
                     elif event.get("type") == "result":
                         return triggered
@@ -177,8 +184,8 @@ def run_single_query(
 
         return triggered
     finally:
-        if command_file.exists():
-            command_file.unlink()
+        if skill_dir.exists():
+            shutil.rmtree(skill_dir)
 
 
 def run_eval(

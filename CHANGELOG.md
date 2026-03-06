@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.9] - 2026-03-06
+
+### Fixed
+
+- **aeo-claude**: Fix skill-creator description optimization eval producing 0% recall — create temp skills in `.claude/skills/` instead of `.claude/commands/` so they appear in the `skills` list, allow `ToolSearch` as a pass-through in stream detection, handle multi-turn `message_stop` without early exit, and suppress nous hooks in eval subprocesses via `NOUS_SUBPROCESS=1`
+
 ## [0.4.8] - 2026-03-05
 
 ### Added
