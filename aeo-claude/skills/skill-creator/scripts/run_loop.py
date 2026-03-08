@@ -18,7 +18,7 @@ from pathlib import Path
 from scripts.generate_report import generate_html
 from scripts.improve_description import improve_description
 from scripts.run_eval import find_project_root, run_eval
-from scripts.utils import parse_skill_md
+from scripts.utils import browser_open_path, parse_skill_md
 
 
 def split_eval_set(eval_set: list[dict], holdout: float, seed: int = 42) -> tuple[list[dict], list[dict]]:
@@ -276,7 +276,7 @@ def main():
             live_report_path = Path(args.report)
         # Open the report immediately so the user can watch
         live_report_path.write_text("<html><body><h1>Starting optimization loop...</h1><meta http-equiv='refresh' content='5'></body></html>")
-        webbrowser.open(str(live_report_path))
+        webbrowser.open(browser_open_path(str(live_report_path)))
     else:
         live_report_path = None
 

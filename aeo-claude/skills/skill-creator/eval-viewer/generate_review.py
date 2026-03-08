@@ -82,22 +82,33 @@ def _find_runs_recursive(root: Path, current: Path, runs: list[dict]) -> None:
             _find_runs_recursive(root, child, runs)
 
 
+def _find_json_in_ancestors(filename: str, run_dir: Path, root: Path) -> dict | None:
+    """Walk up from run_dir to root looking for a JSON file, return parsed dict or None."""
+    cursor = run_dir
+    while True:
+        candidate = cursor / filename
+        if candidate.exists():
+            try:
+                data = json.loads(candidate.read_text())
+                if data:
+                    return data
+            except (json.JSONDecodeError, OSError):
+                pass
+        if cursor == root or cursor.parent == cursor:
+            break
+        cursor = cursor.parent
+    return None
+
+
 def build_run(root: Path, run_dir: Path) -> dict | None:
     """Build a run dict with prompt, outputs, and grading data."""
     prompt = ""
     eval_id = None
 
-    # Try eval_metadata.json
-    for candidate in [run_dir / "eval_metadata.json", run_dir.parent / "eval_metadata.json"]:
-        if candidate.exists():
-            try:
-                metadata = json.loads(candidate.read_text())
-                prompt = metadata.get("prompt", "")
-                eval_id = metadata.get("eval_id")
-            except (json.JSONDecodeError, OSError):
-                pass
-            if prompt:
-                break
+    metadata = _find_json_in_ancestors("eval_metadata.json", run_dir, root)
+    if metadata:
+        prompt = metadata.get("prompt", "")
+        eval_id = metadata.get("eval_id")
 
     # Fall back to transcript.md
     if not prompt:
@@ -126,16 +137,7 @@ def build_run(root: Path, run_dir: Path) -> dict | None:
             if f.is_file() and f.name not in METADATA_FILES:
                 output_files.append(embed_file(f))
 
-    # Load grading if present
-    grading = None
-    for candidate in [run_dir / "grading.json", run_dir.parent / "grading.json"]:
-        if candidate.exists():
-            try:
-                grading = json.loads(candidate.read_text())
-            except (json.JSONDecodeError, OSError):
-                pass
-            if grading:
-                break
+    grading = _find_json_in_ancestors("grading.json", run_dir, root)
 
     return {
         "id": run_id,

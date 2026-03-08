@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.11] - 2026-03-08
+
+### Added
+
+- **aeo-claude**: Add WSL browser compatibility to skill-creator — `browser_open_path()` converts Linux paths to Windows UNC paths via `wslpath` when a Windows-side browser is detected (v0.4.7)
+- Add `docs/kb/claude-p-subprocess-patterns.md` knowledge base documenting SDK-to-CLI parity mapping, stream-json parsing, session continuation, and thinking block extraction
+
+### Changed
+
+- **aeo-claude**: Refactor `generate_review.py` metadata and grading lookup into `_find_json_in_ancestors()` that walks up the directory tree instead of checking only two fixed locations
+- **aeo-claude**: Use `python3 -m webbrowser` instead of `open` for cross-platform browser launching in skill-creator SKILL.md
+
 ## [0.4.10] - 2026-03-07
 
 ### Changed
