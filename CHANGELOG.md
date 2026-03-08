@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.12] - 2026-03-08
+
+### Fixed
+
+- **aeo-nous**: Replace broken `CLAUDECODE` absence guard with `agent_id`/`agent_type` provenance check — `CLAUDECODE` env var is not passed to hook subprocesses, so the absence check blocked all hook invocations; new guard correctly skips only subagents, team leads, and `--agent` sessions (v0.4.5)
+
 ## [0.4.11] - 2026-03-08
 
 ### Added

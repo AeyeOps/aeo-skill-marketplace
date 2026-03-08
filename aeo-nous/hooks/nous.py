@@ -803,9 +803,6 @@ def run_stop_hook(current: "StatuslineEntry", previous: "StatuslineEntry | None"
 
 def main() -> int:
     """Hook entry point. Fire-and-forget, always returns 0."""
-    if not os.environ.get("CLAUDECODE"):
-        return 0
-
     start_time = datetime.now()
     session_id = "?"
     project = "?"
@@ -816,6 +813,11 @@ def main() -> int:
         event_name = raw.get("hook_event_name", "")
         session_id = raw.get("session_id", "?")
         project = raw.get("cwd", "?")
+
+        # Only run for interactive human sessions — skip subagents, team leads, --agent
+        if raw.get("agent_id") or raw.get("agent_type"):
+            log(f"SKIP agent={raw.get('agent_type') or raw.get('agent_id')}", session=session_id, project=project)
+            return 0
 
         if event_name == "SessionStart":
             hook = SessionStartInput.model_validate(raw)
