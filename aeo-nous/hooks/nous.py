@@ -12,7 +12,7 @@ Dual-purpose hook entry point:
 
 SessionStart (sync): Injects context (recent learnings/knowledge) via stdout.
 Stop (async): Flushes inboxes, fires extraction subprocesses at thresholds.
-  Blocking decision (>65% context) handled by nous-stop-guard.sh (sync).
+  Blocking decision handled by nous-stop-guard.sh (sync).
 """
 
 from __future__ import annotations
@@ -83,7 +83,7 @@ CURSOR_FILE = ".claude/nous/extraction_cursor.json"
 # Stop hook: context window thresholds (percentage)
 CONTEXT_SKIP_PCT = 10          # Below this: skip entirely
 CONTEXT_EXTRACT_MAX_PCT = 70   # At or below: flush inboxes + fire extractions
-                               # Above: flush only (blocking handled by nous-stop-guard.sh at 65%)
+                               # Above: flush only (blocking handled by nous-stop-guard.sh)
 
 # Extraction: subprocess timeout and model
 WORKER_TIMEOUT_SECONDS = 300   # 5 minutes
