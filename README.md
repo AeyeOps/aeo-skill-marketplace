@@ -29,9 +29,9 @@ graph LR
 | **Productivity** | 3 plugins | Agile roles, requirements gathering, troubleshooting |
 | **Developer Tools** | 4 plugins | Claude skills, deployment, performance, self-improving memory |
 | **Design** | 1 plugin | UX optimization, React PWA patterns |
-| **Infrastructure** | 1 plugin | AWS CLI operations, cloud resource management |
+| **Infrastructure** | 1 plugin | AWS and Azure CLI operations, cloud resource management |
 
-**Total:** 17 plugins · 35 skills · 25 agents · 45 commands
+**Total:** 17 plugins · 37 skills · 25 agents · 31 commands
 
 ---
 
@@ -60,10 +60,11 @@ Design systems, document decisions, and maintain quality.
 
 | Plugin | Description |
 |--------|-------------|
-| [**aeo-architecture**](./aeo-architecture) | 10 agents for system design, C4 diagrams, ADRs, and architecture review |
+| [**aeo-architecture**](./aeo-architecture) | 5 agents for system design, C4 diagrams, ADRs, and architecture review |
 | [**aeo-documentation**](./aeo-documentation) | Diataxis framework implementation with tutorial, how-to, reference, and explanation agents |
 
 **Skills included:** MCP server design, Mermaid diagram creation
+**Commands:** `/code-review`, `/design-architecture`, `/refactor-code`
 
 ---
 
@@ -73,11 +74,11 @@ Enforce quality through systematic testing workflows.
 
 | Plugin | Description |
 |--------|-------------|
-| [**aeo-tdd-workflow**](./aeo-tdd-workflow) | Red-green-refactor methodology with 6 specialized agents |
+| [**aeo-tdd-workflow**](./aeo-tdd-workflow) | Red-green-refactor methodology with TDD skills and commands |
 | [**aeo-testing**](./aeo-testing) | Test planning, quality gates, coverage analysis |
 | [**aeo-security**](./aeo-security) | Vulnerability scanning, compliance validation, permission auditing |
 
-**Commands:** `/tdd-feature`, `/tdd-bugfix`, `/security-scan`, `/generate-tests`
+**Commands:** `/tdd-feature`, `/tdd-bugfix`, `/security-scan`, `/permission-audit`, `/generate-tests`
 
 ---
 
@@ -87,11 +88,11 @@ Structured methodologies for complex development tasks.
 
 | Plugin | Description |
 |--------|-------------|
-| [**aeo-epcc-workflow**](./aeo-epcc-workflow) | Explore-Plan-Code-Commit cycle with 12 agents and 7 commands |
+| [**aeo-epcc-workflow**](./aeo-epcc-workflow) | Explore-Plan-Code-Commit cycle with 7 commands and 16 reference files |
 | [**aeo-n8n**](./aeo-n8n) | 7 skills for n8n workflow automation — expressions, nodes, validation, patterns |
 | [**aeo-python**](./aeo-python) | CLI engineering, data pipelines, terminal UI development |
 
-**Commands:** `/epcc-explore`, `/epcc-plan`, `/epcc-code`, `/epcc-commit`, `/epcc-prd`, `/trd`
+**Commands:** `/epcc-explore`, `/epcc-plan`, `/epcc-code`, `/epcc-commit`, `/epcc-prd`, `/epcc-resume`, `/trd`
 
 ---
 
@@ -105,7 +106,7 @@ Agents that embody specific roles and responsibilities.
 | [**aeo-requirements**](./aeo-requirements) | Product discovery, technical specifications, build-vs-buy analysis |
 | [**aeo-troubleshooting**](./aeo-troubleshooting) | Systematic debugging with escalation mechanisms |
 
-**Commands:** `/tech-req`, `/troubleshoot`
+**Commands:** `/sprint-planning`, `/retrospective`, `/prd`, `/tech-req`, `/troubleshoot`
 
 ---
 
@@ -133,6 +134,7 @@ Skills for building AI-powered tooling.
 | [**aeo-nous**](./aeo-nous) | Self-improving memory — extracts learnings from sessions, injects context at startup |
 
 **Skills included:** Agent SDK patterns, skill authoring, command development, prompt engineering
+**Commands:** `/aeo-retro`, `/aeo-reconcile`, `/setup`, `/analyze-performance`
 
 ---
 
@@ -142,9 +144,9 @@ Cloud operations and resource management.
 
 | Plugin | Description |
 |--------|-------------|
-| [**aeo-infra**](./aeo-infra) | AWS CLI v2 operations — authentication, credential management, service patterns, dangerous command awareness |
+| [**aeo-infra**](./aeo-infra) | AWS CLI v2 and Azure CLI operations — authentication, credential management, service patterns, dangerous command awareness |
 
-**Skills included:** AWS CLI operations with JMESPath, S3 transfers, VPC/Lambda/DynamoDB/RDS/CloudWatch patterns
+**Skills included:** AWS CLI operations, Azure CLI operations, JMESPath queries, service patterns
 
 ---
 
@@ -226,7 +228,7 @@ aeo-skill-marketplace/
 ├── aeo-deployment/         # Release management
 ├── aeo-documentation/      # Diataxis framework
 ├── aeo-epcc-workflow/      # Development methodology
-├── aeo-infra/              # AWS infrastructure
+├── aeo-infra/              # Cloud infrastructure (AWS & Azure)
 ├── aeo-n8n/                # Workflow automation
 ├── aeo-nous/               # Self-improving memory
 ├── aeo-performance/        # Profiling & optimization
