@@ -114,7 +114,7 @@ The `` ```! `` fence syntax (backticks followed by `!`) causes Claude Code to ex
 Skills that function as bounded commands (ultrareview, ultraplan, ultrareview-loop) use `allowed-tools` and `model` fields in frontmatter to constrain execution — regular passive knowledge skills do not.
 
 ### Hooks with disabled-by-default pattern
-Plugins with aggressive hooks document reference configurations in `hooks/README.md` while keeping `hooks.json` with an empty `"hooks": {}` object. See aeo-deployment, aeo-agile-tools.
+Plugins with aggressive hooks document reference configurations in `hooks/README.md` while keeping `hooks.json` with an empty `"hooks": {}` object. See aeo-deployment, aeo-agile-tools, aeo-testing.
 
 ## Key Subsystems
 

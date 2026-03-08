@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **aeo-nous**: Replace broken `CLAUDECODE` absence guard with `agent_id`/`agent_type` provenance check — `CLAUDECODE` env var is not passed to hook subprocesses, so the absence check blocked all hook invocations; new guard correctly skips only subagents, team leads, and `--agent` sessions (v0.4.5)
+- **aeo-claude**: Reduce false positives in explore-before-create PreToolUse prompt hook — remove dead `MultiEdit` matcher, front-load JSON response format, reference `cwd` from hook input for project boundary detection, collapse allowlist to 3 verifiable conditions, add motivation clause, and remove unverifiable conditions that the Haiku judge cannot check from `$ARGUMENTS` alone (v0.4.8)
 
 ## [0.4.11] - 2026-03-08
 

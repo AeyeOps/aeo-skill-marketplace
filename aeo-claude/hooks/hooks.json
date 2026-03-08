@@ -3,11 +3,11 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Edit|Write|MultiEdit",
+        "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "You judge whether a file edit creates something new versus modifying something existing.\n\nTool call: $ARGUMENTS\n\nRespond {\"ok\":true} if this edit modifies, fixes, updates, removes, or extends existing content.\n\nRespond {\"ok\":false,\"reason\":\"EXPLORE-BEFORE-CREATE: You are creating [new thing] but may not have checked what already exists. Before retrying this edit, search the project for existing structures that could serve this purpose. Name what you found, explain why it doesn't fit, and show the user both options.\"} if the edit introduces a new file, function, class, schema section, config block, or abstraction — especially when the new content doesn't reference or build on anything already in the target file.\n\nWhen uncertain, allow.",
+            "prompt": "Respond as JSON: {\"ok\": boolean, \"reason\": string|null}\n\nTool call: $ARGUMENTS\n\nRespond {\"ok\":true} for:\n- Edit tool (old_string is present) — always a modification\n- Write tool where file_path is outside the cwd shown in the tool call\n- Write tool creating data, docs, configs, or scripts\n\nRespond {\"ok\":false,\"reason\":\"EXPLORE-BEFORE-CREATE: Creating [describe what] without evidence that existing alternatives were checked. Search the project first, then retry.\"} only when ALL of these are true, because duplicate abstractions cause maintenance burden:\n1. Write tool is creating a new file inside the cwd directory tree\n2. The file introduces a new abstraction (class, module, config schema)\n3. No similar file path or name pattern exists in the tool call context\n\nWhen uncertain, respond {\"ok\":true}.",
             "timeout": 15000
           }
         ]
