@@ -835,7 +835,7 @@ def main() -> int:
 
             current, previous = read_statusline_for_session(hook.cwd, hook.session_id)
             if not current:
-                log(f"WARN no_statusline_entry session={session_id[:8]}", session=session_id, project=project)
+                log(f"INFO no_statusline_entry session={session_id[:8]}", session=session_id, project=project)
                 return 0
 
             run_stop_hook(current, previous)
