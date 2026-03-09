@@ -183,17 +183,31 @@ WEIGHT_RUBRIC = {
         "Prior weight is informational context, not a binding constraint. A previously high-weight entry that has gone stale should be demoted without hesitation.",
         f"Verification gate: entries assigned w >= {VERIFICATION_GATE} MUST have a corresponding tool verification (Read/Grep/Glob on the file, path, or value the entry claims). If you cannot verify, cap at w = {NARROW_FLOOR + 0.10} (narrow band ceiling).",
         "w_at freshness integrity: only update w_at on entries you individually verified with a tool call. Unverified entries keep their existing w_at — do not stamp a fresh timestamp on entries scored by plausibility alone.",
+        "When pruning, set `_prune` per PRUNE_ROUTES to categorize disposition.",
     ],
 }
 
+PRUNE_ROUTES = {
+    "field": "_prune",
+    "default_suffix": ".discarded.jsonl",
+    "default_description": "Generic low-value: stale, duplicate, misdirecting, etc.",
+    "routes": {
+        "off_project": {
+            "suffix": ".nonproject.jsonl",
+            "description": "Valid content that belongs to a different project.",
+        },
+        "lens_misclassified": {
+            "suffix": ".misclassified.jsonl",
+            "description": "Valid content that doesn't belong in this lens.",
+        },
+    },
+    "rules": [
+        "Set _prune on entries to categorize disposition. The sweep routes to separate files based on this field.",
+        "Off-project and misclassified entries keep their current weight. The sweep routes them by _prune tag when above the discard threshold; below it, they go to the default discard file.",
+        "Entries without _prune go to the default discard file when w <= discard_threshold.",
+    ],
+}
 
-def get_weight_rubric() -> dict:
-    """Return the weight rubric for agent consumption.
-
-    Called by reconciliation agents during grounding to get weight bands,
-    scoring constants, promotion/demotion signals, and assignment rules.
-    """
-    return WEIGHT_RUBRIC
 
 
 # =============================================================================
@@ -592,13 +606,14 @@ def handle_session_start(hook: SessionStartInput) -> int:
 
 
 def reconcile_nous_entries(project_dir: Path, session: str = "?") -> dict:
-    """Sweep low-weight entries from encoded stores to categorized files.
+    """Sweep entries from encoded stores to categorized files.
 
     Called by the reconciliation coordinator after agents finish assigning
-    weights. Routes entries with w <= DISCARD_THRESHOLD based on _prune field:
-      - _prune="off_project"  -> <stem>.nonproject.jsonl
-      - _prune="lens_bleed"   -> <stem>.misclassified.jsonl
-      - all others            -> <stem>.discarded.jsonl
+    weights. Weight is checked first — entries at w <= DISCARD_THRESHOLD go
+    to <stem>.discarded.jsonl regardless of _prune tag. Remaining entries
+    are routed by _prune:
+      - _prune="off_project"         -> <stem>.nonproject.jsonl
+      - _prune="lens_misclassified"  -> <stem>.misclassified.jsonl
 
     Returns per-store counts including nonproject and misclassified breakdowns.
     """
@@ -609,14 +624,8 @@ def reconcile_nous_entries(project_dir: Path, session: str = "?") -> dict:
         ("engram", project_dir / ".claude/nous/learnings/engram.jsonl"),
     ]
 
-    # Routing table: _prune value -> file suffix
-    # "off_project" and "lens_bleed" are routed regardless of weight —
-    # they may be high-value entries that simply don't belong in this store.
-    PRUNE_ROUTES = {
-        "off_project": ".nonproject.jsonl",
-        "lens_bleed": ".misclassified.jsonl",
-    }
-    DEFAULT_SUFFIX = ".discarded.jsonl"
+    route_map = {k: v["suffix"] for k, v in PRUNE_ROUTES["routes"].items()}
+    default_suffix = PRUNE_ROUTES["default_suffix"]
 
     for name, store_path in stores:
         if not store_path.exists():
@@ -628,12 +637,12 @@ def reconcile_nous_entries(project_dir: Path, session: str = "?") -> dict:
         routed: dict[str, list[dict]] = {}
 
         for entry in entries:
-            reason = entry.get('_prune', '')
-            if reason in PRUNE_ROUTES:
-                suffix = PRUNE_ROUTES[reason]
+            w = entry.get('w')
+            if w is not None and w <= DISCARD_THRESHOLD:
+                routed.setdefault(default_suffix, []).append(entry)
+            elif entry.get('_prune', '') in route_map:
+                suffix = route_map[entry['_prune']]
                 routed.setdefault(suffix, []).append(entry)
-            elif entry.get('w') is not None and entry['w'] <= DISCARD_THRESHOLD:
-                routed.setdefault(DEFAULT_SUFFIX, []).append(entry)
             else:
                 keep.append(entry)
 
@@ -656,7 +665,7 @@ def reconcile_nous_entries(project_dir: Path, session: str = "?") -> dict:
                 session=session, project=str(project_dir))
 
         result = {"swept": swept_total, "kept": len(keep)}
-        for prune_val, suffix in PRUNE_ROUTES.items():
+        for prune_val, suffix in route_map.items():
             count = len(routed.get(suffix, []))
             if count:
                 result[prune_val] = count

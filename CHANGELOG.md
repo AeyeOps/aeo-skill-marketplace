@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.13] - 2026-03-09
+
+### Changed
+
+- **aeo-nous**: Add `PRUNE_ROUTES` constant to nous.py and serialize it alongside `WEIGHT_RUBRIC` into reconciliation agent prompts via a "Resolve constants" step in aeo-reconcile.md (v0.4.6)
+- **aeo-nous**: Check weight before prune routing in `reconcile_nous_entries()` — entries below discard threshold go to `.discarded.jsonl` regardless of `_prune` tag
+- **aeo-nous**: Rename `lens_bleed` to `lens_misclassified` throughout reconciliation prompts and sweep logic
+- **aeo-nous**: Simplify misclassification flow — route to `.misclassified.jsonl` by tag instead of lift-and-shift between stores
+
+### Removed
+
+- **aeo-nous**: Remove `get_weight_rubric()` and `get_prune_routes()` accessors — `WEIGHT_RUBRIC` and `PRUNE_ROUTES` are direct module-level imports
+
 ## [0.4.12] - 2026-03-08
 
 ### Fixed
