@@ -113,8 +113,11 @@ The `` ```! `` fence syntax (backticks followed by `!`) causes Claude Code to ex
 ### `allowed-tools` in skill frontmatter
 Skills that function as bounded commands (ultrareview, ultraplan, ultrareview-loop) use `allowed-tools` and `model` fields in frontmatter to constrain execution — regular passive knowledge skills do not.
 
+### Plugin cache sync
+Editing repo files does NOT update the installed plugin cache at `~/.claude/plugins/cache/aeo-skill-marketplace/`. After edits, copy changed files to the cache path (resolve via `jq -r '.plugins["<plugin>@aeo-skill-marketplace"][0].installPath' ~/.claude/plugins/installed_plugins.json`). Run `diff -rq` on the full plugin directory to catch accumulated drift from prior sessions — not just files changed in the current session.
+
 ### Hooks with disabled-by-default pattern
-Plugins with aggressive hooks document reference configurations in `hooks/README.md` while keeping `hooks.json` with an empty `"hooks": {}` object. See aeo-deployment, aeo-agile-tools, aeo-testing, aeo-epcc-workflow.
+Plugins with aggressive hooks document reference configurations in `hooks/README.md` while keeping `hooks.json` with an empty `"hooks": {}` object. See aeo-deployment, aeo-agile-tools, aeo-epcc-workflow.
 
 ## Key Subsystems
 

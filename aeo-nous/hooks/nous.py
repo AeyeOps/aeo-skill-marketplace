@@ -592,53 +592,75 @@ def handle_session_start(hook: SessionStartInput) -> int:
 
 
 def reconcile_nous_entries(project_dir: Path, session: str = "?") -> dict:
-    """Sweep low-weight entries from encoded stores to discard files.
+    """Sweep low-weight entries from encoded stores to categorized files.
 
     Called by the reconciliation coordinator after agents finish assigning
-    weights. Deterministic: reads w from each entry, moves w <= DISCARD_THRESHOLD
-    to the corresponding .discarded.jsonl file.
+    weights. Routes entries with w <= DISCARD_THRESHOLD based on _prune field:
+      - _prune="off_project"  -> <stem>.nonproject.jsonl
+      - _prune="lens_bleed"   -> <stem>.misclassified.jsonl
+      - all others            -> <stem>.discarded.jsonl
 
-    Returns {"cortex": {"swept": N, "kept": M}, "engram": {"swept": N, "kept": M}}.
+    Returns per-store counts including nonproject and misclassified breakdowns.
     """
     results = {}
 
     stores = [
-        ("cortex", project_dir / ".claude/nous/knowledge/cortex.jsonl",
-         project_dir / ".claude/nous/knowledge/cortex.discarded.jsonl"),
-        ("engram", project_dir / ".claude/nous/learnings/engram.jsonl",
-         project_dir / ".claude/nous/learnings/engram.discarded.jsonl"),
+        ("cortex", project_dir / ".claude/nous/knowledge/cortex.jsonl"),
+        ("engram", project_dir / ".claude/nous/learnings/engram.jsonl"),
     ]
 
-    for name, store_path, discard_path in stores:
+    # Routing table: _prune value -> file suffix
+    # "off_project" and "lens_bleed" are routed regardless of weight —
+    # they may be high-value entries that simply don't belong in this store.
+    PRUNE_ROUTES = {
+        "off_project": ".nonproject.jsonl",
+        "lens_bleed": ".misclassified.jsonl",
+    }
+    DEFAULT_SUFFIX = ".discarded.jsonl"
+
+    for name, store_path in stores:
         if not store_path.exists():
             results[name] = {"swept": 0, "kept": 0}
             continue
 
         entries = read_all_jsonl(store_path)
         keep = []
-        sweep = []
+        routed: dict[str, list[dict]] = {}
 
         for entry in entries:
-            w = entry.get('w')
-            if w is not None and w <= DISCARD_THRESHOLD:
-                sweep.append(entry)
+            reason = entry.get('_prune', '')
+            if reason in PRUNE_ROUTES:
+                suffix = PRUNE_ROUTES[reason]
+                routed.setdefault(suffix, []).append(entry)
+            elif entry.get('w') is not None and entry['w'] <= DISCARD_THRESHOLD:
+                routed.setdefault(DEFAULT_SUFFIX, []).append(entry)
             else:
                 keep.append(entry)
 
-        if sweep:
-            discard_path.parent.mkdir(parents=True, exist_ok=True)
-            with open(discard_path, "a") as df:
-                for entry in sweep:
-                    df.write(json.dumps(entry) + "\n")
+        swept_total = sum(len(v) for v in routed.values())
+
+        if swept_total:
+            store_path.parent.mkdir(parents=True, exist_ok=True)
+
+            for suffix, swept_entries in routed.items():
+                dest = store_path.with_suffix(suffix)
+                with open(dest, "a") as f:
+                    for entry in swept_entries:
+                        f.write(json.dumps(entry) + "\n")
 
             with open(store_path, "w") as sf:
                 for entry in keep:
                     sf.write(json.dumps(entry) + "\n")
 
-            log(f"RECONCILE_SWEEP store={name} swept={len(sweep)} kept={len(keep)}",
+            log(f"RECONCILE_SWEEP store={name} swept={swept_total} kept={len(keep)}",
                 session=session, project=str(project_dir))
 
-        results[name] = {"swept": len(sweep), "kept": len(keep)}
+        result = {"swept": swept_total, "kept": len(keep)}
+        for prune_val, suffix in PRUNE_ROUTES.items():
+            count = len(routed.get(suffix, []))
+            if count:
+                result[prune_val] = count
+        results[name] = result
 
     return results
 

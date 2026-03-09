@@ -66,6 +66,7 @@ After scanning, set `w` (and `w_at` where applicable) on each entry. For consoli
 - **Duplicated** — same insight restated across sessions; keep the most complete version
 - **Lens bleed** — entry belongs in a different lens based on the domain boundaries. Flag which lens it should move to.
 - **CLAUDE.md correction** — entry exists to compensate for a wrong claim in a CLAUDE.md file. Verify the claim against actual project state. Flag for the coordinator with the file path and what needs fixing.
+- **Off-project** — entry describes facts or guidance about systems, tools, or files outside the project scope. Check `suggested_target` paths against the project root — targets outside the project tree are strong signals. These waste injection budget and dilute project-specific context.
 
 If a lens has no actionable findings, report that cleanly — don't force findings where none exist.
 </detection-criteria>
@@ -82,9 +83,16 @@ The JSONL stores are `jq`-native. Here are some ways to work with them efficient
 
 Prune means set `w = 0.0` and `w_at` to the current timestamp on the entry.
 
+**Prune tagging** — when pruning, set `_prune` to categorize the reason. The sweep routes entries to separate files based on this field:
+- `"off_project"` → `<stem>.nonproject.jsonl` — valid content that belongs to a different project
+- `"lens_bleed"` → `<stem>.misclassified.jsonl` — valid content that doesn't belong in this lens
+- No `_prune` field → `<stem>.discarded.jsonl` — generic low-value (stale, duplicate, misdirecting, etc.)
+
+Off-project and lens-bleed entries are routed out regardless of their weight — they may be high-value content that simply doesn't belong in this store. Keep their existing `w` intact so downstream processes can assess their value.
+
 For consolidations, set `w = 0.0` on the originals and append one clean merged entry at the end of the JSONL file with an appropriate weight. The consolidated entry should read as if it were always a single observation — no lineage commentary, no process notes, no SUPERSEDES references. If you identify a consolidation candidate, execute it — do not defer to natural decay.
 
-For lens bleed: if the entry is also stale or pruneable, just set `w = 0.0`. If it's still valid, lift-and-shift it — set `w = 0.0` on the source entry and append the entry as-is to the target lens's JSONL store. Do NOT rewrite content, reassign weight, or change `w_at` — copy `content`, `context`, `suggested_target`, `w`, and `w_at` verbatim. Only adapt the schema envelope: add a `category` field (1-2 words) when moving to knowledge; drop `category` when moving to learnings. This is a zero-friction move — if the entry is valid and fits another lens, move it. No rationalization threshold, no cost-benefit analysis, no "it'll decay anyway." Report moves in your summary so the coordinator can verify.
+For lens bleed: if the entry is also stale or pruneable, set `w = 0.0` and `_prune = "lens_bleed"`. If it's still valid, lift-and-shift it — set `_prune = "lens_bleed"` on the source entry (keep its existing `w`) and append the entry as-is to the target lens's JSONL store. Do NOT rewrite content, reassign weight, or change `w_at` — copy `content`, `context`, `suggested_target`, `w`, and `w_at` verbatim. Only adapt the schema envelope: add a `category` field (1-2 words) when moving to knowledge; drop `category` when moving to learnings. This is a zero-friction move — if the entry is valid and fits another lens, move it. No rationalization threshold, no cost-benefit analysis, no "it'll decay anyway." Report moves in your summary so the coordinator can verify.
 </applying>
 
 <workflow>

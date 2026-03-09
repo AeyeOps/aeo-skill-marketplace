@@ -23,6 +23,11 @@ See <transcript_instructions> below for the file path and how to extract only th
 
 What facts about this project should future Claude sessions know?
 
+Only extract knowledge about the project at the path in <project>. Personal environment details
+(dotfiles, editor configs, user tools at other paths) and off-project system facts are out of
+scope. The one exception: environment facts that directly affect how THIS project builds, runs,
+or deploys.
+
 Knowledge = what exists and how it works — true regardless of what happened this session.
 Includes: architecture, environment, tool capabilities, paths, domain rules, configurations.
 Not knowledge: instructions on what to do (corrections, workarounds, preferences, process rules).
@@ -30,6 +35,9 @@ Not knowledge: instructions on what to do (corrections, workarounds, preferences
 Use your judgment. Non-obvious discoveries save future investigation time.
 
 If nothing interesting was discovered about the project, output nothing (empty response).
+
+Returning nothing is a correct, successful outcome when the transcript contains no
+project-relevant discoveries. Do not force extractions to avoid returning empty.
 
 Skip duplicates of existing_entries.
 

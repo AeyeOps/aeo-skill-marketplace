@@ -25,15 +25,31 @@ See <transcript_instructions> below for the file path and how to extract only th
 
 What should future Claude sessions do differently because of what happened in this window?
 
-Capture what to do differently, not what exists. System facts belong in knowledge.
+Only extract learnings relevant to the project at the path in <project>. If session work touched
+files, tools, or systems outside this project's directory tree, those learnings are out of scope
+even if they occurred during this session. The project store should only contain guidance that
+helps future sessions working on THIS project.
+
+Learnings are behavioral deltas — actionable guidance that changes how future sessions approach work.
+
+NOT learnings — out of scope for this lens:
+- CLI flag reference information (what flags exist, what values they accept)
+- System behavior descriptions (how a tool/script/hook works internally)
+- Bug reports that state what IS wrong without stating what to DO about it
+- Architecture facts (what components exist, how they connect)
+- Path/version/config inventories
 
 Look for:
 - Errors and workarounds: Tool failures that led to successful alternatives
 - Missing guidance: Issues caused by incomplete instructions
-- New patterns: Approaches that should replace previous defaults
-- Edge cases: Unexpected behaviors that change how to approach a task
+- Approach changes: a method that should REPLACE a previous default — state what to do now
+- Edge case workarounds: an unexpected behavior that requires a DIFFERENT APPROACH going forward
 - Corrections: User redirected Claude's approach
 - Rules: User stated a principle beyond this task
+
+Each entry should be expressible as an imperative: "do X", "avoid Y", "prefer X over Y",
+"when X happens, do Y". If the entry reads as a declarative statement — "X is Y", "X does
+not support Y", "X uses Y" — it is out of scope for this lens.
 
 Use your judgment. An emphatic correction is worth capturing. Repeated subtle preferences definitely are. If something represents a genuine learning, capture it.
 
@@ -43,8 +59,7 @@ Skip duplicates of existing_entries.
 
 For suggested_target, prefer specific locations over CLAUDE.md:
 - commands/*.md for workflow gaps
-- skills/**/*.md for domain knowledge
-- kb/*.md for project facts
+- skills/**/*.md for workflow patterns
 - CLAUDE.md only if it doesn't fit elsewhere (fallback)
 
 OUTPUT FORMAT (STRICT - NO EXCEPTIONS):
