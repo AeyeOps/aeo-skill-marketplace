@@ -75,7 +75,7 @@ if [ -z "$pct" ] || [ "$pct" = "null" ]; then
   exit 0
 fi
 
-if [ "$pct" -gt "$THRESHOLD" ] 2>/dev/null; then
+if [ "$pct" -ge "$THRESHOLD" ] 2>/dev/null; then
   printf '{"decision":"block","reason":"Context at %s%%. Run /clear (not /compact) to start fresh. Learnings have been extracted and will be injected automatically.\\n\\nOptional: Before clearing, ask Claude for a concise continuation prompt that captures current task state - copy it, /clear, then paste to resume."}' "$pct"
   ts_exit=$(date -u '+%Y-%m-%dT%H:%M:%S.%3NZ')
   log_guard "$ts_exit" "GUARD_BLOCK ctx=${pct}%"
