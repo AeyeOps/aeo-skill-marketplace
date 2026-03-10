@@ -47,5 +47,5 @@ Azure CLI expert covering cloud operations, resource management, and automation 
 /plugin install aeo-infra@aeo-skill-marketplace
 
 # Direct
-/plugin install /opt/aeo/aeo-skill-marketplace/aeo-infra
+/plugin install ./aeo-infra
 ```

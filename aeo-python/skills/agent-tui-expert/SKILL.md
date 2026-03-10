@@ -11,7 +11,7 @@ Expert guidance for building professional Terminal User Interfaces in Python.
 
 **If developing in WSL2, read @references/wsl2-platform-issues.md BEFORE starting.**
 
-WSL2 has a critical bug (Microsoft/WSL#1001) where horizontal terminal resize does not propagate SIGWINCH signals. This breaks Textual resize handling and requires a specific workaround using `ioctl TIOCGWINSZ` polling. The reference file contains battle-tested solutions that took 12+ hours to discover.
+WSL2 has a critical bug (Microsoft/WSL#1001) where horizontal terminal resize does not propagate SIGWINCH signals. This breaks Textual resize handling and requires a specific workaround using `ioctl TIOCGWINSZ` polling. The reference file contains tested workarounds for these issues.
 
 ## When to Use This Skill
 

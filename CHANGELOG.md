@@ -59,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **aeo-claude**: Add patched skill-creator fork with full subscription compatibility — replace Anthropic SDK calls with `claude -p` subprocess pattern in `improve_description.py` and `run_eval.py` so description optimization, eval, HTML report generation, and browser-based review all work without a paid API subscription, using the CLI's existing auth (v0.4.5)
+- **aeo-claude**: Add patched skill-creator fork with full subscription compatibility — replace Anthropic SDK calls with `claude -p` subprocess pattern in `improve_description.py` and `run_eval.py` so all features work with CLI authentication instead of requiring a separate API key (v0.4.5)
 
 ### Changed
 

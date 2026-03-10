@@ -2,7 +2,7 @@
 
 **CRITICAL: Read this first if developing Textual apps in WSL2.**
 
-This document captures hard-won lessons from extensive debugging of Textual applications running in WSL2 environments. These issues cost 12+ hours to diagnose and resolve.
+Known issues and workarounds for Textual applications running in WSL2 environments.
 
 ## The Big Problem: Horizontal Resize Doesn't Work
 
