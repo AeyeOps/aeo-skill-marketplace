@@ -26,7 +26,7 @@
 LOG="$HOME/.claude/aeo-nous.log"
 
 STATUSLINE="$HOME/.claude/statusline-activity.jsonl"
-THRESHOLD=80  # Authoritative block threshold; nous.py handles extraction thresholds independently
+THRESHOLD=65  # Authoritative block threshold; nous.py handles extraction thresholds independently
 
 input=$(cat)
 

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.14] - 2026-03-15
+
+### Changed
+
+- **aeo-nous**: Lower context thresholds for 1M context window — `CONTEXT_SKIP_PCT` 10→5 (~50K at 1M), `CONTEXT_EXTRACT_MAX_PCT` 80→60, stop guard `THRESHOLD` 80→65. Aligns extraction and guard firing with research-backed optimal rotation point before context quality degrades (v0.4.7)
+
 ## [0.4.13] - 2026-03-09
 
 ### Changed
