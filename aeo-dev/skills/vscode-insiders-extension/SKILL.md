@@ -433,6 +433,18 @@ code-insiders --install-extension my-ext-0.1.0.vsix   # local install
 
 Platform-specific builds: `vsce package --target linux-x64 linux-arm64 darwin-x64`
 
+### Stable vs Insiders — Same Extension
+
+A `.vsix` package works on both VS Code stable and Insiders — there is no separate build. The
+only factor is the `engines.vscode` version in `package.json`:
+
+- `"^1.110.0"` means the extension requires VS Code 1.110+. Insiders runs ~1 month ahead of
+  stable, so APIs available in Insiders may not be in stable yet. Use the lowest version that
+  supports the APIs you need if you want stable compatibility.
+- The marketplace serves the same package to both builds.
+- Local install just differs by CLI: `code-insiders --install-extension` vs `code --install-extension`.
+- When developing on Insiders, test against stable before publishing if you want broad reach.
+
 ## WSL Platform Notes
 
 ### Profile-Based Extension Registration (WSL Gotcha)
