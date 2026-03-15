@@ -1,6 +1,6 @@
 {
   "name": "aeo-dev",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Platform-specific development skills covering VS Code extension development (stable and Insiders), WSL remote workflows, TypeScript tooling, and developer environment configuration",
   "author": {
     "name": "AeyeOps",

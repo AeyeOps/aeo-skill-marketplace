@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.15] - 2026-03-15
+
+### Added
+
+- **aeo-dev**: Add plugin with two VS Code extension development skills
+  - `vscode-insiders-extension` — targets code-insiders on WSL with verified CSP pitfall resolutions, dual TreeView+WebviewView toggle patterns, and profile-based extension registration fixes
+  - `vscode-extension` — generic stable VS Code variant with the same API patterns and CSP guidance
+- **aeo-dev**: Document three deployment environments (native, WSL Remote, SSH Remote) with verified directory paths for extensions, profiles, settings, and keybindings
+- **aeo-dev**: Add WSL-accessible `/mnt/c/` paths alongside Windows env var paths
+- **aeo-dev**: Document that VSIX packages work on both stable and Insiders
+- **aeo-dev**: Register plugin in marketplace
+
 ## [0.4.14] - 2026-03-15
 
 ### Changed
