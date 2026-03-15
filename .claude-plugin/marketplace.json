@@ -126,6 +126,13 @@
       "category": "infrastructure",
       "source": "./aeo-infra",
       "tags": ["aws", "aws-cli", "azure", "az-cli", "infrastructure", "cloud", "s3", "ec2", "iam", "credentials", "sso", "jmespath", "operations"]
+    },
+    {
+      "name": "aeo-dev",
+      "description": "Platform-specific development skills covering VS Code extension development (stable and Insiders), WSL remote workflows, TypeScript tooling, and developer environment configuration",
+      "category": "development",
+      "source": "./aeo-dev",
+      "tags": ["vscode", "vscode-insiders", "extension", "wsl", "webview", "csp", "esbuild", "typescript", "treeview"]
     }
   ]
 }
