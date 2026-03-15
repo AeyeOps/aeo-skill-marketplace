@@ -36,8 +36,11 @@ two locations — UI extensions (themes, keymaps) stay on Windows, workspace ext
   registration
 - **Settings/keybindings (Windows)**: `%APPDATA%\Code - Insiders\User\profiles\<profile-id>\settings.json`
   and `keybindings.json` (from WSL: `/mnt/c/Users/<user>/AppData/Roaming/Code - Insiders/User/profiles/<profile-id>/`)
-  — these live on the Windows side, not in WSL. The WSL server-side profile has only a minimal
-  `settings.json` and `extensions.json`.
+  — the Windows side is **authoritative** for UI/editor settings (theme, font, keybindings,
+  layout). The WSL server-side profile at
+  `~/.vscode-server-insiders/data/User/profiles/<profile-id>/` has only a minimal `settings.json`
+  — most settings are not duplicated there. Workspace-level overrides go in
+  `.vscode/settings.json` in the project dir on WSL.
 - **User data (Windows)**: `%APPDATA%\Code - Insiders\User\`
   (from WSL: `/mnt/c/Users/<user>/AppData/Roaming/Code - Insiders/User/`)
 - **File watchers**: inotify-backed via VS Code's API — always prefer `createFileSystemWatcher()`

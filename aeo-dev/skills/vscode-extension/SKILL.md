@@ -45,7 +45,10 @@ Windows, workspace extensions run in WSL.
 - **Server-side profiles (WSL)**: `~/.vscode-server/data/User/profiles/<profile-id>/extensions.json`
 - **Settings/keybindings (Windows)**: `%APPDATA%\Code\User\profiles\<profile-id>\settings.json`
   (from WSL: `/mnt/c/Users/<user>/AppData/Roaming/Code/User/profiles/<profile-id>/`)
-  — these live on the Windows side, not in WSL
+  — the Windows side is **authoritative** for UI/editor settings (theme, font, keybindings,
+  layout). The WSL server-side profile at `~/.vscode-server/data/User/profiles/<profile-id>/`
+  has only a minimal `settings.json` — most settings are not duplicated there.
+  Workspace-level overrides go in `.vscode/settings.json` in the project dir on WSL.
 - **File watchers**: inotify-backed via VS Code's API — always prefer `createFileSystemWatcher()`
   over Node.js `fs.watch()` which has cross-platform inconsistencies
 - **Path translation**: Not needed for extension code — the extension host runs natively in WSL.
