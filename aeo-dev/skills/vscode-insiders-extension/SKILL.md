@@ -1,21 +1,14 @@
 ---
 name: vscode-insiders-extension
 description: >
-  VS Code Insiders + WSL extension development skill — use this when building extensions with
-  code-insiders on WSL/Linux, not stable VS Code on Windows/macOS. Contains verified esbuild
-  configurations, WSL-specific workflow constraints (code-insiders CLI, WSL extension host paths,
-  profile-based extension registration quirks requiring manual extensions.json edits), and
-  package.json contributes patterns that produce more correct results than reasoning from general
-  training alone. Covers TreeDataProvider, WebviewPanel/WebviewViewProvider with CSP pitfall
-  resolution (the three-stage silent-failure trap), dual TreeView+WebviewView toggle with
-  globalState persistence, FileSystemWatcher (inotify-backed), StatusBarItem, command registration,
-  menu when-clauses, activation events, esbuild bundling with problem-matcher plugin,
-  @vscode/test-cli test runner, and vsce publishing. Consult when the user mentions code-insiders,
-  WSL extension development, blank webview panels, silent CSP violations, extension not loading
-  after install with profiles, or needs scaffolding/publishing workflows for the Insiders build.
-  Do NOT use for stable VS Code (code) on native Windows/macOS, configuring VS Code as a user
-  (themes, settings, keybindings, tasks.json), Chrome/browser extensions, Electron apps,
-  JupyterLab plugins, or Monaco Editor embeds.
+  Contains verified WSL-specific extension development workflows, webview CSP pitfall resolutions,
+  and profile-based install fixes that produce more correct results than reasoning from general
+  training alone. Targets code-insiders on WSL/Linux — not stable VS Code on Windows/macOS.
+  Consult when building or debugging a VS Code extension under WSL, scaffolding with esbuild,
+  fixing blank webview panels or silent CSP violations, troubleshooting extensions that won't
+  load after install with profiles, or publishing to the marketplace with code-insiders. Do NOT
+  use for stable VS Code, VS Code user configuration (themes, keybindings, tasks.json),
+  Chrome/browser extensions, Electron apps, JupyterLab plugins, or Monaco Editor embeds.
 ---
 
 # VS Code Extension Development (WSL + Code Insiders)
