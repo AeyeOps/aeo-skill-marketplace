@@ -27,11 +27,11 @@ graph LR
 | **Testing** | 3 plugins | TDD workflows, QA agents, security scanning |
 | **Automation** | 3 plugins | EPCC workflow, n8n workflows, Python tooling |
 | **Productivity** | 3 plugins | Agile roles, requirements gathering, troubleshooting |
-| **Developer Tools** | 4 plugins | Claude skills, deployment, performance, self-improving memory |
+| **Developer Tools** | 5 plugins | Claude skills, VS Code extensions, deployment, performance, self-improving memory |
 | **Design** | 1 plugin | UX optimization, React PWA patterns |
 | **Infrastructure** | 1 plugin | AWS and Azure CLI operations, cloud resource management |
 
-**Total:** 17 plugins · 37 skills · 25 agents · 31 commands
+**Total:** 18 plugins · 39 skills · 25 agents · 31 commands
 
 ---
 
@@ -132,8 +132,9 @@ Skills for building AI-powered tooling.
 | [**aeo-deployment**](./aeo-deployment) | Release orchestration, compliance automation, progressive rollouts |
 | [**aeo-performance**](./aeo-performance) | Profiling, bottleneck identification, optimization planning |
 | [**aeo-nous**](./aeo-nous) | Self-improving memory — extracts learnings from sessions, injects context at startup |
+| [**aeo-dev**](./aeo-dev) | VS Code extension development (stable and Insiders) with WSL remote workflows, CSP pitfall resolutions, dual-view patterns |
 
-**Skills included:** Agent SDK patterns, skill authoring, command development, prompt engineering
+**Skills included:** Agent SDK patterns, skill authoring, command development, prompt engineering, VS Code extension APIs (TreeView, WebviewView, CSP)
 **Commands:** `/aeo-retro`, `/aeo-reconcile`, `/setup`, `/analyze-performance`
 
 ---
@@ -225,6 +226,7 @@ aeo-skill-marketplace/
 ├── aeo-agile-tools/        # Agile team roles
 ├── aeo-architecture/       # System design
 ├── aeo-claude/             # Developer tools
+├── aeo-dev/                # VS Code extension development
 ├── aeo-deployment/         # Release management
 ├── aeo-documentation/      # Diataxis framework
 ├── aeo-epcc-workflow/      # Development methodology
