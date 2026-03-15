@@ -41,8 +41,10 @@ Windows, workspace extensions run in WSL.
 - **CLI**: `code` (available inside WSL via the VS Code Server shim)
 - **Server-side extensions (WSL)**: `~/.vscode-server/extensions/`
 - **UI-side extensions (Windows)**: `%USERPROFILE%\.vscode\extensions\`
+  (from WSL: `/mnt/c/Users/<user>/.vscode/extensions/`)
 - **Server-side profiles (WSL)**: `~/.vscode-server/data/User/profiles/<profile-id>/extensions.json`
-- **Settings/keybindings (Windows)**: `%APPDATA%\Code\User\profiles/<profile-id>/settings.json`
+- **Settings/keybindings (Windows)**: `%APPDATA%\Code\User\profiles\<profile-id>\settings.json`
+  (from WSL: `/mnt/c/Users/<user>/AppData/Roaming/Code/User/profiles/<profile-id>/`)
   — these live on the Windows side, not in WSL
 - **File watchers**: inotify-backed via VS Code's API — always prefer `createFileSystemWatcher()`
   over Node.js `fs.watch()` which has cross-platform inconsistencies

@@ -30,13 +30,16 @@ two locations — UI extensions (themes, keymaps) stay on Windows, workspace ext
 - **CLI**: Always `code-insiders`, never `code`
 - **Server-side extensions (WSL)**: `~/.vscode-server-insiders/extensions/`
 - **UI-side extensions (Windows)**: `%USERPROFILE%\.vscode-insiders\extensions\`
+  (from WSL: `/mnt/c/Users/<user>/.vscode-insiders/extensions/`)
 - **Server-side profiles (WSL)**: `~/.vscode-server-insiders/data/User/profiles/<profile-id>/extensions.json`
   — CLI installs register in the global registry but NOT the active profile, requiring manual
   registration
 - **Settings/keybindings (Windows)**: `%APPDATA%\Code - Insiders\User\profiles\<profile-id>\settings.json`
-  and `keybindings.json` — these live on the Windows side, not in WSL. The WSL server-side
-  profile has only a minimal `settings.json` and `extensions.json`.
+  and `keybindings.json` (from WSL: `/mnt/c/Users/<user>/AppData/Roaming/Code - Insiders/User/profiles/<profile-id>/`)
+  — these live on the Windows side, not in WSL. The WSL server-side profile has only a minimal
+  `settings.json` and `extensions.json`.
 - **User data (Windows)**: `%APPDATA%\Code - Insiders\User\`
+  (from WSL: `/mnt/c/Users/<user>/AppData/Roaming/Code - Insiders/User/`)
 - **File watchers**: inotify-backed via VS Code's API — always prefer `createFileSystemWatcher()`
   over Node.js `fs.watch()`
 - **Path translation**: Not needed for extension code — the extension host runs natively in WSL
