@@ -1,5 +1,5 @@
 ---
-name: vscode-insiders-wsl-ext
+name: vscode-insiders-extension
 description: >
   VS Code Insiders + WSL extension development skill — use this when building extensions with
   code-insiders on WSL/Linux, not stable VS Code on Windows/macOS. Contains verified esbuild
