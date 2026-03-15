@@ -1,22 +1,21 @@
 ---
-name: vscode-extension-dev
+name: vscode-insiders-wsl-ext
 description: >
-  WSL + VS Code Insiders extension development skill with verified esbuild configurations,
-  WSL-specific workflow constraints, and package.json contributes patterns that produce more
-  correct results than reasoning from general training alone. All CLI operations use
-  code-insiders (not code) — the skill enforces this and provides tested scaffolding, build
-  scripts, and publish workflows validated under WSL. Covers WSL extension host paths,
-  profile-based extension registration quirks, inotify-based file watchers, TreeDataProvider,
-  WebviewPanel/WebviewViewProvider with CSP and state persistence, FileSystemWatcher,
-  StatusBarItem, command registration, menu when-clauses, activation events, esbuild bundling
-  with problem-matcher plugin, @vscode/test-cli test runner, and vsce publishing. Consult when
-  building a VS Code extension under WSL with code-insiders, scaffolding an extension project,
-  implementing extension APIs (TreeView, Webview, sidebar panels, context menus, status bar),
-  configuring package.json contribution points, setting up extension tests, bundling with
-  esbuild, or publishing to the marketplace. Do NOT use for stable VS Code (code) workflows,
-  native Windows/macOS extension development, configuring VS Code as a user (themes, settings,
-  keybindings, tasks.json), Chrome/browser extensions, Electron apps, JupyterLab plugins, or
-  Monaco Editor embeds.
+  VS Code Insiders + WSL extension development skill — use this when building extensions with
+  code-insiders on WSL/Linux, not stable VS Code on Windows/macOS. Contains verified esbuild
+  configurations, WSL-specific workflow constraints (code-insiders CLI, WSL extension host paths,
+  profile-based extension registration quirks requiring manual extensions.json edits), and
+  package.json contributes patterns that produce more correct results than reasoning from general
+  training alone. Covers TreeDataProvider, WebviewPanel/WebviewViewProvider with CSP pitfall
+  resolution (the three-stage silent-failure trap), dual TreeView+WebviewView toggle with
+  globalState persistence, FileSystemWatcher (inotify-backed), StatusBarItem, command registration,
+  menu when-clauses, activation events, esbuild bundling with problem-matcher plugin,
+  @vscode/test-cli test runner, and vsce publishing. Consult when the user mentions code-insiders,
+  WSL extension development, blank webview panels, silent CSP violations, extension not loading
+  after install with profiles, or needs scaffolding/publishing workflows for the Insiders build.
+  Do NOT use for stable VS Code (code) on native Windows/macOS, configuring VS Code as a user
+  (themes, settings, keybindings, tasks.json), Chrome/browser extensions, Electron apps,
+  JupyterLab plugins, or Monaco Editor embeds.
 ---
 
 # VS Code Extension Development (WSL + Code Insiders)
