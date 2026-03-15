@@ -1,0 +1,23 @@
+{
+  "skill_name": "vscode-extension",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "I want to make a vscode extension that shows a tree in the bottom panel listing docker containers with green/red dots for running/stopped. Clicking one should open docker logs in a terminal. Can you scaffold the whole project for me? I need it to actually compile and run.",
+      "expected_output": "A working extension scaffold with package.json, build config, tsconfig, entry point, and TreeDataProvider. Should compile with npm run compile and produce a loadable extension.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "I have a VS Code extension with a TreeView but I need a richer view too — multi-line rows with colored status badges. I want users to toggle between the standard tree and the HTML version from the toolbar. What's the right way to set this up? Especially worried about the webview part — I've heard click handlers can be tricky.",
+      "expected_output": "Dual view implementation with toggle mechanism, WebviewViewProvider with working click handlers and proper CSP that won't silently fail.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Weird issue — I packaged my VS Code extension as a vsix and installed it from the command line. It said success but the extension just doesn't show up. No errors, no activation, nothing in the logs. I do have a custom profile set up in VS Code if that matters. Any ideas?",
+      "expected_output": "Correct diagnosis of the profile-based extension registration issue with an actionable fix.",
+      "files": []
+    }
+  ]
+}
