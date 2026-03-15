@@ -20,20 +20,30 @@ publication.
 
 This skill targets **VS Code Insiders** (`code-insiders`) running with a **WSL remote backend**.
 Every CLI invocation, launch config, README instruction, and documentation reference must use
-`code-insiders`. Key WSL-specific constraints:
+`code-insiders`. If the user says "VS Code" or "code", they mean code-insiders.
+
+### WSL Remote (VS Code Insiders on Windows, extension host in WSL)
+
+VS Code Insiders runs on Windows, the extension host runs inside WSL. Extensions split across
+two locations — UI extensions (themes, keymaps) stay on Windows, workspace extensions run in WSL.
 
 - **CLI**: Always `code-insiders`, never `code`
-- **Extension host**: Runs inside WSL at `~/.vscode-server-insiders/extensions/`
-- **Profiles**: WSL maintains per-profile extension registries at
-  `~/.vscode-server-insiders/data/User/profiles/<profile-id>/extensions.json` — CLI installs
-  register in the global registry but NOT the active profile, requiring manual registration
-- **File watchers**: Use VS Code's API (inotify-backed), not Node.js `fs.watch()`
+- **Server-side extensions (WSL)**: `~/.vscode-server-insiders/extensions/`
+- **UI-side extensions (Windows)**: `%USERPROFILE%\.vscode-insiders\extensions\`
+- **Server-side profiles (WSL)**: `~/.vscode-server-insiders/data/User/profiles/<profile-id>/extensions.json`
+  — CLI installs register in the global registry but NOT the active profile, requiring manual
+  registration
+- **Settings/keybindings (Windows)**: `%APPDATA%\Code - Insiders\User\profiles\<profile-id>\settings.json`
+  and `keybindings.json` — these live on the Windows side, not in WSL. The WSL server-side
+  profile has only a minimal `settings.json` and `extensions.json`.
+- **User data (Windows)**: `%APPDATA%\Code - Insiders\User\`
+- **File watchers**: inotify-backed via VS Code's API — always prefer `createFileSystemWatcher()`
+  over Node.js `fs.watch()`
 - **Path translation**: Not needed for extension code — the extension host runs natively in WSL
-- **Install command**: `code-insiders --install-extension my-ext.vsix`
+- **Install**: `code-insiders --install-extension my-ext.vsix` (runs inside WSL)
 - **Launch config**: Use `${execPath}` (resolves correctly); docs/comments reference code-insiders
-
-If the user says "VS Code" or "code", they mean code-insiders. Never generate `code` commands
-without the `-insiders` suffix.
+- **`process.env`**: The extension host does NOT have terminal-specific variables like
+  `VSCODE_IPC_HOOK_CLI` — read those from `/proc/<terminal_pid>/environ` instead
 
 ## Quick Start — Scaffold a New Extension
 
@@ -418,15 +428,6 @@ code-insiders --install-extension my-ext-0.1.0.vsix   # local install
 Platform-specific builds: `vsce package --target linux-x64 linux-arm64 darwin-x64`
 
 ## WSL Platform Notes
-
-### Extension Host Environment
-
-- The Extension Host runs inside WSL — extensions install to
-  `~/.vscode-server-insiders/extensions/`
-- `process.env` in the extension host does NOT include terminal-specific variables like
-  `VSCODE_IPC_HOOK_CLI` — read those from `/proc/<terminal_pid>/environ` instead
-- File watchers use inotify via VS Code's `createFileSystemWatcher()` API — always prefer this
-  over Node.js `fs.watch()` which has cross-platform inconsistencies
 
 ### Profile-Based Extension Registration (WSL Gotcha)
 

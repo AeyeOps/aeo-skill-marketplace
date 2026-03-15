@@ -22,25 +22,33 @@ across all three — the differences are in where files live and how the extensi
 
 ### Native (Windows/macOS/Linux desktop)
 
+The extension host runs locally on the same machine as the VS Code UI.
+
 - **CLI**: `code`
-- **Extensions**: `~/.vscode/extensions/`
-- **Profile registry**: `~/.vscode/data/User/profiles/<profile-id>/extensions.json`
-- **File watchers**: OS-native (FSEvents on macOS, ReadDirectoryChangesW on Windows, inotify on Linux)
+- **Extensions**: `%USERPROFILE%\.vscode\extensions\` (Windows), `~/.vscode/extensions/` (macOS/Linux)
+- **User data**: `%APPDATA%\Code\User\` (Windows), `~/Library/Application Support/Code/User/` (macOS), `~/.config/Code/User/` (Linux)
+- **Profile settings**: `<user-data>/profiles/<profile-id>/settings.json`
+- **Profile extensions**: `<user-data>/profiles/<profile-id>/extensions.json`
+- **File watchers**: OS-native (ReadDirectoryChangesW on Windows, FSEvents on macOS, inotify on Linux)
 - **Install**: `code --install-extension my-ext.vsix`
 
 ### WSL Remote (VS Code on Windows, extension host in WSL)
 
-VS Code runs on Windows but connects to a WSL distro via the Remote - WSL extension. The
-extension host process runs inside WSL as a Node.js server, not on Windows.
+VS Code runs on Windows but connects to a WSL distro. The extension host runs inside WSL as a
+Node.js server. Extensions split across two locations — UI extensions (themes, keymaps) stay on
+Windows, workspace extensions run in WSL.
 
 - **CLI**: `code` (available inside WSL via the VS Code Server shim)
-- **Extensions**: `~/.vscode-server/extensions/` (inside the WSL filesystem, not Windows)
-- **Profile registry**: `~/.vscode-server/data/User/profiles/<profile-id>/extensions.json`
+- **Server-side extensions (WSL)**: `~/.vscode-server/extensions/`
+- **UI-side extensions (Windows)**: `%USERPROFILE%\.vscode\extensions\`
+- **Server-side profiles (WSL)**: `~/.vscode-server/data/User/profiles/<profile-id>/extensions.json`
+- **Settings/keybindings (Windows)**: `%APPDATA%\Code\User\profiles/<profile-id>/settings.json`
+  — these live on the Windows side, not in WSL
 - **File watchers**: inotify-backed via VS Code's API — always prefer `createFileSystemWatcher()`
   over Node.js `fs.watch()` which has cross-platform inconsistencies
 - **Path translation**: Not needed for extension code — the extension host runs natively in WSL.
-  Windows paths are only relevant for the VS Code UI process, which the extension never touches.
-- **Install**: `code --install-extension my-ext.vsix` (runs inside WSL)
+  Windows paths are only relevant for the VS Code UI process.
+- **Install**: `code --install-extension my-ext.vsix` (runs inside WSL, installs to WSL server dir)
 - **`process.env`**: The extension host does NOT have terminal-specific variables like
   `VSCODE_IPC_HOOK_CLI` — read those from `/proc/<terminal_pid>/environ` instead
 
