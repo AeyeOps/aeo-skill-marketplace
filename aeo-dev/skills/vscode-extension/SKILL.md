@@ -17,21 +17,41 @@ Guide for building VS Code extensions from scaffold through publication.
 
 ## Environment Notes
 
-This skill works with **VS Code** (`code`) including WSL remote development. Key constraints
-when running under WSL:
+VS Code extensions run in three distinct environments. The extension code and APIs are identical
+across all three — the differences are in where files live and how the extension host is launched.
 
-- **CLI**: `code` (or `code-insiders` if using the Insiders build)
-- **Extension host**: Runs inside WSL at `~/.vscode-server/extensions/`
-- **Profiles**: WSL maintains per-profile extension registries at
-  `~/.vscode-server/data/User/profiles/<profile-id>/extensions.json` — CLI installs
-  register in the global registry but NOT the active profile, requiring manual registration
-- **File watchers**: Use VS Code's API (inotify-backed on Linux), not Node.js `fs.watch()`
-- **Path translation**: Not needed for extension code — the extension host runs natively in WSL
-- **Install command**: `code --install-extension my-ext.vsix`
-- **Launch config**: Use `${execPath}` (resolves correctly for both stable and Insiders)
+### Native (Windows/macOS/Linux desktop)
 
-On native Windows/macOS, extensions install to `~/.vscode/extensions/` and the profile
-registry lives under the VS Code user data directory.
+- **CLI**: `code`
+- **Extensions**: `~/.vscode/extensions/`
+- **Profile registry**: `~/.vscode/data/User/profiles/<profile-id>/extensions.json`
+- **File watchers**: OS-native (FSEvents on macOS, ReadDirectoryChangesW on Windows, inotify on Linux)
+- **Install**: `code --install-extension my-ext.vsix`
+
+### WSL Remote (VS Code on Windows, extension host in WSL)
+
+VS Code runs on Windows but connects to a WSL distro via the Remote - WSL extension. The
+extension host process runs inside WSL as a Node.js server, not on Windows.
+
+- **CLI**: `code` (available inside WSL via the VS Code Server shim)
+- **Extensions**: `~/.vscode-server/extensions/` (inside the WSL filesystem, not Windows)
+- **Profile registry**: `~/.vscode-server/data/User/profiles/<profile-id>/extensions.json`
+- **File watchers**: inotify-backed via VS Code's API — always prefer `createFileSystemWatcher()`
+  over Node.js `fs.watch()` which has cross-platform inconsistencies
+- **Path translation**: Not needed for extension code — the extension host runs natively in WSL.
+  Windows paths are only relevant for the VS Code UI process, which the extension never touches.
+- **Install**: `code --install-extension my-ext.vsix` (runs inside WSL)
+- **`process.env`**: The extension host does NOT have terminal-specific variables like
+  `VSCODE_IPC_HOOK_CLI` — read those from `/proc/<terminal_pid>/environ` instead
+
+### SSH Remote (VS Code on any OS, extension host on remote Linux)
+
+Same architecture as WSL Remote — extensions install to `~/.vscode-server/` on the remote host,
+the extension host runs as a Node.js server over SSH. Same constraints as WSL Remote apply.
+
+### Launch Config
+
+Use `${execPath}` in `.vscode/launch.json` — it resolves correctly across all three environments.
 
 ## Quick Start — Scaffold a New Extension
 
@@ -417,23 +437,17 @@ Platform-specific builds: `vsce package --target linux-x64 linux-arm64 darwin-x6
 
 ## Platform Notes
 
-### WSL Extension Host
-
-- The Extension Host runs inside WSL — extensions install to
-  `~/.vscode-server/extensions/`
-- `process.env` in the extension host does NOT include terminal-specific variables like
-  `VSCODE_IPC_HOOK_CLI` — read those from `/proc/<terminal_pid>/environ` instead
-- File watchers use inotify via VS Code's `createFileSystemWatcher()` API — always prefer this
-  over Node.js `fs.watch()` which has cross-platform inconsistencies
-
 ### Profile-Based Extension Registration
 
-When VS Code profiles are active, `code --install-extension` may register the extension
-in the global registry (`~/.vscode-server/extensions/extensions.json`) but NOT in the
-active profile's registry (`~/.vscode-server/data/User/profiles/<profile-id>/extensions.json`).
+When VS Code profiles are active, `code --install-extension` may register the extension in the
+global registry but NOT in the active profile's registry. This is especially common in WSL/SSH
+remote environments where the global registry is at `~/.vscode-server/extensions/extensions.json`
+but the profile registry is at `~/.vscode-server/data/User/profiles/<profile-id>/extensions.json`.
 The `--profile` flag may not fix this on WSL. The extension won't load until manually added to
 the profile-specific `extensions.json`. Without a publisher field in package.json, the extension
 installs as `undefined_publisher.<name>-<version>`.
+
+On native installs, the equivalent paths are under `~/.vscode/` instead of `~/.vscode-server/`.
 
 ### Webview Content Security Policy
 
