@@ -50,7 +50,7 @@ Scan for:
 - **Real personal info**: names tied to accounts, real email addresses (not @example.com), phone numbers
 - **Internal URLs**: intranet, VPN endpoints, private service/repo URLs
 - **Session artifacts**: embedded log output, stack traces with local paths, IDE configs with machine paths
-- **Git author leaks**: `.mailmap` or commit templates with private emails
+- **Git author leaks**: `.mailmap` or commit templates exposing emails the author didn't intend to publish (e.g., corporate email on a personal project). The repo owner's own email in their own commits is intentional git configuration, not a leak.
 - **Personal account details**: billing/subscription references in changelogs
 
 ### Category 3: Supply Chain & Operational Risk
@@ -58,7 +58,7 @@ Scan for:
 - **Pinning gaps**: dependencies without version pins or with overly broad ranges
 - **Lockfile presence**: verify lockfiles exist where dependency files exist
 - **Build script risks**: `curl | bash`, downloads from arbitrary URLs, elevated privileges
-- **Silent code execution**: `pip install` or similar in `except ImportError` blocks with suppressed output
+- **Untrusted code execution**: scripts that download and execute code from arbitrary URLs, or install packages from non-standard indexes without verification
 - **Sensitive tracked files**: `.env`, `credentials.json`, `*.key`, `*.pem`, `id_rsa`
 - **Docker risks**: running as root, hardcoded registry credentials, `--privileged`
 - **CI/CD leaks**: workflow files that echo secrets, use insecure action versions
@@ -66,7 +66,12 @@ Scan for:
 - **Large tracked files**: anything over 10MB
 
 <viability-gate>
-Before passing a finding to Step 3, verify that the stated risk is actually realizable given the execution context of the flagged code. A risk that cannot manifest given how the code runs is not a valid finding — drop it entirely.
+Before passing a finding to Step 3, verify that the stated risk is actually realizable in the execution context where the flagged code runs. A risk whose premise cannot manifest is not a valid finding — drop it entirely.
+
+For each candidate finding, ask:
+- Is this risk unique to the flagged pattern, or would it apply equally to any standard alternative? If the standard alternative carries the same risk, the pattern isn't the problem.
+- Is the flagged behavior appropriate for its execution context, or genuinely anomalous? Understand how the code is actually invoked before judging whether its behavior is surprising.
+- Would the proposed remediation improve the actual security posture, or just move the same risk to a different form?
 </viability-gate>
 
 ## Step 3: Compile and Deduplicate Findings
@@ -80,7 +85,7 @@ Gitignore coverage gaps are findings in the main table, not a separate section.
 Assign each deduplicated finding a severity:
 
 - **CRITICAL** — Active secret exposure, private key in repo, real credentials that grant access
-- **HIGH** — Real PII exposure, silent code execution risks (auto-install, `curl|sh` in executed scripts)
+- **HIGH** — Real PII exposure, execution of code from untrusted sources (`curl|sh` from unknown URLs, installs from non-standard package indexes)
 - **MEDIUM** — Scanner false-positive magnets, open-ended dependency pins, missing `.gitignore` patterns, documentation normalizing insecure patterns
 - **LOW** — Clearly-fake example credentials, generic placeholder paths, intentional public contact info
 
@@ -89,7 +94,9 @@ Calibration — these prevent common misclassifications:
 - `support@company.com` in project metadata → LOW (intentional), not HIGH
 - `sk_live_abc123` in a "BAD example" code block → MEDIUM (scanner noise), not CRITICAL
 - `/home/user/.config/app` in a tutorial → LOW (generic example), not HIGH
-- `pip install --quiet` in a hook's `except ImportError` → HIGH (silent supply chain risk)
+- `pip install popular-package` in a hook's `except ImportError` → LOW (standard dependency management, equivalent to requirements.txt)
+- `pip install` from a custom `--index-url` or installing an obscure package → HIGH (untrusted source)
+- Repo owner's personal email in their own git commits → not a finding (intentional git configuration)
 </reference>
 
 ## Step 4: Present Report

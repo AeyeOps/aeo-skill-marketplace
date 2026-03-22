@@ -110,6 +110,16 @@ For each issue found, record:
 
 Only flag items with "certain" confidence for automatic correction. Present "likely" items for user review because false corrections are worse than stale content.
 
+## Step 2c: Freshness Verification Before Proposals
+
+Context loaded in Step 1 may be stale — other sessions or the user may have modified CLAUDE.md, MEMORY.md, memory files, or skills between Step 1 and now (especially in long sessions or when agents run in parallel). Before proposing any addition or correction:
+
+1. **Re-read every target file** you plan to propose changes to. Use the Read tool — do not rely on content cached in your context from Step 1. Files change during sessions.
+2. **Search for existing coverage** of each finding. Before proposing a new entry, grep the target file and its linked files for key terms from your proposal. If the topic is already covered (even with different wording), do not propose a duplicate — propose a refinement only if the existing content is incomplete or wrong.
+3. **Check linked memory files** referenced by MEMORY.md entries (e.g., `[topic](feedback_topic.md)`). The index entry may look incomplete but the linked file may contain the full guidance you're about to propose.
+
+This step exists because proposing content that already exists wastes the user's review time and erodes trust in the retro's thoroughness. A retro that proposes something already saved looks like it didn't read its own project's memory.
+
 ## Step 3: Route Findings to Destinations
 
 Classify each finding into exactly one destination:

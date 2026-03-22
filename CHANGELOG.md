@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.17] - 2026-03-22
+
+### Added
+
+- **aeo-vsc-cc-sessions-sidecar**: Add hook sidecar plugin for the AEO VSC CC Sessions VSIX — provides per-process session state and lineage via SessionStart/Stop hooks (v0.2.0)
+- **aeo-claude**: Add freshness verification step to `/aeo-retro` — re-reads target files and checks for existing coverage before proposing additions (v0.4.10)
+
+### Fixed
+
+- **aeo-claude**: Replace false "safe eval" claim with security warning in Agent SDK calculator example (v0.4.10)
+- **aeo-claude**: Refine `/aeo-repo-sanitize` scan categories — clarify git author leak scope, replace "silent code execution" with "untrusted code execution", add methodology-based viability gate questions, fix calibration examples for standard dependency management (v0.4.10)
+- **aeo-claude**: Fix `generate_review.py` to recurse into output subdirectories and escape `</script>` in embedded JSON (v0.4.10)
+- **aeo-nous**: Pin pydantic dependency to `>=2.0,<3.0` in auto-install and PEP 723 metadata (v0.4.7)
+
+### Changed
+
+- Add defensive `.gitignore` patterns for secrets and credentials (`.env*`, `*.key`, `*.pem`, `credentials*`, `secrets*`)
+
 ## [0.4.16] - 2026-03-20
 
 ### Added

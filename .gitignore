@@ -18,5 +18,16 @@ Thumbs.db
 # Local plugin settings
 *.local.md
 
+# Secrets and credentials
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa*
+credentials*
+secrets*
+
 # Claude Code local state
 .claude/

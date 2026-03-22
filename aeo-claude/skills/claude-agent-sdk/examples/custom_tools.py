@@ -32,7 +32,9 @@ async def calculate(args: dict[str, Any]) -> dict[str, Any]:
         Tool response dict with content or error
     """
     try:
-        # Safe eval with restricted builtins (no access to __import__, etc.)
+        # WARNING: eval() is inherently unsafe even with empty __builtins__.
+        # Attackers can escape via ().__class__.__bases__[0].__subclasses__().
+        # For production use, replace with ast.literal_eval() or a math parser.
         result = eval(args["expression"], {"__builtins__": {}}, {})
         return {
             "content": [{"type": "text", "text": f"Result: {result}"}]

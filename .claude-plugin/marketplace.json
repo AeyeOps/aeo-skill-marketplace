@@ -133,6 +133,13 @@
       "category": "development",
       "source": "./aeo-dev",
       "tags": ["vscode", "vscode-insiders", "extension", "wsl", "webview", "csp", "esbuild", "typescript", "treeview"]
+    },
+    {
+      "name": "aeo-vsc-cc-sessions-sidecar",
+      "description": "Hook sidecar plugin for the AEO VSC CC Sessions VSIX, providing authoritative per-process session state and lineage",
+      "category": "development",
+      "source": "./aeo-vsc-cc-sessions-runtime",
+      "tags": ["vscode", "claude-code", "hooks", "sidecar", "sessions", "lineage"]
     }
   ]
 }

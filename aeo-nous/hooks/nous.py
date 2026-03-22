@@ -2,7 +2,7 @@
 # /// script
 # requires-python = ">=3.10"
 # dependencies = [
-#     "pydantic>=2.0",
+#     "pydantic>=2.0,<3.0",
 # ]
 # ///
 """
@@ -38,8 +38,8 @@ except ImportError:
     # Auto-install pydantic if missing; try pip then uv
     _installed = False
     for _cmd in (
-        [sys.executable, "-m", "pip", "install", "--quiet", "pydantic>=2.0"],
-        ["uv", "pip", "install", "--quiet", "pydantic>=2.0"],
+        [sys.executable, "-m", "pip", "install", "--quiet", "pydantic>=2.0,<3.0"],
+        ["uv", "pip", "install", "--quiet", "pydantic>=2.0,<3.0"],
     ):
         try:
             subprocess.check_call(_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -49,7 +49,7 @@ except ImportError:
             continue
     if not _installed:
         print("nous: pydantic is required but could not be installed. "
-              "Run: pip install pydantic>=2.0", file=sys.stderr)
+              "Run: pip install pydantic>=2.0,<3.0", file=sys.stderr)
         sys.exit(1)
     from pydantic import BaseModel, ValidationError
 

@@ -132,10 +132,19 @@ def build_run(root: Path, run_dir: Path) -> dict | None:
     # Collect output files
     outputs_dir = run_dir / "outputs"
     output_files: list[dict] = []
+    # Directories to skip when recursing into outputs
+    SKIP_DIRS = {"node_modules", ".git", "dist", "out", "__pycache__", ".vscode-test"}
     if outputs_dir.is_dir():
-        for f in sorted(outputs_dir.iterdir()):
+        for f in sorted(outputs_dir.rglob("*")):
+            # Skip files inside excluded directories
+            rel = f.relative_to(outputs_dir)
+            if any(part in SKIP_DIRS for part in rel.parts):
+                continue
             if f.is_file() and f.name not in METADATA_FILES:
-                output_files.append(embed_file(f))
+                entry = embed_file(f)
+                # Use path relative to outputs_dir as the display name
+                entry["name"] = str(f.relative_to(outputs_dir))
+                output_files.append(entry)
 
     grading = _find_json_in_ancestors("grading.json", run_dir, root)
 
@@ -279,6 +288,11 @@ def generate_html(
         embedded["benchmark"] = benchmark
 
     data_json = json.dumps(embedded)
+    # Escape </script> sequences in JSON values so they don't prematurely
+    # close the <script> tag when embedded in HTML.
+    data_json = data_json.replace("</script>", r"<\/script>")
+    data_json = data_json.replace("</Script>", r"<\/Script>")
+    data_json = data_json.replace("</SCRIPT>", r"<\/SCRIPT>")
 
     return template.replace("/*__EMBEDDED_DATA__*/", f"const EMBEDDED_DATA = {data_json};")
 
