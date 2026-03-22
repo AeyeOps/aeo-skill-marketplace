@@ -138,7 +138,7 @@
       "name": "aeo-vsc-cc-sessions-sidecar",
       "description": "Hook sidecar plugin for the AEO VSC CC Sessions VSIX, providing authoritative per-process session state and lineage",
       "category": "development",
-      "source": "./aeo-vsc-cc-sessions-runtime",
+      "source": "./aeo-vsc-cc-sessions-sidecar",
       "tags": ["vscode", "claude-code", "hooks", "sidecar", "sessions", "lineage"]
     }
   ]

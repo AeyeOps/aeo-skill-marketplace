@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **aeo-vsc-cc-sessions-sidecar**: Add hook sidecar plugin for the AEO VSC CC Sessions VSIX — provides per-process session state and lineage via SessionStart/Stop hooks (v0.2.0)
+- **aeo-vsc-cc-sessions-sidecar**: Add hook sidecar plugin for the AEO VSC CC Sessions VSIX — provides per-process session state, event logging, and lineage via 14 hook events (v0.2.0)
 - **aeo-claude**: Add freshness verification step to `/aeo-retro` — re-reads target files and checks for existing coverage before proposing additions (v0.4.10)
 
 ### Fixed
