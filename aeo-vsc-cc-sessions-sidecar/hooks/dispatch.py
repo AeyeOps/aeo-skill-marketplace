@@ -758,39 +758,50 @@ def run_self_test() -> int:
   if state.get('state') != 'error':
     return 1
 
-  # Test StopFailure -> error with error type
-  state, _ = apply_event(state, identity, {
+  # Test StopFailure -> error with error type and event record fields
+  state, record = apply_event(state, identity, {
     'hook_event_name': 'StopFailure',
     'session_id': 'session-1',
     'transcript_path': '/tmp/session-1.jsonl',
     'cwd': '/tmp/project',
     'error': 'rate_limit',
+    'error_details': '429 Too Many Requests',
   }, utc_now())
   if state.get('state') != 'error':
     return 1
   if state.get('tool_summary') != 'rate_limit':
     return 1
+  if record.get('error_type') != 'rate_limit':
+    return 1
+  if record.get('error_details') != '429 Too Many Requests':
+    return 1
 
-  # Test SubagentStart increments counter
-  state, _ = apply_event(state, identity, {
+  # Test SubagentStart increments counter and event record carries agent fields
+  state, record = apply_event(state, identity, {
     'hook_event_name': 'SubagentStart',
     'session_id': 'session-1',
     'transcript_path': '/tmp/session-1.jsonl',
     'cwd': '/tmp/project',
     'agent_type': 'Explore',
+    'agent_id': 'agent-abc-123',
   }, utc_now())
   if state['subagents']['active_count'] != 1:
     return 1
   if state['subagents']['last_started_type'] != 'Explore':
     return 1
+  if record.get('agent_type') != 'Explore':
+    return 1
+  if record.get('agent_id') != 'agent-abc-123':
+    return 1
 
-  # Test SubagentStop decrements counter
-  state, _ = apply_event(state, identity, {
+  # Test SubagentStop decrements counter and event record carries agent fields
+  state, record = apply_event(state, identity, {
     'hook_event_name': 'SubagentStop',
     'session_id': 'session-1',
     'transcript_path': '/tmp/session-1.jsonl',
     'cwd': '/tmp/project',
     'agent_type': 'Explore',
+    'agent_id': 'agent-abc-123',
   }, utc_now())
   if state['subagents']['active_count'] != 0:
     return 1
