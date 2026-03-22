@@ -62,18 +62,26 @@ description: |
   "hooks": {
     "PreToolUse": [{"matcher": "Bash", "hooks": [{"type": "command", "command": "..."}]}],
     "PostToolUse": [...],
+    "PostToolUseFailure": [...],
     "UserPromptSubmit": [...],
     "Stop": [...],
-    "SubagentStop": [...],
+    "StopFailure": [...],
     "SubagentStart": [...],
+    "SubagentStop": [...],
     "SessionStart": [...],
     "SessionEnd": [...],
     "PreCompact": [...],
+    "PostCompact": [...],
     "Notification": [...],
     "PermissionRequest": [...],
-    "PostToolUseFailure": [...],
+    "Elicitation": [...],
+    "ElicitationResult": [...],
+    "InstructionsLoaded": [...],
     "TeammateIdle": [...],
-    "TaskCompleted": [...]
+    "TaskCompleted": [...],
+    "ConfigChange": [...],
+    "WorktreeCreate": [...],
+    "WorktreeRemove": [...]
   }
 }
 ```

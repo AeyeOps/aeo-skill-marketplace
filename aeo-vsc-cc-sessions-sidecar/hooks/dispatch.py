@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 PROCESS_RETENTION_SECONDS = 24 * 60 * 60
 EVENT_MAX_BYTES = 2 * 1024 * 1024
 EVENT_MAX_LINES = 2000
@@ -302,6 +302,12 @@ def base_state(identity: ProcessIdentity, payload: dict[str, Any], now: datetime
       'summary_path': None,
       'summary_excerpt': None,
     },
+    'subagents': {
+      'active_count': 0,
+      'last_started_type': None,
+      'last_started_at': None,
+      'last_stopped_type': None,
+    },
     'ended_reason': None,
     'last_event': {
       'hook_event_name': extract_text(payload, 'hook_event_name'),
@@ -322,6 +328,7 @@ def normalize_state(existing: dict[str, Any] | None, identity: ProcessIdentity, 
   state['claude_pid_start_ticks'] = identity.claude.start_ticks
   state.setdefault('lineage', {})
   state.setdefault('compact', {})
+  state.setdefault('subagents', {'active_count': 0, 'last_started_type': None, 'last_started_at': None, 'last_stopped_type': None})
   state.setdefault('last_event', {})
   return state
 
@@ -351,6 +358,15 @@ def event_record(identity: ProcessIdentity, payload: dict[str, Any], now: dateti
   compact_summary = extract_text(payload, 'compact_summary', 'compactSummary')
   if compact_summary:
     record['compact_summary'] = compact_summary
+  error_type = extract_text(payload, 'error', 'error_type')
+  if error_type:
+    record['error_type'] = error_type
+  agent_type = extract_text(payload, 'agent_type', 'agentType')
+  if agent_type:
+    record['agent_type'] = agent_type
+  agent_id = extract_text(payload, 'agent_id', 'agentId')
+  if agent_id:
+    record['agent_id'] = agent_id
   return record
 
 
@@ -404,6 +420,10 @@ def apply_event(existing: dict[str, Any] | None, identity: ProcessIdentity, payl
     state['compact']['trigger'] = None
     state['compact']['summary_path'] = None
     state['compact']['summary_excerpt'] = None
+    state['subagents']['active_count'] = 0
+    state['subagents']['last_started_type'] = None
+    state['subagents']['last_started_at'] = None
+    state['subagents']['last_stopped_type'] = None
   elif hook_event == 'PermissionRequest':
     state['state'] = 'prompt'
     state['needs_user_attention'] = True
@@ -474,7 +494,32 @@ def apply_event(existing: dict[str, Any] | None, identity: ProcessIdentity, payl
     state['tool_summary'] = None
     state['notification_type'] = None
     state['ended_reason'] = reason
-  elif hook_event in {'Elicitation', 'ElicitationResult', 'Stop', 'SubagentStop'}:
+    state['subagents']['active_count'] = 0
+  elif hook_event == 'Stop':
+    if state['state'] not in ('error', 'ended', 'prompt'):
+      state['state'] = 'idle'
+      state['needs_user_attention'] = False
+      state['attention_kind'] = None
+      state['tool_name'] = None
+      state['tool_summary'] = None
+      state['notification_type'] = None
+  elif hook_event == 'StopFailure':
+    state['state'] = 'error'
+    state['needs_user_attention'] = False
+    state['attention_kind'] = None
+    state['tool_name'] = None
+    state['tool_summary'] = record.get('error_type')
+    state['notification_type'] = None
+  elif hook_event == 'SubagentStart':
+    agent_type = record.get('agent_type')
+    state['subagents']['active_count'] = max(0, state['subagents'].get('active_count', 0)) + 1
+    state['subagents']['last_started_type'] = agent_type
+    state['subagents']['last_started_at'] = isoformat(now)
+  elif hook_event == 'SubagentStop':
+    agent_type = record.get('agent_type')
+    state['subagents']['active_count'] = max(0, state['subagents'].get('active_count', 0) - 1)
+    state['subagents']['last_stopped_type'] = agent_type
+  elif hook_event in {'Elicitation', 'ElicitationResult'}:
     pass
 
   return state, record
@@ -623,6 +668,97 @@ def run_self_test() -> int:
     return 1
   if state.get('attention_kind') != 'input':
     return 1
+
+  # Test Stop -> idle (settles from prompt since prompt is NOT a guard state for Stop)
+  # First transition to thinking via UserPromptSubmit, then Stop should settle to idle
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'UserPromptSubmit',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+  }, utc_now())
+  if state.get('state') != 'thinking':
+    return 1
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'Stop',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+  }, utc_now())
+  if state.get('state') != 'idle':
+    return 1
+  if state.get('tool_name') is not None:
+    return 1
+
+  # Test Stop does NOT overwrite error state
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'PostToolUseFailure',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+    'tool_name': 'Bash',
+  }, utc_now())
+  if state.get('state') != 'error':
+    return 1
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'Stop',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+  }, utc_now())
+  if state.get('state') != 'error':
+    return 1
+
+  # Test StopFailure -> error with error type
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'StopFailure',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+    'error': 'rate_limit',
+  }, utc_now())
+  if state.get('state') != 'error':
+    return 1
+  if state.get('tool_summary') != 'rate_limit':
+    return 1
+
+  # Test SubagentStart increments counter
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'SubagentStart',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+    'agent_type': 'Explore',
+  }, utc_now())
+  if state['subagents']['active_count'] != 1:
+    return 1
+  if state['subagents']['last_started_type'] != 'Explore':
+    return 1
+
+  # Test SubagentStop decrements counter
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'SubagentStop',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+    'agent_type': 'Explore',
+  }, utc_now())
+  if state['subagents']['active_count'] != 0:
+    return 1
+  if state['subagents']['last_stopped_type'] != 'Explore':
+    return 1
+
+  # Test SubagentStop clamps at 0
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'SubagentStop',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+    'agent_type': 'Plan',
+  }, utc_now())
+  if state['subagents']['active_count'] != 0:
+    return 1
+
   return 0
 
 

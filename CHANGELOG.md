@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.18] - 2026-03-22
+
+### Added
+
+- **aeo-vsc-cc-sessions-sidecar**: Add StopFailure hook — surfaces API errors (rate_limit, auth_failed, billing_error) as `state: 'error'` with raw error type in tool_summary (v0.3.0)
+- **aeo-vsc-cc-sessions-sidecar**: Add SubagentStart hook with `subagents` state object — tracks active_count, last_started_type, last_started_at, last_stopped_type; counter resets on SessionStart/SessionEnd (v0.3.0)
+
+### Fixed
+
+- **aeo-vsc-cc-sessions-sidecar**: Fix Stop event to transition state to idle — previously a no-op, leaving sessions stuck in 'thinking' after Claude finishes responding. Guards against overwriting stronger states (error, ended, prompt) (v0.3.0)
+
+### Changed
+
+- **aeo-vsc-cc-sessions-sidecar**: Bump schema_version to 2 and extend self-test to cover Stop→idle, Stop guard states, StopFailure, and SubagentStart/SubagentStop counter logic (v0.3.0)
+
 ## [0.4.17] - 2026-03-22
 
 ### Added
