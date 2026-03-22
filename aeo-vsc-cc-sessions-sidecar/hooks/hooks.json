@@ -188,8 +188,7 @@
           {
             "type": "command",
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/dispatch.py",
-            "timeout": 10000,
-            "async": true
+            "timeout": 10000
           }
         ]
       }

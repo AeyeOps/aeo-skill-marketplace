@@ -361,6 +361,9 @@ def event_record(identity: ProcessIdentity, payload: dict[str, Any], now: dateti
   error_type = extract_text(payload, 'error', 'error_type')
   if error_type:
     record['error_type'] = error_type
+  error_details = extract_text(payload, 'error_details', 'errorDetails')
+  if error_details:
+    record['error_details'] = error_details
   agent_type = extract_text(payload, 'agent_type', 'agentType')
   if agent_type:
     record['agent_type'] = agent_type
@@ -654,6 +657,22 @@ def run_self_test() -> int:
   if state.get('tool_summary') != 'Choose one option':
     return 1
 
+  # Test unknown Notification type is inert (does not change state)
+  # Transition to idle first so we can detect if the notification incorrectly changes state
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'UserPromptSubmit',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+  }, utc_now())
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'Stop',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+  }, utc_now())
+  if state.get('state') != 'idle':
+    return 1
   unknown_notification = {
     'hook_event_name': 'Notification',
     'session_id': 'session-1',
@@ -662,15 +681,45 @@ def run_self_test() -> int:
     'notification_type': 'unvalidated_type',
   }
   state, _ = apply_event(state, identity, unknown_notification, utc_now())
-  if state.get('state') != 'prompt':
+  # Unknown notification type should NOT change state from idle
+  if state.get('state') != 'idle':
     return 1
+  # But should still record the notification_type
   if state.get('notification_type') != 'unvalidated_type':
     return 1
-  if state.get('attention_kind') != 'input':
+  # And should NOT set needs_user_attention
+  if state.get('needs_user_attention') is True:
     return 1
 
-  # Test Stop -> idle (settles from prompt since prompt is NOT a guard state for Stop)
-  # First transition to thinking via UserPromptSubmit, then Stop should settle to idle
+  # Test Stop does NOT overwrite prompt state (prompt IS a guard state)
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'PreToolUse',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+    'tool_name': 'AskUserQuestion',
+    'tool_input': {'questions': [{'question': 'Pick one'}]},
+  }, utc_now())
+  if state.get('state') != 'prompt':
+    return 1
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'Stop',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+  }, utc_now())
+  if state.get('state') != 'prompt':
+    return 1
+
+  # Test Stop -> idle from thinking state
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'UserPromptSubmit',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+  }, utc_now())
+  if state.get('state') != 'thinking':
+    return 1
   state, _ = apply_event(state, identity, {
     'hook_event_name': 'UserPromptSubmit',
     'session_id': 'session-1',
