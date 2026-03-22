@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **aeo-vsc-cc-sessions-sidecar**: Bump schema_version to 2 and extend self-test to cover Stop→idle, Stop guard states, StopFailure, and SubagentStart/SubagentStop counter logic (v0.3.0)
+- **aeo-vsc-cc-sessions-sidecar**: Remove standalone `aeo-vsc-cc-sessions-marketplace` — sidecar is a plugin of `aeo-skill-marketplace` only, not a separate marketplace
 
 ## [0.4.17] - 2026-03-22
 
