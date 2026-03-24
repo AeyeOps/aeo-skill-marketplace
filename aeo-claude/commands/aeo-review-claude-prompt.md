@@ -1,6 +1,7 @@
 ---
 description: Review and improve an existing Claude prompt — identifies over-specification, procedural anti-patterns, and missed agentic potential
 argument-hint: "[path to prompt file or paste prompt text]"
+disable-model-invocation: true
 ---
 
 # Review Claude Prompt

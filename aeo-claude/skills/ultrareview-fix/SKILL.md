@@ -29,9 +29,11 @@ Adapt your fix strategy accordingly.
 
 <investigate_before_fixing>
 Before modifying any artifact:
-1. Read the current state of files you intend to change
+1. Re-read target files from disk — even if they appear in conversation context.
+   Files may have changed since the ultrareview read them, and stale context
+   produces incorrect fixes. Trust the current file, not the earlier Read result.
 2. Understand the context around each finding
-3. Verify the finding is still applicable
+3. Verify the finding is still applicable given the current file contents
 4. Plan fixes that don't introduce new issues
 </investigate_before_fixing>
 

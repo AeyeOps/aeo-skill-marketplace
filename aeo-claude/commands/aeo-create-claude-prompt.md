@@ -1,6 +1,7 @@
 ---
 description: Create well-crafted prompts for Claude agentic execution — fights the tendency to over-prescribe inputs and procedural steps
 argument-hint: "[description of what the prompt should do]"
+disable-model-invocation: true
 ---
 
 # Create Claude Prompt
@@ -13,13 +14,12 @@ exists to counteract that instinct.
 </purpose>
 
 <prep>
-Before writing anything, load these resources:
+Before writing anything:
 
-- Invoke the `opus-prompting@aeo-claude` skill for behavioral properties and
-  pattern transformations. These are your content guardrails.
-- Spawn a `claude-code-guide` agent to confirm current best practices for
-  `claude -p` / `run_claude()` subprocess invocation (stdin piping, `--print`
-  flag, output handling). Only ask about delivery mechanics.
+- Use the claude-code-guide to learn current best practices for optimal
+  prompting.
+- Invoke the `opus-prompting@aeo-claude` skill for behavioral properties
+  and pattern transformations. These are your content guardrails.
 </prep>
 
 <principles>
@@ -99,9 +99,10 @@ Confirm:
 - **Strictness**: should the agent respond with ONLY the structured block
   (for machine parsing), or is surrounding prose acceptable?
 
-The strictness question matters for `run_claude()` consumers — if the calling
-code will `yaml.safe_load(stdout)`, the prompt needs to request bare structured
-output with no surrounding text. If a human reads the output, prose is fine.
+The strictness question matters when the calling code parses stdout
+programmatically — if it will `yaml.safe_load(stdout)`, the prompt needs to
+request bare structured output with no surrounding text. If a human reads
+the output, prose is fine.
 
 If the user says "just figure it out" — design the output schema yourself
 based on the intent, present it for approval, then proceed.

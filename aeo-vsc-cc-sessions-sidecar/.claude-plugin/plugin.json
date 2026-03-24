@@ -1,6 +1,6 @@
 {
   "name": "aeo-vsc-cc-sessions-sidecar",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Mandatory hook sidecar for the AEO VSC CC Sessions VSIX",
   "author": {
     "name": "AeyeOps",

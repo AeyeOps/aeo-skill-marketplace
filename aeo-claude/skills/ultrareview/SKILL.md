@@ -44,7 +44,10 @@ Adapt your validation approach accordingly.
 ### Step 0.5: Source Reading
 
 <source_reading>
-Before evaluating, identify and read every primary source file in scope.
+Before evaluating, re-read every primary source file in scope from disk — even files
+that appear in the conversation context. Files may have been edited since they were
+last read, and stale context produces false findings. Trust what the file contains
+now, not what an earlier Read result showed.
 
 When the focus area references a command template that calls a script, that script is a
 primary source — read it, because the template's description of what the script does may

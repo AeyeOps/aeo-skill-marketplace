@@ -437,13 +437,23 @@ def apply_event(existing: dict[str, Any] | None, identity: ProcessIdentity, payl
     state['notification_type'] = notification_type
     attention_kind = map_notification_attention(notification_type)
     if attention_kind:
-      state['state'] = 'prompt'
-      state['needs_user_attention'] = True
-      state['attention_kind'] = attention_kind
-      if tool_name:
-        state['tool_name'] = tool_name
-      if tool_summary:
-        state['tool_summary'] = tool_summary
+      if attention_kind == 'idle':
+        # Idle prompt is a soft attention hint, not a durable blocking prompt.
+        # Preserve a real permission/input prompt if one is already active.
+        if not (state.get('state') == 'prompt' and state.get('attention_kind') in {'permission', 'input'}):
+          state['state'] = 'idle'
+          state['needs_user_attention'] = False
+          state['attention_kind'] = None
+          state['tool_name'] = None
+          state['tool_summary'] = None
+      else:
+        state['state'] = 'prompt'
+        state['needs_user_attention'] = True
+        state['attention_kind'] = attention_kind
+        if tool_name:
+          state['tool_name'] = tool_name
+        if tool_summary:
+          state['tool_summary'] = tool_summary
   elif hook_event == 'UserPromptSubmit':
     state['state'] = 'thinking'
     state['needs_user_attention'] = False
@@ -689,6 +699,23 @@ def run_self_test() -> int:
     return 1
   # And should NOT set needs_user_attention
   if state.get('needs_user_attention') is True:
+    return 1
+
+  # Test idle_prompt settles to idle rather than durable prompt
+  state, _ = apply_event(state, identity, {
+    'hook_event_name': 'Notification',
+    'session_id': 'session-1',
+    'transcript_path': '/tmp/session-1.jsonl',
+    'cwd': '/tmp/project',
+    'notification_type': 'idle_prompt',
+  }, utc_now())
+  if state.get('state') != 'idle':
+    return 1
+  if state.get('needs_user_attention') is not False:
+    return 1
+  if state.get('attention_kind') is not None:
+    return 1
+  if state.get('notification_type') != 'idle_prompt':
     return 1
 
   # Test Stop does NOT overwrite prompt state (prompt IS a guard state)
