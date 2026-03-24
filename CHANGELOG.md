@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **aeo-vsc-cc-sessions-sidecar**: Fix idle_prompt notification to settle as `state: 'idle'` instead of durable blocking prompt — preserves active permission/input prompts when idle hint arrives (v0.3.1)
+- **aeo-vsc-cc-sessions-sidecar**: Extract state constants, attention kind constants, and `_set_interaction()` helper — derives `needs_user_attention` from state + attention_kind instead of tracking it redundantly across 8 branches (v0.3.1)
 
 ## [0.4.18] - 2026-03-22
 

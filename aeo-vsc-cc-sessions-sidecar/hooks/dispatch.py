@@ -24,6 +24,22 @@ ROOT_DIR_ENV = 'AEO_VSC_CC_SESSIONS_SIDECAR_ROOT'
 VALIDATION_DIR_ENV = 'AEO_VSC_CC_SESSIONS_VALIDATION_DIR'
 VALIDATION_LABEL_ENV = 'AEO_VSC_CC_SESSIONS_VALIDATION_LABEL'
 
+# Session state values
+ST_IDLE = 'idle'
+ST_PROMPT = 'prompt'
+ST_THINKING = 'thinking'
+ST_TOOL_PENDING = 'tool_pending'
+ST_ERROR = 'error'
+ST_COMPACTING = 'compacting'
+ST_ENDED = 'ended'
+
+# Attention kinds (stored in state)
+AK_PERMISSION = 'permission'
+AK_INPUT = 'input'
+
+# Stop cannot overwrite these states
+STOP_GUARD_STATES = (ST_ERROR, ST_ENDED, ST_PROMPT)
+
 SCRIPT_PATH = Path(__file__).resolve()
 PLUGIN_ROOT = Path(os.environ.get('CLAUDE_PLUGIN_ROOT', SCRIPT_PATH.parent.parent))
 WRITER_VERSION = (PLUGIN_ROOT / 'hooks' / 'VERSION').read_text(encoding='utf-8').strip()
@@ -267,10 +283,34 @@ def summarize_compact_text(compact_summary: str) -> str:
 
 def map_notification_attention(notification_type: str | None) -> str | None:
   if notification_type == 'permission_prompt':
-    return 'permission'
+    return AK_PERMISSION
   if notification_type == 'idle_prompt':
     return 'idle'
   return None
+
+
+_KEEP = object()
+
+
+def _set_interaction(
+  state: dict[str, Any], *,
+  new_state: str,
+  attention_kind: str | None = None,
+  tool_name: Any = None,
+  tool_summary: Any = None,
+  notification_type: Any = _KEEP,
+) -> None:
+  state['state'] = new_state
+  state['attention_kind'] = attention_kind
+  state['needs_user_attention'] = (
+    new_state == ST_PROMPT and attention_kind in {AK_PERMISSION, AK_INPUT}
+  )
+  if tool_name is not _KEEP:
+    state['tool_name'] = tool_name
+  if tool_summary is not _KEEP:
+    state['tool_summary'] = tool_summary
+  if notification_type is not _KEEP:
+    state['notification_type'] = notification_type
 
 
 def base_state(identity: ProcessIdentity, payload: dict[str, Any], now: datetime) -> dict[str, Any]:
@@ -284,7 +324,7 @@ def base_state(identity: ProcessIdentity, payload: dict[str, Any], now: datetime
     'cwd': extract_text(payload, 'cwd'),
     'current_session_id': extract_text(payload, 'session_id'),
     'current_transcript_path': extract_text(payload, 'transcript_path'),
-    'state': 'idle',
+    'state': ST_IDLE,
     'needs_user_attention': False,
     'attention_kind': None,
     'permission_mode': extract_text(payload, 'permission_mode'),
@@ -408,12 +448,7 @@ def apply_event(existing: dict[str, Any] | None, identity: ProcessIdentity, payl
   }
 
   if hook_event == 'SessionStart':
-    state['state'] = 'idle'
-    state['needs_user_attention'] = False
-    state['attention_kind'] = None
-    state['tool_name'] = None
-    state['tool_summary'] = None
-    state['notification_type'] = None
+    _set_interaction(state, new_state=ST_IDLE, notification_type=None)
     state['ended_reason'] = None
     state['lineage']['start_source'] = source
     if previous_session_id and previous_session_id != session_id:
@@ -428,71 +463,44 @@ def apply_event(existing: dict[str, Any] | None, identity: ProcessIdentity, payl
     state['subagents']['last_started_at'] = None
     state['subagents']['last_stopped_type'] = None
   elif hook_event == 'PermissionRequest':
-    state['state'] = 'prompt'
-    state['needs_user_attention'] = True
-    state['attention_kind'] = 'permission'
-    state['tool_name'] = tool_name
-    state['tool_summary'] = tool_summary
+    _set_interaction(state, new_state=ST_PROMPT, attention_kind=AK_PERMISSION,
+                     tool_name=tool_name, tool_summary=tool_summary)
   elif hook_event == 'Notification':
     state['notification_type'] = notification_type
-    attention_kind = map_notification_attention(notification_type)
-    if attention_kind:
-      if attention_kind == 'idle':
+    notif_attention = map_notification_attention(notification_type)
+    if notif_attention:
+      if notif_attention == 'idle':
         # Idle prompt is a soft attention hint, not a durable blocking prompt.
         # Preserve a real permission/input prompt if one is already active.
-        if not (state.get('state') == 'prompt' and state.get('attention_kind') in {'permission', 'input'}):
-          state['state'] = 'idle'
-          state['needs_user_attention'] = False
-          state['attention_kind'] = None
-          state['tool_name'] = None
-          state['tool_summary'] = None
+        if not (state.get('state') == ST_PROMPT and state.get('attention_kind') in {AK_PERMISSION, AK_INPUT}):
+          _set_interaction(state, new_state=ST_IDLE)
       else:
-        state['state'] = 'prompt'
-        state['needs_user_attention'] = True
-        state['attention_kind'] = attention_kind
-        if tool_name:
-          state['tool_name'] = tool_name
-        if tool_summary:
-          state['tool_summary'] = tool_summary
+        _set_interaction(state, new_state=ST_PROMPT, attention_kind=notif_attention,
+                         tool_name=tool_name if tool_name else _KEEP,
+                         tool_summary=tool_summary if tool_summary else _KEEP)
   elif hook_event == 'UserPromptSubmit':
-    state['state'] = 'thinking'
-    state['needs_user_attention'] = False
-    state['attention_kind'] = None
-    state['tool_name'] = None
-    state['tool_summary'] = None
-    state['notification_type'] = None
+    _set_interaction(state, new_state=ST_THINKING, notification_type=None)
   elif hook_event == 'PreToolUse':
     if tool_name in PROMPT_TOOL_NAMES:
-      state['state'] = 'prompt'
-      state['needs_user_attention'] = True
-      state['attention_kind'] = 'input'
+      _set_interaction(state, new_state=ST_PROMPT, attention_kind=AK_INPUT,
+                       tool_name=tool_name, tool_summary=tool_summary,
+                       notification_type=None)
     else:
-      state['state'] = 'tool_pending'
-      state['needs_user_attention'] = False
-      state['attention_kind'] = None
-    state['tool_name'] = tool_name
-    state['tool_summary'] = tool_summary
-    state['notification_type'] = None
+      _set_interaction(state, new_state=ST_TOOL_PENDING,
+                       tool_name=tool_name, tool_summary=tool_summary,
+                       notification_type=None)
   elif hook_event == 'PostToolUse':
-    state['state'] = 'thinking'
-    state['needs_user_attention'] = False
-    state['attention_kind'] = None
-    state['tool_name'] = None
-    state['tool_summary'] = None
-    state['notification_type'] = None
+    _set_interaction(state, new_state=ST_THINKING, notification_type=None)
   elif hook_event == 'PostToolUseFailure':
-    state['state'] = 'error'
-    state['needs_user_attention'] = False
-    state['attention_kind'] = None
-    state['tool_name'] = tool_name
-    state['tool_summary'] = tool_summary
-    state['notification_type'] = None
+    _set_interaction(state, new_state=ST_ERROR,
+                     tool_name=tool_name, tool_summary=tool_summary,
+                     notification_type=None)
   elif hook_event == 'PreCompact':
-    state['state'] = 'compacting'
+    state['state'] = ST_COMPACTING
     state['compact']['pending'] = True
     state['compact']['trigger'] = trigger
   elif hook_event == 'PostCompact':
-    state['state'] = 'thinking'
+    state['state'] = ST_THINKING
     state['compact']['pending'] = False
     state['compact']['trigger'] = trigger
     if isinstance(summary_path, str):
@@ -500,29 +508,16 @@ def apply_event(existing: dict[str, Any] | None, identity: ProcessIdentity, payl
     if isinstance(compact_summary, str):
       state['compact']['summary_excerpt'] = summarize_compact_text(compact_summary)
   elif hook_event == 'SessionEnd':
-    state['state'] = 'ended'
-    state['needs_user_attention'] = False
-    state['attention_kind'] = None
-    state['tool_name'] = None
-    state['tool_summary'] = None
-    state['notification_type'] = None
+    _set_interaction(state, new_state=ST_ENDED, notification_type=None)
     state['ended_reason'] = reason
     state['subagents']['active_count'] = 0
   elif hook_event == 'Stop':
-    if state['state'] not in ('error', 'ended', 'prompt'):
-      state['state'] = 'idle'
-      state['needs_user_attention'] = False
-      state['attention_kind'] = None
-      state['tool_name'] = None
-      state['tool_summary'] = None
-      state['notification_type'] = None
+    if state['state'] not in STOP_GUARD_STATES:
+      _set_interaction(state, new_state=ST_IDLE, notification_type=None)
   elif hook_event == 'StopFailure':
-    state['state'] = 'error'
-    state['needs_user_attention'] = False
-    state['attention_kind'] = None
-    state['tool_name'] = None
-    state['tool_summary'] = record.get('error_type')
-    state['notification_type'] = None
+    _set_interaction(state, new_state=ST_ERROR,
+                     tool_summary=record.get('error_type'),
+                     notification_type=None)
   elif hook_event == 'SubagentStart':
     agent_type = record.get('agent_type')
     state['subagents']['active_count'] = max(0, state['subagents'].get('active_count', 0)) + 1
@@ -579,7 +574,7 @@ def gc_process_root(root: Path, now: datetime) -> None:
       state = load_json(state_path)
       updated_at = parse_iso(state.get('updated_at') if isinstance(state, dict) else None)
       state_name = state.get('state') if isinstance(state, dict) else None
-      if state_name == 'ended' and updated_at and updated_at.timestamp() < cutoff:
+      if state_name == ST_ENDED and updated_at and updated_at.timestamp() < cutoff:
         shutil.rmtree(child, ignore_errors=True)
       continue
     try:
