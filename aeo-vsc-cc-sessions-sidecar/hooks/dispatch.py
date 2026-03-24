@@ -42,7 +42,18 @@ STOP_GUARD_STATES = (ST_ERROR, ST_ENDED, ST_PROMPT)
 
 SCRIPT_PATH = Path(__file__).resolve()
 PLUGIN_ROOT = Path(os.environ.get('CLAUDE_PLUGIN_ROOT', SCRIPT_PATH.parent.parent))
-WRITER_VERSION = (PLUGIN_ROOT / 'hooks' / 'VERSION').read_text(encoding='utf-8').strip()
+PLUGIN_MANIFEST = PLUGIN_ROOT / '.claude-plugin' / 'plugin.json'
+
+
+def read_writer_version() -> str:
+  manifest = json.loads(PLUGIN_MANIFEST.read_text(encoding='utf-8'))
+  version = manifest.get('version')
+  if not isinstance(version, str) or not version.strip():
+    raise RuntimeError(f'Plugin manifest {PLUGIN_MANIFEST} is missing a valid version')
+  return version.strip()
+
+
+WRITER_VERSION = read_writer_version()
 DEFAULT_ROOT = Path.home() / '.claude' / 'aeo-vsc-cc-sessions'
 
 
