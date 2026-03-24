@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.19] - 2026-03-24
+
+### Added
+
+- **aeo-claude**: Add `/aeo-create-claude-prompt` command — guided prompt creation for agentic execution contexts with delivery format routing, token contract validation, output strictness checks, and opus-prompting self-review (v0.4.11)
+- **aeo-claude**: Add `/aeo-review-claude-prompt` command — evaluate existing prompts through 7 anti-pattern lenses (content embedding, procedural prescription, exhaustive enums, aggressive language, output clarity, context boundaries, self-defeating instructions) and produce revised versions (v0.4.11)
+
 ## [0.4.18] - 2026-03-22
 
 ### Added

@@ -117,6 +117,24 @@ The skills activate when you ask about:
 
 ## Commands
 
+### /aeo-create-claude-prompt
+
+Create well-crafted prompts for Claude agentic execution:
+
+- Derives context from arguments and conversation, asks only for low-confidence gaps
+- Supports file templates, slash commands, console, and embedded string delivery
+- Enforces intent-over-procedure and files-over-content principles
+- Validates token replacement contracts and output format strictness
+- Self-reviews against opus-prompting anti-patterns before presenting
+
+### /aeo-review-claude-prompt
+
+Review and improve existing Claude prompts:
+
+- Evaluates through 7 anti-pattern lenses (content embedding, procedural prescription, exhaustive enums, aggressive language, output clarity, context boundaries, self-defeating instructions)
+- Produces a summary verdict, specific issues with quoted passages, and a full revised prompt
+- Complementary to create — catches over-specification in prompts written without the creation workflow
+
 ### /aeo-retro
 
 Session retrospective that extracts improvements and reconciles stale guidance in CLAUDE.md files and project skills:
