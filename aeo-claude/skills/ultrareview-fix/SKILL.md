@@ -107,6 +107,7 @@ For code/configuration:
 5. Preserve intent: fixes solve problems without changing goals
 6. Use provided code snippets from ultrareview as starting points
 7. Verify file:line references before editing
+8. Never create unit tests, mocks, or synthetic-data test fixtures — e2e with real data only
 
 <post_fix_workflow>
 After completing all fixes, inform the user they can run ultrareview again to verify fixes and catch any issues introduced by the changes.

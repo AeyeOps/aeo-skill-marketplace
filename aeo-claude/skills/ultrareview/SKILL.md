@@ -92,8 +92,9 @@ Examine for issues appropriate to the context type:
 Identify what's missing:
 - Incomplete implementations or undefined behaviors
 - Missing error handling for edge cases
-- Absent tests for critical paths
 - Undocumented assumptions
+
+**Testing:** Only flag missing e2e tests that run the real system with real data. Never flag absent unit tests, mocks, fakes, or synthetic-data tests.
 
 ### Step 4: Codebase Alignment
 Compare against existing patterns:
