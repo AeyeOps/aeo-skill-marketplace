@@ -1,133 +1,141 @@
 ---
 name: repo-governance
 description: >
-  Guide for the aeo-repo-* command family that manages repository documentation governance.
-  Use when the user asks about AGENTS.md scaffolding, roadmap alignment, doc curation,
-  repo bootstrap, or wants to know which governance command to run next. Covers the
-  lifecycle: bootstrap a scaffold, iterate with curation and alignment reviews, sanitize
-  before publishing.
+  Guide the user through repository documentation governance using the aeo-repo-* command
+  family. Use when the user asks about AGENTS.md scaffolding, roadmap alignment reviews,
+  doc curation, repo bootstrap, or wants to know which governance command to run next.
+  Covers lifecycle sequencing: bootstrap a scaffold, iterate with alignment reviews and
+  curation passes, sanitize before publishing.
 ---
 
-# Repository Governance Commands
+# Repository Governance
 
-Four commands that manage documentation governance as a lifecycle. They share an opinionated
-structure: `AGENTS.md` policy files, `docs/` subdirectories by purpose, and `_archive/` for
-retired artifacts.
+## Purpose
+
+Keep repository documentation honest. Code evolves faster than the docs that describe it —
+roadmap items get implemented but never retired, architecture docs describe plans instead of
+reality, and issue trackers accumulate resolved items. This command family closes that gap
+by providing a repeatable lifecycle: establish structure, check alignment, curate what's
+stale, and verify before sharing.
+
+## Intent
+
+Documentation governance is not about volume — it's about signal. A repository where
+`docs/roadmap/` only contains active plans and `docs/architecture/` only contains implemented
+designs is more useful than one with comprehensive but stale artifacts. These commands treat
+documentation as a living system with an explicit lifecycle: planning docs are born in
+`roadmap/`, mature into `architecture/` or `modules/` when implemented, and retire to
+`_archive/` with provenance when they no longer reflect reality.
+
+The governance scaffold uses `AGENTS.md` policy files because they give every directory a
+contract — what belongs there, how content enters and exits, and what quality means in that
+context. This helps both human contributors and AI agents make consistent decisions about
+where to put things and when to move them.
 
 ## Command Family
 
-| Command | Purpose | Modifies files? |
-|---------|---------|-----------------|
-| `/aeo-repo-bootstrap` | Create or augment the governance scaffold | Yes |
-| `/aeo-repo-curate-docs` | Reconcile roadmap/issues docs against implementation | Yes |
-| `/aeo-repo-roadmap-alignment-review` | Check implementation vs roadmap alignment | No (read-only) |
-| `/aeo-repo-sanitize` | Security, PII, and supply-chain scan before push | Yes (with approval) |
+| Command | Verb | Modifies files? |
+|---------|------|-----------------|
+| `/aeo-repo-bootstrap` | Establish the governance scaffold | Yes |
+| `/aeo-repo-roadmap-alignment-review` | Diagnose implementation vs roadmap drift | No |
+| `/aeo-repo-curate-docs` | Retire, trim, and archive stale docs | Yes |
+| `/aeo-repo-sanitize` | Scan for secrets, PII, supply-chain risk | Yes (with approval) |
 
 ## Lifecycle
 
-### First use: Bootstrap
+### 1. Bootstrap (once)
 
-Run `/aeo-repo-bootstrap` to set up the scaffold. This creates:
-- `AGENTS.md` policy files at root and in each `docs/` subdirectory
-- Directory structure: `docs/roadmap/`, `docs/adr/`, `docs/architecture/`, `docs/modules/`, `docs/issues/`, `docs/kb/`
-- Utility directories: `tmp/`, `_archive/`
-- Language-aware `.gitignore` additions
+`/aeo-repo-bootstrap` creates the scaffold: `AGENTS.md` policy files at 10 locations,
+`docs/` subdirectories by purpose, `tmp/` and `_archive/` utility directories, and
+language-aware `.gitignore` additions. Idempotent — detects whether to initialize or
+augment based on what already exists, and merges rather than overwrites.
 
-The command is idempotent — it detects `init` (scaffold absent) vs `augment` (partially present)
-and merges rather than overwrites.
+Run this first. The other governance commands assume this structure.
 
-### Ongoing: Review and Curate
+### 2. Review → Curate (iterative)
 
-Once the scaffold exists, two commands form an iteration loop:
+Two commands form a feedback loop:
 
 ```
-                ┌──────────────────────────┐
-                │  /aeo-repo-roadmap-      │
-                │  alignment-review        │
-                │  (read-only diagnostic)  │
-                └────────────┬─────────────┘
-                             │ identifies drift,
-                             │ stale docs, gaps
-                             ▼
-                ┌──────────────────────────┐
-                │  /aeo-repo-curate-docs   │
-                │  (retire, trim, archive) │
-                └────────────┬─────────────┘
-                             │ acts on findings
-                             │
-                             ▼
-                     commit changes,
-                     loop back to review
+    /aeo-repo-roadmap-alignment-review
+    (read-only: identifies drift, stale docs, gaps)
+                    │
+                    ▼
+    /aeo-repo-curate-docs
+    (acts: archives done, trims partial, updates issues)
+                    │
+                    ▼
+              commit, repeat
 ```
 
-**Alignment review** answers: "Are we building what the roadmap says? What's drifted?"
-It produces a structured report with objective check, coverage table, top 3 recommendations,
-and a user check-in. Run this when you want a status pulse.
+**Alignment review** is safe to run anytime because it only reads. It compares implementation
+evidence against roadmap intent, flags drift, and recommends three prioritized next steps.
+Use it as a status pulse — after a sprint, before planning, or when docs feel stale.
 
-**Curate docs** answers: "What roadmap items are done? What should be archived?"
-It classifies each roadmap artifact (`implemented`, `partially_implemented`,
-`still_applicable_unimplemented`, `not_applicable_or_superseded`), then archives completed
-items and trims partially-done docs to remaining scope. Run this after a milestone or when
-alignment review flags stale roadmap docs.
+**Curate docs** acts on what the review found. It classifies each roadmap artifact against
+the codebase using evidence-first reasoning, then:
+- Archives fully implemented items to `_archive/` with path provenance
+- Trims partially implemented docs to remaining scope only
+- Leaves unimplemented items in place (conservative default)
+- Updates issue trackers in whatever format they already use
 
-Typical iteration pattern:
-1. Run alignment review to assess current state
-2. If stale or completed roadmap docs are identified, run curate-docs
-3. Commit the curation results
-4. Run alignment review again to confirm the docs reflect reality
+Typical cadence: review after each milestone, curate when review flags stale artifacts,
+commit, review again to confirm docs match reality.
 
-### Before publishing: Sanitize
+### 3. Sanitize (before sharing)
 
-Run `/aeo-repo-sanitize` before making a repo public or pushing to a shared remote.
-This scans for secrets, PII, local environment leaks, and supply-chain risks.
-It presents findings with severity ratings and grouped remediation options.
+`/aeo-repo-sanitize` is independent of the governance scaffold — it works on any repository.
+Run before making a repo public, pushing to a shared remote, or onboarding collaborators.
+
+<reference>
+Scaffold structure created by bootstrap:
+
+repo/
+├── AGENTS.md                     # Root governance policy
+├── docs/
+│   ├── AGENTS.md                 # Docs directory contract
+│   ├── roadmap/   + AGENTS.md    # Active planning (→ architecture when done)
+│   ├── adr/       + AGENTS.md    # Architecture decision records
+│   ├── architecture/ + AGENTS.md # Implemented system design
+│   ├── modules/   + AGENTS.md    # Per-module documentation
+│   ├── issues/    + AGENTS.md    # Issue tracking (row or file based)
+│   └── kb/        + AGENTS.md    # Knowledge base
+├── tmp/           + AGENTS.md    # Ephemeral working files (gitignored)
+└── _archive/      + AGENTS.md    # Retired artifacts with provenance (gitignored)
+
+Document lifecycle flow:
+  roadmap/ → (implemented) → architecture/ or modules/
+  roadmap/ → (obsolete) → _archive/docs/roadmap/
+  issues/  → (resolved) → _archive/docs/issues/
+</reference>
 
 ## When to Suggest Each Command
 
-| User intent | Command |
+| User signal | Suggest |
 |-------------|---------|
-| "Set up docs structure" / "add AGENTS.md" / "bootstrap governance" | `/aeo-repo-bootstrap` |
-| "What's the status of our roadmap?" / "are we on track?" / "alignment check" | `/aeo-repo-roadmap-alignment-review` |
-| "Clean up roadmap docs" / "archive what's done" / "retire completed items" | `/aeo-repo-curate-docs` |
-| "Check for secrets" / "prepare for public push" / "security scan" | `/aeo-repo-sanitize` |
-| "I just finished a major feature" | Alignment review first, then curate-docs |
-| "We haven't touched our docs in a while" | Alignment review to assess, curate-docs to act |
+| Setting up a new project, wants structure | `/aeo-repo-bootstrap` |
+| Asks "are we on track?" or "what's drifted?" | `/aeo-repo-roadmap-alignment-review` |
+| Finished a milestone, wants to clean up docs | `/aeo-repo-curate-docs` |
+| Preparing to publish or share the repo | `/aeo-repo-sanitize` |
+| Says "docs feel stale" or "roadmap is outdated" | Alignment review first, then curate |
+| Asks which command to run next | Check if scaffold exists → if not, bootstrap; if yes, alignment review |
 
-## The Scaffold Structure
+## Design Principles
 
-The governance scaffold assumes this directory layout:
+These inform how the commands behave and why — useful context when the user asks "why did
+it do X?" or wants to customize the approach.
 
-```
-repo/
-├── AGENTS.md                    # Root governance policy
-├── docs/
-│   ├── AGENTS.md                # Docs directory contract
-│   ├── roadmap/                 # Active planning docs
-│   │   └── AGENTS.md
-│   ├── adr/                     # Architecture decision records
-│   │   └── AGENTS.md
-│   ├── architecture/            # Implemented system design
-│   │   └── AGENTS.md
-│   ├── modules/                 # Per-module documentation
-│   │   └── AGENTS.md
-│   ├── issues/                  # Issue tracking (row or file based)
-│   │   └── AGENTS.md
-│   └── kb/                      # Knowledge base
-│       └── AGENTS.md
-├── tmp/                         # Ephemeral working files (gitignored)
-│   └── AGENTS.md
-└── _archive/                    # Retired artifacts with provenance (gitignored)
-    └── AGENTS.md
-```
-
-Each `AGENTS.md` file defines the policy for its directory — what belongs there, lifecycle
-rules, and quality expectations. The bootstrap command creates these with generic, framework-
-agnostic content. Projects customize them over time.
-
-## Key Design Decisions
-
-- **`docs/roadmap/`** holds active planning. Once implemented, content moves to `docs/architecture/` or `docs/modules/`.
-- **`_archive/`** preserves provenance — path structure mirrors the source (`_archive/docs/roadmap/<file>`).
-- **Curate-docs uses evidence-first reasoning** — it inspects actual code before classifying. Ambiguous cases default to `still_applicable_unimplemented` rather than premature archival.
-- **Alignment review is read-only** — it diagnoses but does not modify, so it's safe to run anytime.
-- **Sanitize is independent** — it doesn't require the governance scaffold. Works on any repo.
+- **Evidence over assumption**: Curate-docs inspects actual code paths before classifying a
+  roadmap item, because surface-level directory matches mislead. Ambiguous cases default to
+  keeping the item active rather than archiving prematurely.
+- **Archive with provenance**: Retired docs move to `_archive/` mirroring their source path
+  (`docs/roadmap/x.md` → `_archive/docs/roadmap/x.md`) because being able to trace where
+  something came from matters more than saving directory depth.
+- **Format-adaptive**: Curate-docs detects whether issues use row-based trackers (CSV/JSONL)
+  or file-based docs and adapts its actions accordingly, because imposing a new schema on an
+  existing tracker disrupts workflows.
+- **Generic by default**: Bootstrap creates framework-agnostic policy content. Projects
+  customize their AGENTS.md files over time — the scaffold provides structure, not opinions
+  about the project's domain.
+- **Read-only diagnostics are free**: Alignment review modifies nothing, so suggest it
+  liberally. Curate-docs modifies files, so confirm the user's intent before running it.
