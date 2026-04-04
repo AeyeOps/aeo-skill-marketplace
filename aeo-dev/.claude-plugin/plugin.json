@@ -1,7 +1,7 @@
 {
   "name": "aeo-dev",
-  "version": "0.2.0",
-  "description": "Platform-specific development skills covering VS Code extension development (stable and Insiders), WSL remote workflows, TypeScript tooling, and developer environment configuration",
+  "version": "0.3.0",
+  "description": "Developer workflow tools: repository governance (bootstrap, curate-docs, roadmap alignment review, sanitize), VS Code extension development (stable and Insiders), WSL remote workflows, and TypeScript tooling",
   "author": {
     "name": "AeyeOps",
     "url": "https://github.com/AeyeOps"
