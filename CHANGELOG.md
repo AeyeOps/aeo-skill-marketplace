@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.20] - 2026-04-04
+
+### Added
+
+- **aeo-dev**: Add aeo-repo-* governance command family — `aeo-repo-bootstrap`, `aeo-repo-curate-docs`, `aeo-repo-roadmap-alignment-review`, `aeo-repo-sanitize` — ported from OpenAI Codex prompts with Opus-native patterns (v0.3.0)
+- **aeo-dev**: Add `repo-governance` skill tying the command family together with purpose, intent, lifecycle guidance, and user-signal-to-command mapping (v0.3.0)
+
+### Changed
+
+- **aeo-claude**: Move aeo-repo-* commands and repo-governance skill from aeo-claude to aeo-dev — repo governance is a developer workflow concern, not a Claude-specific one
+- **aeo-claude**: Consolidate skill-creator workspace paths — all ephemeral eval artifacts now go to project-relative `tmp/<skill-name>-workspace/` instead of scattering across skill directories and system `/tmp/` (v0.4.15)
+- **aeo-claude**: Add `--results-dir` and `--report` flags to skill-creator description optimization run_loop guidance with `$(pwd)/tmp/` paths for WSL browser interop (v0.4.15)
+- **aeo-claude**: Add e2e-only testing policy to ultrareview skills (v0.4.13)
+- **aeo-claude**: Standardize `name:` and `version:` frontmatter across all aeo-claude commands (v0.4.14)
+
+### Fixed
+
+- **aeo-claude**: Fix eval_review.html `addRow` focusing wrong textarea after sort — use `data-new` attribute to track and focus the actual new row (v0.4.15)
+- **aeo-claude**: Fix eval_review.html textarea using `onchange` (blur-only) instead of `oninput` — summary count now updates as user types (v0.4.15)
+- **aeo-claude**: Fix eval_review.html export filename always `eval_set.json` — now includes sanitized skill name (v0.4.15)
+- Normalize CRLF→LF line endings in `analyze-prompt.py`
+- Add `tmp/` to `.gitignore` for ephemeral eval workspace artifacts
+
 ## [0.4.19] - 2026-03-24
 
 ### Added
