@@ -1,4 +1,6 @@
 ---
+name: aeo-create-claude-prompt
+version: 0.1.0
 description: Create well-crafted prompts for Claude agentic execution — fights the tendency to over-prescribe inputs and procedural steps
 argument-hint: "[description of what the prompt should do]"
 disable-model-invocation: true

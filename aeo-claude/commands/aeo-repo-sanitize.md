@@ -1,6 +1,6 @@
 ---
 name: aeo-repo-sanitize
-version: 0.3.0
+version: 0.4.0
 description: Scan repo for security risks, PII, secrets, local environment leaks, and supply chain issues before public push
 argument-hint: "[--auto-approve]"
 allowed-tools: Read, Edit, Write, Glob, Grep, Bash, Agent
@@ -99,7 +99,16 @@ Calibration — these prevent common misclassifications:
 - Repo owner's personal email in their own git commits → not a finding (intentional git configuration)
 </reference>
 
-## Step 4: Present Report
+## Step 4: Final Verification
+
+Re-read each deduplicated finding in its full file context. Drop any finding where:
+- The risk was already mitigated by another mechanism visible in the codebase
+- The finding depends on an assumption that other findings disproved
+- The remediation would not improve the actual security posture
+
+This catches findings that passed the viability gate individually but are invalidated by the broader picture.
+
+## Step 5: Present Report
 
 Structure the output exactly as shown below. The report ends with selectable next-step options — this is the primary decision point for the user.
 

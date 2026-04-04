@@ -1,4 +1,6 @@
 ---
+name: aeo-retro
+version: 0.1.0
 description: Session retrospective that extracts improvements and reconciles stale guidance in CLAUDE.md files and project skills
 argument-hint: "[--approve-all]"
 allowed-tools: Read, Edit, Write, Glob, Grep, Bash, Skill
