@@ -99,7 +99,7 @@ The harness script is a Python program that:
    - `TURN_LIMIT` - Max reasoning turns
    - `HEADLESS` - Run browser in headless mode
 
-   → See `templates/env_template.env` for complete configuration
+   → See `templates/env_template.example` for complete configuration
 
 2. **Function Call Handlers:**
    - `navigate(url)` - Navigate to URL
@@ -149,7 +149,7 @@ The harness script is a Python program that:
 **Generated Artifacts:**
 1. **Goal file** based on `templates/goal_template.txt`
 2. **Harness script** from `templates/harness_template.py`
-3. **Environment config** from `templates/env_template.env`
+3. **Environment config** from `templates/env_template.example`
 
 **Key test scenarios:**
 - Verify 4-panel layout renders correctly
@@ -255,7 +255,7 @@ This skill uses progressive disclosure - additional files loaded only when neede
 ### Templates (`templates/`)
 - **goal_template.txt** - Natural-language goal template
 - **harness_template.py** - Python Playwright harness (395 lines, complete implementation)
-- **env_template.env** - Environment variables configuration
+- **env_template.example** - Environment variables configuration
 
 ### When to Read Reference Files
 

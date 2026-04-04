@@ -37,7 +37,7 @@ automating-computer-use-testing/
 ├── templates/
 │   ├── goal_template.txt             # Natural-language goal template
 │   ├── harness_template.py           # Python Playwright harness
-│   └── env_template.env              # Environment variables template
+│   └── env_template.example              # Environment variables template
 ├── examples/
 │   ├── example_webapp_testing.md     # Complete example: Multi-panel webapp QA
 │   ├── example_form_automation.md    # Example: form filling automation
@@ -137,7 +137,7 @@ See `templates/harness_template.py` - includes:
 
 ### Environment Template
 
-See `templates/env_template.env` - configure:
+See `templates/env_template.example` - configure:
 - `GOOGLE_API_KEY` (required)
 - Application URL (default: http://localhost:5173)
 - Viewport dimensions (default: 1920x1080)
