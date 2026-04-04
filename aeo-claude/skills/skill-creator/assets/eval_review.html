@@ -86,8 +86,9 @@
 
         const idx = item.origIdx;
         const tr = document.createElement('tr');
+        if (item._isNew) tr.setAttribute('data-new', '');
         tr.innerHTML = `
-          <td><textarea class="query-input" onchange="updateQuery(${idx}, this.value)">${escapeHtml(item.query)}</textarea></td>
+          <td><textarea class="query-input" oninput="updateQuery(${idx}, this.value)">${escapeHtml(item.query)}</textarea></td>
           <td>
             <label class="toggle">
               <input type="checkbox" ${item.should_trigger ? 'checked' : ''} onchange="updateTrigger(${idx}, this.checked)">
@@ -113,10 +114,14 @@
     function deleteRow(idx) { evalItems.splice(idx, 1); render(); }
 
     function addRow() {
-      evalItems.push({ query: '', should_trigger: true });
+      evalItems.push({ query: '', should_trigger: true, _isNew: true });
       render();
-      const inputs = document.querySelectorAll('.query-input');
-      inputs[inputs.length - 1].focus();
+      const newRow = document.querySelector('[data-new]');
+      if (newRow) {
+        newRow.querySelector('.query-input').focus();
+        newRow.removeAttribute('data-new');
+      }
+      delete evalItems[evalItems.length - 1]._isNew;
     }
 
     function updateSummary() {
@@ -133,7 +138,9 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'eval_set.json';
+      const rawName = document.getElementById('skill-name').textContent || 'eval_set';
+      const safeName = rawName.replace(/[^a-zA-Z0-9_-]/g, '_');
+      a.download = `${safeName}_eval_set.json`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
