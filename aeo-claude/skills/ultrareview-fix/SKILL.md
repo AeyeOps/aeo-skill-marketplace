@@ -5,7 +5,7 @@ description: |
   errors, alignment issues, gaps, and improvements by priority. Use after running ultrareview
   to fix identified issues in plans or code.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, TaskCreate, TaskUpdate, TaskList, TaskGet
-model: claude-opus-4-6
+model: opus
 ---
 
 # Ultra-Fix Protocol

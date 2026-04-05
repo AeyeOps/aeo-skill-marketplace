@@ -179,12 +179,12 @@ Output results as JSON:
 
 ### Fast Model for Simple Tasks
 ```yaml
-model: claude-3-5-haiku-20241022
+model: haiku
 ```
 
 ### Full Model for Complex Analysis
 ```yaml
-model: claude-sonnet-4-20250514
+model: sonnet
 ```
 
 ## Invocation Control Patterns

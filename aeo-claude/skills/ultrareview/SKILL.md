@@ -5,7 +5,7 @@ description: |
   alignment issues, gaps, and improvement opportunities. Produces a machine-parseable summary.
   Use when validating plans, code changes, configurations, or any work product before proceeding.
 allowed-tools: Read, Glob, Grep, Bash(git status *), Bash(git diff *), Bash(find *)
-model: claude-opus-4-6
+model: opus
 ---
 
 # Ultra-Validation Protocol
