@@ -13,10 +13,11 @@ import sys
 try:
     from pydantic import create_model
 except ImportError:
+    # --break-system-packages needed for PEP 668 externally-managed envs (Ubuntu 24.04+)
     _installed = False
     for _cmd in (
-        [sys.executable, "-m", "pip", "install", "--quiet", "pydantic>=2.0,<3.0"],
-        ["uv", "pip", "install", "--quiet", "pydantic>=2.0,<3.0"],
+        [sys.executable, "-m", "pip", "install", "--quiet", "--break-system-packages", "pydantic>=2.0,<3.0"],
+        ["uv", "pip", "install", "--quiet", "--break-system-packages", "--system", "pydantic>=2.0,<3.0"],
     ):
         try:
             subprocess.check_call(_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
