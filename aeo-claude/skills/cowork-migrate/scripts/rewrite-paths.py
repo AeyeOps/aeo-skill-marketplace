@@ -36,7 +36,7 @@ from pathlib import Path
 
 SRC_USER = "srcuser"            # username on the source Windows machine
 DST_USER = "dstuser"            # username on the dest Windows machine
-VM_NAME = "happy-magical-xxx"   # vmProcessName from the session's sidecar
+VM_NAME = "PLACEHOLDER-VM-NAME" # vmProcessName from the session's sidecar
 
 # Where did you extract the VM's /sessions/<VM_NAME>/ files to on the dest?
 # This becomes the rewrite target for any /sessions/<VM_NAME>/... reference
@@ -90,7 +90,7 @@ def _vm_root_rewrite(dest_prefix: str):
 
 
 def _require_edited():
-    if SRC_USER == "srcuser" or DST_USER == "dstuser" or VM_NAME == "happy-magical-xxx":
+    if SRC_USER == "srcuser" or DST_USER == "dstuser" or VM_NAME == "PLACEHOLDER-VM-NAME":
         raise SystemExit(
             "rewrite-paths.py has not been edited for this migration.\n"
             "Fill in SRC_USER, DST_USER, VM_NAME, VM_FILES_DEST, and the RULES\n"
@@ -119,16 +119,16 @@ RULES: list = [
     # /sessions/<VM_NAME>/mnt/<folder-basename>/. Uncomment and edit for the
     # mounts relevant to THIS session.
     #
-    # Example for a `C:\Users\<src>\dls` selected folder that should map to
-    # `C:\Users\<dst>\dls` on the dest:
+    # Example for a `C:\Users\<src>\Documents\work` selected folder that should
+    # map to `C:\Users\<dst>\Documents\work` on the dest:
     # ("regex",
-    #  re.compile(rf"/sessions/{re.escape(VM_NAME)}/mnt/dls/([A-Za-z0-9_./\-]*)"),
-    #  _vm_mnt_rewrite(rf"C:\Users\{DST_USER}\dls")),
+    #  re.compile(rf"/sessions/{re.escape(VM_NAME)}/mnt/work/([A-Za-z0-9_./\-]*)"),
+    #  _vm_mnt_rewrite(rf"C:\Users\{DST_USER}\Documents\work")),
     #
-    # Example for a `C:\Users\<src>\data\OneDrive\temp-from-vault` entry:
+    # Example for a `C:\Users\<src>\OneDrive\shared-folder` entry:
     # ("regex",
-    #  re.compile(rf"/sessions/{re.escape(VM_NAME)}/mnt/temp-from-vault/([A-Za-z0-9_./\-]*)"),
-    #  _vm_mnt_rewrite(rf"C:\Users\{DST_USER}\data\OneDrive\temp-from-vault")),
+    #  re.compile(rf"/sessions/{re.escape(VM_NAME)}/mnt/shared-folder/([A-Za-z0-9_./\-]*)"),
+    #  _vm_mnt_rewrite(rf"C:\Users\{DST_USER}\OneDrive\shared-folder")),
 
     # Catch-all for everything else under /sessions/<VM_NAME>/. Must come
     # AFTER the mnt/ rules so it doesn't shadow them. Rewrites to wherever

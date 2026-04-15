@@ -49,8 +49,7 @@ those and a different workflow is required.
 - Both machines run Claude Cowork for Windows and are logged into the **same Cowork
   account** (account UUID and profile UUID must match — they're identical across
   machines for the same login, so you do not invent new IDs).
-- You can reach the source machine via SSH (`tssh` if available) or have its files
-  locally already.
+- You can reach the source machine via SSH or have its files locally already.
 - The user has agreed to **quit Cowork on the source machine** — the
   `sessiondata.vhdx` is locked while Cowork is running.
 - You have the session's friendly title or `cliSessionId` prefix so you can
@@ -98,7 +97,8 @@ those and a different workflow is required.
 ### 1. Inventory the source
 
 Ask the source host for its sidecars and pick the right one by title. On Windows
-via PowerShell (or `tssh` + `-EncodedCommand`):
+via PowerShell locally, or remotely over SSH with `-EncodedCommand` to avoid
+quoting pitfalls:
 
 ```powershell
 $profile = "$env:APPDATA\Claude\local-agent-mode-sessions\<acct>\<prof>\"
@@ -161,8 +161,8 @@ Transcripts reference absolute paths from the source machine. Four classes:
 | Class | Pattern | Rewrite target |
 |---|---|---|
 | Source username in Windows paths | `C:\Users\<srcuser>\...` | Dest username |
-| Source-specific folder layout | e.g. `Downloads\dls` vs `dls` | Ask the user what the right dest path is |
-| VM bind-mount paths | `/sessions/<vm>/mnt/<mountname>/...` | The real host dir the mount pointed at on source — **which is the folder whose basename matches `<mountname>`** in `userSelectedFolders`. E.g. a `userSelectedFolders` entry of `C:\Users\<srcuser>\dls` produces a VM bind mount at `/sessions/<vm>/mnt/dls`. Use that correspondence to discover what to rewrite to. |
+| Source-specific folder layout | e.g. source has a junction or symlink that the dest lacks | Ask the user what the right dest path is |
+| VM bind-mount paths | `/sessions/<vm>/mnt/<mountname>/...` | The real host dir the mount pointed at on source — **which is the folder whose basename matches `<mountname>`** in `userSelectedFolders`. E.g. a `userSelectedFolders` entry of `C:\Users\<srcuser>\Documents\work` produces a VM bind mount at `/sessions/<vm>/mnt/work`. Use that correspondence to discover what to rewrite to. |
 | VM working-dir paths | `/sessions/<vm>/...` (often thousands of refs) | Wherever you extracted VM files to on the dest. Do **not** rewrite the `.claude/projects/-sessions-<vm>/` subdirectory name itself — that encoded-cwd string is the directory layout Cowork expects and stays unchanged. Only `cwd` **values** inside transcript event JSON get rewritten. |
 
 Use `scripts/rewrite-paths.py` as a template. Copy it into a working dir, edit the
