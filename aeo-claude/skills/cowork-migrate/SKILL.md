@@ -28,8 +28,8 @@ look like success. Follow the workflow in order.
 
 Trigger on any of:
 - Explicit intent: "migrate my cowork session/conversation/project from X to Y",
-  "import this cowork session", "bring my cowork work over", "copy cowork from xps
-  to aurora"
+  "import this cowork session", "bring my cowork work over", "copy cowork from
+  my laptop to my desktop"
 - Symptom reports after a manual copy attempt:
   - Session visible in list but opens blank
   - Scratchpad shows reviewed files but clicks go nowhere
