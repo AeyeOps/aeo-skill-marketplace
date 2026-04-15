@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.22] - 2026-04-15
+
+### Added
+
+- **aeo-claude**: Add `cowork-migrate` skill — end-to-end procedure for migrating a Claude Cowork session between Windows machines, including sidecar/JSONL extraction, VM VHDX mounting, path rewrites, and the undocumented two-layer compact_boundary truncation workaround. Bundles `stitch-boundaries.py` (with duplicate-UUID handling), `chain-walker.py` (validator), `rewrite-paths.py` (path rewrite template), and `references/truncation-filter.md` documenting Cowork's `cDn`/`sDn`/`iDn`/`lDn` functions reverse-engineered from `app.asar`. Validated against live migrations of three sessions (175-line no-boundary, 3352-line 23-boundary, 4025-line 68-boundary 345MB).
+
 ## [0.4.21] - 2026-04-13
 
 ### Fixed
