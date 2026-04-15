@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.23] - 2026-04-15
+
+### Changed
+
+- **aeo-claude**: Scrub `cowork-migrate` skill of user-specific identifiers — replace personal machine-name trigger example (`xps to aurora` → `my laptop to my desktop`), remove SSH-wrapper reference (`tssh`), genericize folder examples (`Downloads\dls`, `OneDrive\temp-from-vault`) to neutral paths (`Documents\work`, `OneDrive\shared-folder`), and change VM_NAME placeholder in `rewrite-paths.py` to explicit `PLACEHOLDER-VM-NAME`. Docs-only changes; no behavior change.
+
 ## [0.4.22] - 2026-04-15
 
 ### Added
 
-- **aeo-claude**: Add `cowork-migrate` skill — end-to-end procedure for migrating a Claude Cowork session between Windows machines, including sidecar/JSONL extraction, VM VHDX mounting, path rewrites, and the undocumented two-layer compact_boundary truncation workaround. Bundles `stitch-boundaries.py` (with duplicate-UUID handling), `chain-walker.py` (validator), `rewrite-paths.py` (path rewrite template), and `references/truncation-filter.md` documenting Cowork's `cDn`/`sDn`/`iDn`/`lDn` functions reverse-engineered from `app.asar`. Validated against live migrations of three sessions (175-line no-boundary, 3352-line 23-boundary, 4025-line 68-boundary 345MB).
+- **aeo-claude**: Add `cowork-migrate` skill — end-to-end procedure for migrating a Claude Cowork session between Windows machines, including sidecar/JSONL extraction, VM VHDX mounting, path rewrites, and the undocumented two-layer compact_boundary truncation workaround. Bundles `stitch-boundaries.py` (with duplicate-UUID handling), `chain-walker.py` (validator), `rewrite-paths.py` (path rewrite template), and `references/truncation-filter.md` documenting Cowork's `cDn`/`sDn`/`iDn`/`lDn` functions reverse-engineered from `app.asar`. Validated against live migrations across two iterations covering five Cowork sessions including a 345 MB / 68-boundary stress case.
 
 ## [0.4.21] - 2026-04-13
 
