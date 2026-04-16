@@ -6,7 +6,6 @@ description: |
   fix iterations on plans or code changes.
 argument-hint: "[focus_area] [--max-iterations N]"
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, TaskCreate, TaskUpdate, TaskList, TaskGet
-model: opus
 ---
 
 # Ultrareview Loop

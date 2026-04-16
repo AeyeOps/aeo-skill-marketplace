@@ -2,7 +2,6 @@
 description: Reconcile nous stores — prune stale, resolve conflicts, deduplicate, fix misclassified entries
 argument-hint: [max-entries-per-lens]
 disable-model-invocation: true
-model: opus
 ---
 
 # Nous Reconciliation

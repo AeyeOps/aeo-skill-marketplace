@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.24] - 2026-04-16
+
+### Changed
+
+- **aeo-claude**: Remove `model: opus` frontmatter from `ultrareview`, `ultrareview-fix`, and `ultrareview-loop` skill-commands — the bare `opus` alias is not documented to preserve the caller's model variant, so pinning it risked resolving to the default 200K Opus when invoked from an Opus 4.7 1M session, causing immediate context-window failures for reviews of large plans/codebases. Dropping the field lets these commands inherit the caller's exact model ID (v0.4.24)
+- **aeo-nous**: Remove `model: opus` frontmatter from `/aeo-reconcile` command — same rationale as above; reconciliation over large nous stores benefits from the caller's 1M variant when that's what they're running (v0.4.9)
+
+### Fixed
+
+- **aeo-nous**: Reduce SessionStart injection from 20 to 10 entries per store — previous output (~45 KB stdout) exceeded the harness inline cap and was silently truncated, so Claude only received a 2 KB preview of the injected context. Halving keeps injection under the cap while preserving the freshest entries (v0.4.8, backfilled changelog)
+
 ## [0.4.23] - 2026-04-15
 
 ### Changed
