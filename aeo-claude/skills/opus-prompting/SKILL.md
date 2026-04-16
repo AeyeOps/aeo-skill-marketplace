@@ -1,12 +1,18 @@
 ---
 name: opus-prompting
 description: |
-  Reviews and rewrites Claude instructions — CLAUDE.md files, skill bodies, slash command
-  templates, and agent system prompts — so they match how current Claude models actually
-  respond. Identifies the artifact type from context and applies the patterns that fit:
-  softening aggressive language, trading exhaustive rules for intent, adding rationale,
-  and using semantic XML where it earns its place. Use when drafting, reviewing, or
-  debugging any prompt Claude will read, not only when "prompt engineering" is named.
+  Use this skill when the user is writing, reviewing, debugging, or rewriting any
+  instructions that Claude itself will read — including CLAUDE.md files, skill files
+  (SKILL.md, frontmatter descriptions), slash command templates (.claude/commands/*.md),
+  and agent definitions (.claude/agents/*.md). Trigger on symptoms like: an agent firing
+  too often or on the wrong things, a prompt that's too long or full of MUST/NEVER/ALWAYS,
+  Claude ignoring sections of a command, agents looping on tools instead of stopping,
+  skills not activating when they should, descriptions that don't trigger correctly, or
+  asking how to structure a system prompt so Claude behaves a certain way. Also trigger
+  when converting docs/runbooks into skills, drafting agent frontmatter from scratch, or
+  asking what's "pulling weight" in a prompt. Do not trigger for general code review, MCP
+  server design, hook scripts, or API/SDK questions unless the artifact under discussion
+  is a prompt Claude reads.
 ---
 
 # Prompt Writing Assistant

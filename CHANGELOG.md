@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.27] - 2026-04-16
+
+### Changed
+
+- **aeo-claude**: Rewrite `opus-prompting` skill description using the symptom-first framing produced by the skill-creator description-optimization loop (20-query trigger eval, 5 iterations over claude-opus-4-7). New description names concrete artifact paths (CLAUDE.md, SKILL.md, `.claude/commands/*.md`, `.claude/agents/*.md`), lists behavioral symptoms that should trigger (MUST/NEVER stacks, agents firing too often, Claude skipping sections, autonomous tool loops, skills that don't activate), and adds an explicit negative guard for MCP server design / hook scripts / API-SDK questions. Note: loop reported no numeric improvement (both original and iter-2 descriptions scored 3/7 test, 5/13 train) because the failing should-trigger queries lose to more specific sibling skills (`plugin-dev:skill-development`, `plugin-dev:agent-development`, `plugin-dev:command-development`, `claude-md-management:claude-md-improver`) when users phrase requests as "create X from scratch". The iter-2 description is adopted anyway for its clearer structure and explicit negative guard. Iterations 3–5 were invalidated by `claude -p` stdout being polluted with harness hook JSON — future runs should use `env -u CLAUDECODE` around the loop invocation (v0.4.27)
+
 ## [0.4.26] - 2026-04-16
 
 ### Changed
