@@ -60,7 +60,7 @@ Prefer absolute dates over relative terms like "yesterday".
 
 ## 2. Think Variants
 
-Earlier models were particularly sensitive to the word "think" when extended thinking was disabled. Adaptive thinking (4 effort levels: low/medium/high/max) reduces this sensitivity. These transformations are still good practice for cleaner prompts.
+Earlier models were particularly sensitive to the word "think" when thinking modes were gated. Adaptive thinking reduces this sensitivity by calibrating reasoning depth automatically. These transformations are still good practice for cleaner prompts.
 
 ### Before/After Examples
 

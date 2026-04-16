@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.26] - 2026-04-16
+
+### Changed
+
+- **aeo-claude**: Follow-up fixes to `opus-prompting` skill after trigger eval — (1) rewrote the skill description to drop the self-contradictory "Covers X, Y, Z" phrasing the skill itself warns against, (2) removed "4 effort levels" from the Think Variants section of `patterns.md`, (3) replaced the enumerated effort-level table in `agentic-patterns.md` with version-agnostic prose. All changes remain free of model numbers, literal context sizes, and enumerated effort-level names. Validated by an iteration-1 skill-creator eval loop across three test cases (CLAUDE.md aggressive language, agent overtriggering, slash command template): fixed skill 21/21 (100%), old snapshot 19/21 (90.5%), no regressions (v0.4.26)
+
 ## [0.4.25] - 2026-04-16
 
 ### Added

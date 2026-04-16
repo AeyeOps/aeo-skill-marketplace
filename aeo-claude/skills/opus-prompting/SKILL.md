@@ -1,9 +1,12 @@
 ---
 name: opus-prompting
 description: |
-  Writing assistant that identifies artifact type (CLAUDE.md, skill, command, agent prompt)
-  and surfaces relevant prompt patterns when invoked. Covers Claude's behavioral properties,
-  over-specification prevention, and agentic workflow design.
+  Reviews and rewrites Claude instructions — CLAUDE.md files, skill bodies, slash command
+  templates, and agent system prompts — so they match how current Claude models actually
+  respond. Identifies the artifact type from context and applies the patterns that fit:
+  softening aggressive language, trading exhaustive rules for intent, adding rationale,
+  and using semantic XML where it earns its place. Use when drafting, reviewing, or
+  debugging any prompt Claude will read, not only when "prompt engineering" is named.
 ---
 
 # Prompt Writing Assistant

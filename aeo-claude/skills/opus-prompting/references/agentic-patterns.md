@@ -346,16 +346,16 @@ Keep your context focused on the current implementation.
 
 ## 9. Adaptive Thinking
 
-Claude uses adaptive thinking—4 effort levels that dynamically adjust reasoning depth.
+Claude uses adaptive thinking — tunable effort levels that dynamically adjust reasoning depth.
 
 ### Effort Levels
 
-| Level | Use Case | Reasoning Behavior |
-|-------|----------|-------------------|
-| `low` | Simple edits, quick lookups | Skips deliberation |
-| `medium` | Standard implementation | Moderate reasoning |
-| `high` | Complex reasoning, architecture (default) | Full deliberation |
-| `max` | Hardest problems, novel research | Peak reasoning capability |
+Effort levels tune how much reasoning Claude applies to a task. Lower levels return
+faster and fit simple edits and quick lookups. Higher levels deliberate more and fit
+complex reasoning, architecture work, and novel research. The exact level names and
+count may vary by model — consult current API documentation for the canonical list.
+As a general rule, use the lowest level that does the job well, because lower levels
+return faster and cost less.
 
 ### API Usage
 
