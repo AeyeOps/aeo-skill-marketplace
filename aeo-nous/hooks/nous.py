@@ -70,7 +70,7 @@ LOG_BACKUP_COUNT = 3        # keep aeo-nous.log + 3 rotated files
 STATUSLINE_PATH = Path.home() / ".claude" / "statusline-activity.jsonl"
 
 # SessionStart: how many recent entries to inject from each encoded file
-INJECT_RECENT_COUNT = 20
+INJECT_RECENT_COUNT = 10
 
 # Statusline: max lines to read (matches LOG_ROTATE_AT in statusline.sh)
 STATUSLINE_MAX_LINES = 100
