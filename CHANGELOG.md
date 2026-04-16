@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.25] - 2026-04-16
+
+### Added
+
+- **aeo-claude**: Add `/aeo-continuation-prompt` command — generates a paste-ready continuation prompt that captures current task state so a fresh session after `/clear` can resume without losing the thread. Useful when a session has accumulated low-value context (dead-ends, tool output) and a clean restart is cheaper than carrying history forward. Accepts an optional focus argument to scope the prompt to a specific thread (v0.4.25)
+
+### Changed
+
+- **aeo-claude**: Refresh `opus-prompting` skill to reflect current Opus model behaviors — describe adaptive thinking without prescribing a specific number of effort levels, note that manual thinking budgets and sampling parameters (temperature, top-p, top-k) are unsupported, add guidance that response length calibrates to task complexity and that autonomous tool loops / subagent spawning are reduced by default. Version-agnostic throughout — no model numbers, no literal context sizes — so guidance remains applicable as models evolve (v0.4.25)
+
 ## [0.4.24] - 2026-04-16
 
 ### Changed

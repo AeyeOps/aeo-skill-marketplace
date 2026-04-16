@@ -16,12 +16,14 @@ If unsure whether these behavioral properties are current, check the system date
 
 | Property | Implication |
 |----------|-------------|
-| Adaptive thinking (4 effort levels) | Let Claude calibrate reasoning depth; specify effort only at API level when needed |
-| 200K context window (1M in beta) | Long conversations maintain quality; 1M requires beta access |
+| Adaptive thinking with tunable effort levels | Let Claude calibrate reasoning depth; manual thinking budgets are unsupported — set effort at the API level when needed |
 | Literal instruction following | Every instruction compounds — write guidelines, not rules |
 | High system prompt responsiveness | Natural language over directives; aggressive language causes overtriggering |
 | Overtriggering as primary failure mode | `MUST use [tool]` → tools fired when not needed; soften to `Use [tool] when...` |
 | Overeagerness / overengineering | Claude adds features, docs, error handling beyond what's asked; scope constraints help |
+| Response length calibrates to task complexity | Let the task set length — prompts that prescribe target lengths fight built-in calibration |
+| Reduced autonomous tool calls and subagent spawning | Scaffolding that forces tool loops or multiple subagents may be counterproductive — describe intent, let Claude choose |
+| Sampling parameters unsupported | Temperature, top-p, and top-k are not configurable — steer behavior through instruction, not sampling |
 | Prefilling deprecated | Assistant message prefilling is unsupported; use system prompt instructions or structured output |
 
 ## Applying These Patterns

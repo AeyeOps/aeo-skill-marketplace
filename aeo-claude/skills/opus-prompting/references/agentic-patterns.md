@@ -18,7 +18,7 @@ Best practices for building agents, agent teams, MCPs, and long-horizon workflow
 
 ## 1. Context Management
 
-Claude has a 200K token context window (1M available in beta for tier 4 orgs). Server-side compaction is available, reducing client-side context management burden.
+Claude supports long conversations with server-side compaction, reducing client-side context management burden. Long-context variants are available for workloads that exceed the default window.
 
 ### Key Patterns
 
@@ -364,7 +364,7 @@ Claude uses adaptive thinking—4 effort levels that dynamically adjust reasonin
 "output_config": {"effort": "high"}
 ```
 
-Claude auto-calibrates reasoning depth within each effort level. The `budget_tokens` parameter is deprecated.
+Claude auto-calibrates reasoning depth within each effort level. Manual thinking budgets are not supported — adaptive thinking is the only mode. Thinking content is omitted from responses by default; request a summarized display when reasoning traces need to be visible to the caller.
 
 ### Prompting Implications
 
