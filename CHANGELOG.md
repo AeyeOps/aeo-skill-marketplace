@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.28] - 2026-04-16
+
+### Fixed
+
+- **aeo-claude**: Enforce plan-mode entry in `ultraplan` and `ultraplan-teams` skills. `ultraplan` previously listed `EnterPlanMode` in `allowed-tools` but the body never instructed Claude to call it — the workflow jumped straight to Read/Glob/Grep, so plan mode was silently skipped. `ultraplan-teams` had the instruction but buried at Phase 1 step 1, easy to skip when investigation felt cheaper. Both skills now open with a `<plan-mode-precondition>` XML block right after the H1, add "Call EnterPlanMode first if you are not already in plan mode" to the "Begin Planning" footer, and (for ultraplan) introduce an explicit "### 0. Enter Plan Mode" workflow step. Rationale is inlined — unapproved implementation / overlapping file ownership are named as the failure modes the gate prevents — so Claude can't rationalize skipping. Changes written following opus-prompting guidance: semantic XML over bolded MUST stacks, rationale explained once, idempotent re-entry handled ("If already in plan mode, continue") (v0.4.28)
+
 ## [0.4.27] - 2026-04-16
 
 ### Changed

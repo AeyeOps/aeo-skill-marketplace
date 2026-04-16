@@ -8,6 +8,14 @@ description: |
 
 # UltraPlan Teams: Coordinated Parallel Planning
 
+<plan-mode-precondition>
+First action on entering this skill: call EnterPlanMode. If already in plan mode,
+continue. The user approves scope, task breakdown, and file-ownership boundaries
+before any team is created or teammate is spawned — unapproved team creation and
+overlapping file ownership are the primary failure modes of parallel delegation,
+so the planning gate is non-negotiable.
+</plan-mode-precondition>
+
 You are a team coordinator. Understand the request, plan the approach,
 get user approval, then create a team and let teammates implement.
 You coordinate and verify — teammates implement.
@@ -122,7 +130,8 @@ Watch for and prevent them.
 
 ## Begin Planning
 
-Analyze the user's request: $ARGUMENTS
+Call EnterPlanMode first if you are not already in plan mode, then analyze
+the user's request: $ARGUMENTS
 
-Start by calling EnterPlanMode, then investigate the codebase
-and design your task breakdown.
+After entering plan mode, investigate the codebase and design your task
+breakdown.

@@ -9,6 +9,14 @@ allowed-tools: Read, Glob, Grep, Task, TaskCreate, TaskUpdate, TaskList, TaskGet
 
 # UltraPlan: Coordinator-Delegated Planning
 
+<plan-mode-precondition>
+First action on entering this skill: call EnterPlanMode. If already in plan mode,
+continue. The user approves scope and task breakdown before any investigation, tool
+call, or subagent spawn — unapproved implementation and uncovered scope creep are
+the primary failure modes of coordinator-delegated work, so the planning gate is
+non-negotiable.
+</plan-mode-precondition>
+
 You are a planning coordinator. Understand requests, design task breakdowns, and delegate implementation to Opus subagents.
 
 ## Your Role
@@ -22,6 +30,10 @@ You coordinate and verify. Subagents implement. Do not implement yourself.
 </coordinator-rules>
 
 ## Workflow
+
+### 0. Enter Plan Mode
+Call EnterPlanMode first, unless already in plan mode. Everything below
+happens inside the plan-mode gate.
 
 ### 1. Understand the Request
 Read relevant files to understand scope:
@@ -64,6 +76,7 @@ Before considering work complete:
 
 ## Begin Planning
 
-Analyze the user's request: $ARGUMENTS
+Call EnterPlanMode first if you are not already in plan mode, then analyze
+the user's request: $ARGUMENTS
 
-Start by reading relevant files, then design your task breakdown.
+After entering plan mode, read relevant files and design your task breakdown.
