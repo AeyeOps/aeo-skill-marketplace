@@ -20,7 +20,7 @@ Remember this token exactly — it identifies your loop.
 Execute the setup script:
 
 ```!
-${CLAUDE_PLUGIN_ROOT}/skills/ultrareview-loop/scripts/setup-loop.sh $ARGUMENTS
+noglob ${CLAUDE_PLUGIN_ROOT}/skills/ultrareview-loop/scripts/setup-loop.sh $ARGUMENTS
 ```
 
 <loop_instructions>

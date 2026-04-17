@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.29] - 2026-04-16
+
+### Fixed
+
+- **aeo-claude**: Prefix the `ultrareview-loop` setup-script invocation with `noglob` so zsh does not expand `$ARGUMENTS` (or any literal glob metacharacters in the user's arguments) before the script sees them. Without it, arguments containing `*`, `?`, or `[` could either match unrelated files in the cwd or abort the hook with "no matches found" under zsh's default `NOMATCH` setting (v0.4.29)
+
 ## [0.4.28] - 2026-04-16
 
 ### Fixed
