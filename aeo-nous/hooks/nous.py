@@ -72,6 +72,12 @@ STATUSLINE_PATH = Path.home() / ".claude" / "statusline-activity.jsonl"
 # SessionStart: how many recent entries to inject from each encoded file
 INJECT_RECENT_COUNT = 10
 
+# SessionStart: total inline byte budget across both lenses (split evenly).
+# Entries beyond the budget drop to the /tmp spill file instead of being
+# truncated — sized to stay under the harness threshold that previously
+# spilled a 26 KB injection and left only a 2 KB preview in context.
+INJECT_BYTE_BUDGET = 5000
+
 # Statusline: max lines to read (matches LOG_ROTATE_AT in statusline.sh)
 STATUSLINE_MAX_LINES = 100
 
@@ -543,6 +549,27 @@ def effective_score(entry: dict, now: datetime) -> float:
     return w_eff * (WEIGHT_FLOOR + FRESHNESS_BAND * freshness)
 
 
+def take_within_budget(entries_sorted: list[dict], count_cap: int, byte_cap: int) -> list[dict]:
+    """Pick entries in priority order, whole-or-not-at-all.
+
+    Stops on the first entry that would overflow byte_cap — later entries
+    are by definition lower-scored, so skipping ahead to a smaller one
+    would violate the ordering effective_score established.
+    """
+    picked: list[dict] = []
+    used = 0
+    for entry in entries_sorted:
+        if len(picked) >= count_cap:
+            break
+        line = json.dumps(entry)
+        cost = len(line.encode("utf-8")) + 1  # +1 for the joining newline
+        if used + cost > byte_cap:
+            break
+        picked.append(entry)
+        used += cost
+    return picked
+
+
 def handle_session_start(hook: SessionStartInput) -> int:
     """
     Inject context at session start.
@@ -566,34 +593,61 @@ def handle_session_start(hook: SessionStartInput) -> int:
 
     now = datetime.now(timezone.utc)
 
-    # 1. Learnings (engram) — top N by effective score
+    # 1. Learnings (engram) — byte-budgeted top N by effective score
     all_learnings = read_all_jsonl(engram_path)
+    learnings_sorted: list[dict] = []
+    learnings: list[dict] = []
     if all_learnings:
-        scored = sorted(all_learnings, key=lambda e: effective_score(e, now), reverse=True)
-        learnings = scored[:INJECT_RECENT_COUNT]
-        learnings_text = "\n".join(json.dumps(e) for e in learnings)
-        output_parts.append(f"<recent_learnings>\n{learnings_text}\n</recent_learnings>")
-    else:
-        learnings = []
+        learnings_sorted = sorted(all_learnings, key=lambda e: effective_score(e, now), reverse=True)
+        learnings = take_within_budget(learnings_sorted, INJECT_RECENT_COUNT, INJECT_BYTE_BUDGET // 2)
+        if learnings:
+            learnings_text = "\n".join(json.dumps(e) for e in learnings)
+            output_parts.append(f"<recent_learnings>\n{learnings_text}\n</recent_learnings>")
 
-    # 2. Knowledge (cortex) — top N by effective score
+    # 2. Knowledge (cortex) — byte-budgeted top N by effective score
     all_knowledge = read_all_jsonl(cortex_path)
+    knowledge_sorted: list[dict] = []
+    knowledge: list[dict] = []
     if all_knowledge:
-        scored = sorted(all_knowledge, key=lambda e: effective_score(e, now), reverse=True)
-        knowledge = scored[:INJECT_RECENT_COUNT]
-        knowledge_text = "\n".join(json.dumps(e) for e in knowledge)
-        output_parts.append(f"<recent_knowledge>\n{knowledge_text}\n</recent_knowledge>")
-    else:
-        knowledge = []
+        knowledge_sorted = sorted(all_knowledge, key=lambda e: effective_score(e, now), reverse=True)
+        knowledge = take_within_budget(knowledge_sorted, INJECT_RECENT_COUNT, INJECT_BYTE_BUDGET // 2)
+        if knowledge:
+            knowledge_text = "\n".join(json.dumps(e) for e in knowledge)
+            output_parts.append(f"<recent_knowledge>\n{knowledge_text}\n</recent_knowledge>")
 
-    # 3. Instruction to share injected context
+    # 3. Spill full corpus to /tmp so the model can Read the tail on demand.
+    # Requires session_id for the per-session filename; no fallback if missing.
+    spill_written = False
+    if hook.session_id and (all_learnings or all_knowledge):
+        spill_path = Path(f"/tmp/nous-session-{hook.session_id}.md")
+        spill_lines = [
+            f"# Nous corpus for session {hook.session_id}",
+            f"_Project: {hook.cwd}  ·  {len(all_learnings)} learnings, {len(all_knowledge)} knowledge_",
+            "",
+            "## learnings (engram)",
+            *(json.dumps(e) for e in learnings_sorted),
+            "",
+            "## knowledge (cortex)",
+            *(json.dumps(e) for e in knowledge_sorted),
+        ]
+        spill_path.write_text("\n".join(spill_lines))
+        spill_written = True
+        output_parts.append(
+            f"<nous_spill>\n"
+            f"Full nous corpus for this session: `{spill_path}`\n"
+            f"Read this file when an inline entry looks truncated or when the current task "
+            f"might depend on memory below the inline fold.\n"
+            f"</nous_spill>"
+        )
+
+    # 4. Instruction to share injected context
     if learnings or knowledge:
         output_parts.append("<nous_notice>Share a brief summary of the learnings and knowledge injected above so the user understands what context you received.</nous_notice>")
 
     # Output to stdout - this gets injected into Claude's context
     if output_parts:
         print("\n\n".join(output_parts))
-        log(f"INJECTED learnings={len(learnings)} knowledge={len(knowledge)}",
+        log(f"INJECTED learnings={len(learnings)} knowledge={len(knowledge)} spill={spill_written}",
             session=hook.session_id, project=hook.cwd)
     else:
         log("INJECTED nothing (no content found)", session=hook.session_id, project=hook.cwd)

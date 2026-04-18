@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.30] - 2026-04-17
+
+### Changed
+
+- **aeo-nous**: SessionStart inline injection is now byte-budgeted. A new `INJECT_BYTE_BUDGET = 5000` constant caps the total bytes emitted inline across both lenses (split evenly — 2500 per lens), and a new `take_within_budget()` helper selects entries in `effective_score` order, whole-or-not-at-all, stopping on the first entry that would overflow the per-lens cap. The previous count-only limit (unconditional top-10 per lens) could produce 26+ KB of stdout, which the Claude Code harness spilled to a tool-results file and left only a ~2 KB preview in the model's context — so most injected memory was silently invisible. The 10+10 count ceiling is preserved as a hard upper bound; the byte budget is the new soft fence that prevents the harness spill (v0.4.10)
+
+### Added
+
+- **aeo-nous**: SessionStart now writes the full per-project corpus (all engram + cortex entries, sorted by `effective_score`) to `/tmp/nous-session-<session_id>.md` on every startup when `session_id` is available, and emits a new `<nous_spill>` block that cites the absolute path in backticks with conditional-read guidance ("Read this file when an inline entry looks truncated or when the current task might depend on memory below the inline fold"). The model reads the spill on demand rather than paying a Read tax every session. No fallback when `session_id` is empty (hook skips the spill rather than inventing a filename); `/tmp/` lifecycle is left to the OS — transient fit for transient context (v0.4.10)
+
 ## [0.4.29] - 2026-04-16
 
 ### Fixed
