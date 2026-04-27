@@ -139,11 +139,33 @@
       font-weight: 600;
       color: var(--text-muted);
       background: var(--bg);
-      border-bottom: 1px solid var(--border);
       font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .output-file-header:hover {
+      color: var(--text);
+    }
+    .output-file-header .name-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-width: 0;
+      flex: 1;
+    }
+    .output-file-header .arrow {
+      transition: transform 0.15s;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+    .output-file-header .arrow.open {
+      transform: rotate(90deg);
+    }
+    .output-file.open > .output-file-header {
+      border-bottom: 1px solid var(--border);
     }
     .output-file-header .dl-btn {
       font-size: 0.7rem;
@@ -159,8 +181,12 @@
       text-decoration: underline;
     }
     .output-file-content {
+      display: none;
       padding: 0.75rem;
       overflow-x: auto;
+    }
+    .output-file-content.open {
+      display: block;
     }
     .output-file-content pre {
       font-size: 0.8125rem;
@@ -775,22 +801,38 @@
         const fileDiv = document.createElement("div");
         fileDiv.className = "output-file";
 
-        // Always show file header with download link
+        // Header is the toggle handle. Each file collapsed by default —
+        // user expands the ones they care about. Mirrors the grades-toggle pattern.
         const header = document.createElement("div");
         header.className = "output-file-header";
+        const nameWrap = document.createElement("span");
+        nameWrap.className = "name-wrap";
+        const arrow = document.createElement("span");
+        arrow.className = "arrow";
+        arrow.innerHTML = "&#9654;";
+        nameWrap.appendChild(arrow);
         const nameSpan = document.createElement("span");
         nameSpan.textContent = file.name;
-        header.appendChild(nameSpan);
+        nameWrap.appendChild(nameSpan);
+        header.appendChild(nameWrap);
         const dlBtn = document.createElement("a");
         dlBtn.className = "dl-btn";
         dlBtn.textContent = "Download";
         dlBtn.download = file.name;
         dlBtn.href = getDownloadUri(file);
+        // Clicking download must not also toggle the section
+        dlBtn.addEventListener("click", (e) => e.stopPropagation());
         header.appendChild(dlBtn);
         fileDiv.appendChild(header);
 
         const content = document.createElement("div");
         content.className = "output-file-content";
+
+        header.addEventListener("click", () => {
+          content.classList.toggle("open");
+          arrow.classList.toggle("open");
+          fileDiv.classList.toggle("open");
+        });
 
         if (file.type === "text") {
           const pre = document.createElement("pre");
