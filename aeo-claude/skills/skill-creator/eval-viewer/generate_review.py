@@ -132,13 +132,16 @@ def build_run(root: Path, run_dir: Path) -> dict | None:
     # Collect output files
     outputs_dir = run_dir / "outputs"
     output_files: list[dict] = []
-    # Directories to skip when recursing into outputs
+    # Directories to skip when recursing into outputs. Dot-prefixed names
+    # (e.g. .raw/, .cache/, .DS_Store) are also skipped — pathlib.rglob('*')
+    # does not honor the shell convention of hiding dotfiles, so skills that
+    # use dot-prefix to mark debug/internal output rely on this filter.
     SKIP_DIRS = {"node_modules", ".git", "dist", "out", "__pycache__", ".vscode-test"}
     if outputs_dir.is_dir():
         for f in sorted(outputs_dir.rglob("*")):
-            # Skip files inside excluded directories
+            # Skip files inside excluded directories or any dot-prefixed parent
             rel = f.relative_to(outputs_dir)
-            if any(part in SKIP_DIRS for part in rel.parts):
+            if any(part in SKIP_DIRS or part.startswith(".") for part in rel.parts):
                 continue
             if f.is_file() and f.name not in METADATA_FILES:
                 entry = embed_file(f)
