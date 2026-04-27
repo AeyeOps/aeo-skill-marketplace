@@ -222,7 +222,7 @@ This is the only opportunity to capture this data — it comes through the task 
 
 Once all runs are done:
 
-1. **Grade each run** — spawn a grader subagent (or grade inline) that reads `agents/grader.md` and evaluates each assertion against the outputs. Save results to `grading.json` in each run directory. The grading.json expectations array must use the fields `text`, `passed`, and `evidence` (not `name`/`met`/`details` or other variants) — the viewer depends on these exact field names. For assertions that can be checked programmatically, write and run a script rather than eyeballing it — scripts are faster, more reliable, and can be reused across iterations.
+1. **Grade each run** — `agents/grader.md` defines the canonical `grading.json` schema. Spawn a grader subagent that reads it, OR (recommended for assertions that can be checked programmatically — faster, more reliable, reusable across iterations) write a script that produces output conforming to that schema. **Two top-level keys are required**: `summary` (with `pass_rate`, `passed`, `failed`, `total`) and `expectations` (each item with `text`, `passed`, `evidence`). The viewer and `aggregate_benchmark.py` both depend on these exact names. Common breakage: skipping `summary` makes the per-eval Formal Grades footer in the viewer show `? — 0 passed, 0 failed of 0`; off-spec expectation field names (e.g. `name`/`met`/`details`) make assertions disappear from the list.
 
 2. **Aggregate into benchmark** — run the aggregation script from the skill-creator directory:
    ```bash
