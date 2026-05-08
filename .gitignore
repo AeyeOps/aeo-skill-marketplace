@@ -34,3 +34,6 @@ secrets*
 
 # Claude Code local state
 .claude/
+
+# OMC ephemeral session state (sessions, mode state, project memory)
+.omc/
