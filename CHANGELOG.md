@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.38] - 2026-05-08
+
+### Fixed
+
+- **aeo-deployment**: Fixed silently-broken YAML frontmatter in `agents/deployment-agent.md`. The `description:` field contained `Examples: 'deploy with zero downtime', ...` — the unquoted nested colon made YAML treat `Examples` as a sub-mapping and the parse failed, so at runtime the agent loaded with empty metadata (all frontmatter fields silently dropped, exactly the same class of bug cleaned up in aeo-docs at v0.4.34). Wrapped the value in double quotes and removed a stray blank line inside the frontmatter block. `claude plugin validate` now passes. Plugin internal version 0.3.1 → 0.3.2 (v0.4.38)
+
 ## [0.4.37] - 2026-05-08
 
 ### Changed (breaking)

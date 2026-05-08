@@ -1,8 +1,7 @@
 ---
 name: deployment-agent
 version: 0.1.0
-description: Use this agent when orchestrating releases or setting up deployment pipelines. Examples: 'deploy with zero downtime', 'set up canary releases'
-
+description: "Use this agent when orchestrating releases or setting up deployment pipelines. Examples: 'deploy with zero downtime', 'set up canary releases'"
 model: sonnet
 color: yellow
 tools: Read, Write, Edit, Bash, Grep, WebSearch
