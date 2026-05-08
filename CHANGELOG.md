@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.37] - 2026-05-08
+
+### Changed (breaking)
+
+- **aeo-deployment**: Slash command `/release-notes` renamed to `/rel-notes` to avoid colliding with Claude Code's built-in `/release-notes`. The collision prevented the built-in from running even when explicitly selected. File renamed `aeo-deployment/commands/release-notes.md` → `rel-notes.md`; frontmatter `name:` and three in-body usage examples updated. Anyone scripting against `/release-notes` from this plugin must migrate to `/rel-notes` (fully-qualified: `/aeo-deployment:rel-notes`). Plugin internal version 0.3.0 → 0.3.1 (v0.4.37)
+
 ## [0.4.36] - 2026-05-08
 
 ### Changed (breaking)

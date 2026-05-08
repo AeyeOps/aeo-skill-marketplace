@@ -1,5 +1,5 @@
 ---
-name: release-notes
+name: rel-notes
 version: 0.1.0
 description: Generate formatted release notes from git history, grouping commits by type
 argument-hint: "<version-or-tag-range>"
@@ -209,11 +209,11 @@ Before finalizing, verify:
 
 ```bash
 # Generate notes for latest tag
-/release-notes
+/rel-notes
 
 # Generate notes for specific version
-/release-notes v2.1.0
+/rel-notes v2.1.0
 
 # Generate notes for a range
-/release-notes v1.0.0..v2.0.0
+/rel-notes v1.0.0..v2.0.0
 ```
