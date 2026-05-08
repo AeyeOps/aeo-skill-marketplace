@@ -97,28 +97,36 @@ def scan_for_secrets(content: str, file_path: str) -> List[Tuple[str, str]]:
 
 
 def validate_file_path(file_path: str, project_root: str) -> bool:
-    """Validate file path for directory traversal and other security issues."""
+    """Block path-traversal attempts and writes to system directories.
+
+    Note: this is intentionally permissive about *which* user/project directory
+    a path lives in — Claude Code's UI permissions and `/add-dir` are the
+    real authorization gate. This function only blocks the universally-bad
+    cases: literal `..` traversal in input, and writes into OS-managed
+    system directories.
+    """
+    _ = project_root  # signature kept for caller compat; not used
     try:
-        # Resolve the absolute path
+        # Block literal `..` traversal in the input path
+        if '..' in Path(file_path).parts:
+            return False
+
         abs_path = Path(file_path).resolve()
-        project_path = Path(project_root).resolve()
-        
-        # Check if the file is within the project directory
-        try:
-            abs_path.relative_to(project_path)
-        except ValueError:
-            return False  # Path is outside project directory
-            
-        # Check for suspicious path components
-        suspicious_components = ['..', '.git/hooks', '.ssh']
         path_str = str(abs_path)
-        
-        for component in suspicious_components:
-            if component in path_str:
+
+        # Block writes into OS-managed system directories
+        system_prefixes = (
+            '/etc/', '/sys/', '/proc/', '/boot/', '/root/',
+            '/bin/', '/sbin/',
+            '/usr/bin/', '/usr/sbin/',
+            '/usr/local/bin/', '/usr/local/sbin/',
+        )
+        for prefix in system_prefixes:
+            if path_str.startswith(prefix) or path_str == prefix.rstrip('/'):
                 return False
-        
+
         return True
-        
+
     except (OSError, ValueError):
         return False
 

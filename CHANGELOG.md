@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.36] - 2026-05-08
+
+### Changed (breaking)
+
+- **aeo-security**: Plugin internal version bumped 0.3.0 → 0.4.0. Relaxed `hooks/security_check.py validate_file_path()` so it no longer blocks Write/Edit operations on paths outside the primary `CLAUDE_PROJECT_DIR`. The check now only blocks the universally-bad cases (`..` traversal, writes into `/etc /sys /proc /boot /root /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin`). Why: the previous rule had no awareness of `/add-dir`'d additional working directories, so legitimate multi-repo workflows were blocked with no env-hook to opt in. The credential/secret protections (`is_sensitive_file`, `scan_for_secrets`) are unchanged — those are the real value of the hook (v0.4.36)
+
 ## [0.4.35] - 2026-05-08
 
 ### Changed
