@@ -1,0 +1,39 @@
+# Feature comparison grid (grid-columns).
+# Render: d2 grid.d2 grid.svg
+
+# Header row + 4 data rows in a 4-column grid
+comparison: {
+  grid-columns: 4
+  grid-gap: 0
+  style.stroke-width: 0
+
+  # Header
+  h1: Feature       { style: { fill: "#1565c0"; font-color: white; bold: true } }
+  h2: Free          { style: { fill: "#1565c0"; font-color: white; bold: true } }
+  h3: Pro           { style: { fill: "#1565c0"; font-color: white; bold: true } }
+  h4: Enterprise    { style: { fill: "#1565c0"; font-color: white; bold: true } }
+
+  # Row 1
+  r1c1: Users
+  r1c2: 5
+  r1c3: 50
+  r1c4: Unlimited
+
+  # Row 2
+  r2c1: Storage     { style.fill: "#e3f2fd" }
+  r2c2: 1 GB        { style.fill: "#e3f2fd" }
+  r2c3: 100 GB      { style.fill: "#e3f2fd" }
+  r2c4: 1 TB        { style.fill: "#e3f2fd" }
+
+  # Row 3
+  r3c1: Support
+  r3c2: Community
+  r3c3: Email
+  r3c4: 24/7 Phone
+
+  # Row 4
+  r4c1: SSO         { style.fill: "#e3f2fd" }
+  r4c2: ✗           { style.fill: "#e3f2fd" }
+  r4c3: ✗           { style.fill: "#e3f2fd" }
+  r4c4: ✓           { style.fill: "#e3f2fd" }
+}

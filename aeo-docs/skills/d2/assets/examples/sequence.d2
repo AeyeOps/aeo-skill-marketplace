@@ -1,0 +1,41 @@
+# OAuth 2 Authorization Code flow with alt/opt/loop fragments.
+# Render: d2 sequence.d2 sequence.svg
+OAuth 2 Authorization Code Flow: {
+  shape: sequence_diagram
+
+  # Predeclare actors so nested groups can reference them (flat scoping)
+  user: { shape: person }
+  app
+  authz
+  resource
+
+  user -> app: click "login"
+  app -> authz: GET /authorize?client_id=...&redirect_uri=...
+
+  alt: {
+    happy: {
+      authz -> user: render login form
+      user -> authz: submit credentials
+      authz -> app: 302 with auth code {
+        style.stroke-dash: 3
+      }
+      app -> authz: POST /token (code, secret)
+      authz -> app: access_token + refresh_token
+
+      loop: {
+        app -> resource: GET /api with access_token
+        resource -> app: 200 + data
+      }
+    }
+
+    refresh: {
+      app -> authz: POST /token (refresh_token)
+      authz -> app: new access_token
+    }
+  }
+
+  opt: {
+    user -> app: logout
+    app -> authz: revoke token
+  }
+}

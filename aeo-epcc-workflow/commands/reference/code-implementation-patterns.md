@@ -63,8 +63,10 @@ Deliverable: Security report with severity levels, specific fixes
 
 ### Documentation Generation Delegation
 
+For API / config / CLI docs, use the `diataxis` skill (reference mode) from the `aeo-docs` plugin. For OpenAPI specs of HTTP APIs specifically, use the `architecture-docs` skill. Trigger them by stating the documentation task plainly — the skills detect the activation and load the relevant template.
+
 ```markdown
-@documentation-agent Generate API documentation for [feature].
+Generate API documentation for [feature].
 
 Context:
 - Project: [API type]

@@ -1,0 +1,35 @@
+# State machine: order lifecycle.
+# Render: d2 state-machine.d2 state-machine.svg
+direction: right
+
+start: Start { shape: circle; style.fill: black; style.font-color: white }
+
+draft: Draft { shape: rectangle; style.border-radius: 20 }
+submitted: Submitted { shape: rectangle; style.border-radius: 20 }
+paid: Paid { shape: rectangle; style.border-radius: 20; style.fill: "#a5d6a7" }
+shipped: Shipped { shape: rectangle; style.border-radius: 20; style.fill: "#a5d6a7" }
+delivered: Delivered { shape: rectangle; style.border-radius: 20; style.fill: "#c8e6c9" }
+cancelled: Cancelled { shape: rectangle; style.border-radius: 20; style.fill: "#ffcdd2" }
+refunded: Refunded { shape: rectangle; style.border-radius: 20; style.fill: "#ffe0b2" }
+end: End { shape: circle; style.fill: black; style.font-color: white }
+
+start -> draft: create
+draft -> submitted: submit
+draft -> cancelled: discard
+
+submitted -> paid: charge succeeded
+submitted -> cancelled: timeout
+
+paid -> shipped: dispatched
+paid -> refunded: customer cancels
+
+shipped -> delivered: confirmed
+shipped -> refunded: lost in transit
+
+delivered -> end
+cancelled -> end
+refunded -> end
+
+# Self-transitions
+draft -> draft: edit
+submitted -> submitted: re-validate

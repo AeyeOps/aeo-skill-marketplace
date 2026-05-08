@@ -1,0 +1,83 @@
+# UML class diagram: inheritance, realization, composition, aggregation.
+# Render: d2 --layout=elk class-diagram.d2 class-diagram.svg
+direction: right
+vars: { d2-config: { layout-engine: elk } }
+
+# Abstract base
+AbstractAccount: {
+  shape: class
+  style.italic: true                # convention: abstract class
+
+  \#owner: Customer
+  \#balance: Decimal
+
+  +deposit(amount Decimal): bool
+  +withdraw(amount Decimal): bool
+  \#audit(): void
+  \#audit.style.italic: true        # abstract method
+}
+
+CheckingAccount: {
+  shape: class
+  +overdraftLimit: Decimal
+  +applyMonthlyFee(): void
+}
+
+SavingsAccount: {
+  shape: class
+  +interestRate: float
+  +accrueInterest(): Decimal
+}
+
+Customer: {
+  shape: class
+  +id: int
+  +name: string
+  +email: string
+}
+
+Transaction: {
+  shape: class
+  +id: int
+  +amount: Decimal
+  +occurredAt: DateTime
+}
+
+Loggable: {
+  shape: class
+  style.italic: true                # interface
+  +log(message: string): void
+}
+
+# Inheritance — empty triangle
+CheckingAccount -> AbstractAccount: {
+  target-arrowhead: { shape: triangle; style.filled: false }
+}
+SavingsAccount -> AbstractAccount: {
+  target-arrowhead: { shape: triangle; style.filled: false }
+}
+
+# Realization — empty triangle + dashed
+AbstractAccount -> Loggable: {
+  style.stroke-dash: 5
+  target-arrowhead: { shape: triangle; style.filled: false }
+}
+
+# Composition — filled diamond (strong ownership)
+Customer -> AbstractAccount: {
+  target-arrowhead: {
+    shape: diamond
+    style.filled: true
+    label: 1..*
+  }
+  source-arrowhead.label: 1
+}
+
+# Aggregation — empty diamond (weak ownership)
+AbstractAccount -> Transaction: {
+  target-arrowhead: {
+    shape: diamond
+    style.filled: false
+    label: 0..*
+  }
+}

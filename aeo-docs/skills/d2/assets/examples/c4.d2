@@ -1,0 +1,44 @@
+# C4-model context/container diagram (theme 303).
+# Render: d2 --theme=303 c4.d2 c4.svg
+vars: {
+  d2-config: {
+    theme-id: 303
+    layout-engine: elk
+  }
+}
+
+direction: down
+
+# C4 actors and systems
+customer: Online Banking Customer {
+  shape: c4-person
+}
+
+system: Internet Banking System {
+  webapp: Web Application {
+    shape: rectangle
+  }
+  api: API Application {
+    shape: rectangle
+  }
+  db: Database {
+    shape: cylinder
+  }
+
+  webapp -> api: API calls (JSON/HTTPS)
+  api -> db: reads/writes
+}
+
+mainframe: Mainframe Banking System {
+  shape: rectangle
+  style.multiple: true
+}
+
+email: Email System {
+  shape: rectangle
+}
+
+customer -> system.webapp: visits site, views balances
+system.api -> mainframe: gets account info
+system.api -> email: sends notifications
+email -> customer: emails balance alerts

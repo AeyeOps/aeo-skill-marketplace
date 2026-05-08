@@ -120,7 +120,9 @@ Generate: Architecture diagram, component relationships, data models, integratio
 ```
 
 **Available agents:**
-@code-archaeologist @system-designer @business-analyst @test-generator @documentation-agent
+@code-archaeologist @system-designer @business-analyst @test-generator
+
+For documentation work (tutorials / how-tos / references / explanations / API specs / ADRs / C4 diagrams), use the `diataxis` and `architecture-docs` skills from the `aeo-docs` plugin instead of an agent.
 
 **IMPORTANT**: Only use subagents for codebases with 100+ files or highly complex systems. For typical projects, handle exploration directly and autonomously.
 

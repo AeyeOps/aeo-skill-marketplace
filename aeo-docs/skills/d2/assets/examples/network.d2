@@ -1,0 +1,40 @@
+# Network topology with persons, clouds, and routers.
+# Render: d2 --layout=elk network.d2 network.svg
+direction: right
+vars: { d2-config: { layout-engine: elk } }
+
+remote: Remote employees {
+  shape: person
+  style.multiple: true
+}
+
+internet: Internet { shape: cloud }
+
+vpn: VPN Gateway { shape: hexagon }
+
+corporate: Corporate Network {
+  fw: Firewall { shape: hexagon; style.fill: "#FE7070" }
+
+  router: Core Router {
+    icon: https://icons.terrastruct.com/tech/router.svg
+  }
+
+  dmz: DMZ {
+    web: Web Server { shape: rectangle; style.multiple: true }
+    mail: Mail Server { shape: rectangle }
+  }
+
+  internal: Internal {
+    file: File Server { shape: cylinder; style.multiple: true }
+    db: Database { shape: cylinder; icon: https://icons.terrastruct.com/dev%2Fpostgresql.svg; icon.near: bottom-center }
+    dc: Domain Controller { shape: rectangle }
+  }
+}
+
+remote -> internet -> vpn -> corporate.fw
+corporate.fw -> corporate.router
+corporate.router -> corporate.dmz.web
+corporate.router -> corporate.dmz.mail
+corporate.router -> corporate.internal.file
+corporate.router -> corporate.internal.db
+corporate.router -> corporate.internal.dc

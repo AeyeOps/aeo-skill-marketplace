@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.34] - 2026-05-08
+
+### Changed (breaking)
+
+- **aeo-docs**: Plugin internal version bumped 0.4.0 → 0.5.0. Retired all 6 agents (`docs-tutorial-agent`, `docs-howto-agent`, `docs-reference-agent`, `docs-explanation-agent`, `documentation-agent`, `architecture-documenter`) and all 5 slash commands (`/docs-create`, `/docs-tutorial`, `/docs-howto`, `/docs-reference`, `/docs-explanation`) in favor of two new skills. Anyone scripting against `@docs-*-agent` references or invoking `/docs-*` commands will need to migrate (callers can now state the documentation task plainly — the skills detect the activation). The 6 retired agents had silent YAML-frontmatter parse errors anyway (unquoted `Examples: '...'` colons in `description:`), which is part of why nobody noticed they weren't fully wired (v0.4.34)
+- **aeo-epcc-workflow**: Two `commands/reference/` files updated to drop `@documentation-agent` references — `code-implementation-patterns.md` and `pattern-recognition.md` now point readers at the new `diataxis` and `architecture-docs` skills. Description string also updated from `aeo-documentation` → `aeo-docs` to match the rename. Plugin internal version 0.3.0 → 0.3.1 (v0.4.34)
+
+### Added
+
+- **aeo-docs**: New `diataxis` skill consolidates the 4 retired Diataxis quadrant agents into a single skill that picks the right mode (tutorial / how-to / reference / explanation) for the request and applies the matching template. Skill body is the decision matrix; per-mode templates live in `references/{tutorial,howto,reference,explanation}.md` and load only when relevant. Trigger-optimized description per opus-prompting guidance (verb-phrase activation, no MUST / NEVER stacks). Replaces ~1,500 lines of duplicated framework prose across the old quadrant agents with a single source of truth (v0.4.34)
+- **aeo-docs**: New `architecture-docs` skill replaces the retired `architecture-documenter` agent. Covers C4 model (`references/c4-model.md`), ADRs (`references/adr-template.md`), OpenAPI specs (`references/openapi.md`), and system / component design docs (`references/system-and-component-design.md`). Explicitly scoped — *not* user-facing documentation, that's `diataxis` (v0.4.34)
+- **aeo-docs**: Both new skills validated via a 4-eval skill-creator harness (3 diataxis modes + 1 ADR) before commit. Reviewer feedback applied as in-version polish: SKILL.md ↔ reference duplication trimmed, explanation template re-framed as a maximal menu rather than a checklist, reference template gained nested-keys heading guidance and a streamlined env-var section (v0.4.34)
+
+### Fixed
+
+- **aeo-docs**: Eliminated the 6 silently-broken agent frontmatter parse errors that were surfaced (but not fixed) during the 0.4.33 d2 import. The agents are gone; the skill replacements have valid YAML frontmatter (v0.4.34)
+
+## [0.4.33] - 2026-05-08
+
+### Changed
+
+- **aeo-docs** (renamed from `aeo-documentation`): Plugin renamed for brevity; existing installs of `aeo-documentation@aeo-skill-marketplace` will need to reinstall under `aeo-docs@aeo-skill-marketplace`. Plugin internal version bumped 0.3.0 → 0.4.0 to reflect the rename plus the bundled d2 skill (v0.4.33)
+- **aeo-epcc-workflow**: Companion-plugin reference updated from `aeo-documentation` to `aeo-docs` to match the rename (v0.4.33)
+
+### Added
+
+- **aeo-docs**: Bundled the Terrastruct `d2` skill (declarative diagramming language for state machines, ER diagrams, sequence diagrams, C4, class diagrams, and more) alongside the existing `markdown-mermaid` skill. The skill ships its own SKILL.md, 16 reference files (grammar cheatsheet, layouts, edge routing, sql/er, sequence, class, grid diagrams, etc.), and 13 example `.d2` files. Activates whenever the user asks for d2 diagrams or describes a diagram type d2 specializes in (v0.4.33)
+
 ## [0.4.30] - 2026-04-17
 
 ### Changed

@@ -1,0 +1,58 @@
+# Mind map / radial concept layout.
+# Render: d2 --layout=elk mindmap.d2 mindmap.svg
+vars: { d2-config: { layout-engine: elk } }
+
+center: Building a Skill {
+  shape: oval
+  style.fill: "#1565c0"
+  style.font-color: white
+  style.bold: true
+  style.font-size: 22
+}
+
+research: Research { shape: oval; style.fill: "#bbdefb" }
+draft: Draft SKILL.md { shape: oval; style.fill: "#bbdefb" }
+test: Test cases { shape: oval; style.fill: "#bbdefb" }
+iterate: Iterate { shape: oval; style.fill: "#bbdefb" }
+package: Package { shape: oval; style.fill: "#bbdefb" }
+
+# Sub-branches
+research-1: Read docs deeply { shape: rectangle }
+research-2: Find reference impls { shape: rectangle }
+
+draft-1: Frontmatter { shape: rectangle }
+draft-2: Workflow { shape: rectangle }
+draft-3: Reference files { shape: rectangle }
+
+test-1: Realistic prompts { shape: rectangle }
+test-2: Run with subagents { shape: rectangle }
+
+iterate-1: Read feedback { shape: rectangle }
+iterate-2: Generalize { shape: rectangle }
+iterate-3: Re-run { shape: rectangle }
+
+package-1: Validate { shape: rectangle }
+package-2: Zip to .skill { shape: rectangle }
+
+center -> research
+center -> draft
+center -> test
+center -> iterate
+center -> package
+
+research -> research-1
+research -> research-2
+
+draft -> draft-1
+draft -> draft-2
+draft -> draft-3
+
+test -> test-1
+test -> test-2
+
+iterate -> iterate-1
+iterate -> iterate-2
+iterate -> iterate-3
+
+package -> package-1
+package -> package-2

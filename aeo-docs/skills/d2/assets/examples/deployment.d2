@@ -1,0 +1,53 @@
+# CI/CD pipeline with steps animation.
+# Render: d2 --animate-interval=1500 deployment.d2 deployment.svg
+direction: right
+
+title: Deployment Pipeline {
+  near: top-center
+  shape: text
+  style.font-size: 32
+  style.bold: true
+}
+
+steps: {
+  1: {
+    title.label: "1. Commit"
+    dev: { shape: person }
+    code: { icon: https://icons.terrastruct.com/dev/go.svg }
+    dev -> code: write
+  }
+
+  2: {
+    title.label: "2. Push"
+    code -> github: { icon: https://icons.terrastruct.com/dev/github.svg }
+    github.label: GitHub
+  }
+
+  3: {
+    title.label: "3. CI runs"
+    github -> ci: trigger
+    ci.label: Build + Test
+    ci.shape: hexagon
+  }
+
+  4: {
+    title.label: "4. Deploy"
+    ci -> aws: deploy {
+      style.stroke-dash: 4
+      style.animated: true
+    }
+    aws: AWS {
+      icon: https://icons.terrastruct.com/aws%2F_Group%20Icons%2FAWS-Cloud_light-bg.svg
+    }
+  }
+
+  5: {
+    title.label: "5. Monitoring"
+    aws -> cloudwatch: metrics
+    cloudwatch.label: CloudWatch
+    cloudwatch.shape: cylinder
+    cloudwatch -> dev: alert on errors {
+      style.stroke: "#FE7070"
+    }
+  }
+}

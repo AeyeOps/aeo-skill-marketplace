@@ -1,0 +1,33 @@
+# Decision-tree flowchart with branches.
+# Render: d2 flowchart.d2 flowchart.svg
+direction: down
+
+start: Start { shape: oval; style.fill: "#a5d6a7" }
+input: Read order { shape: parallelogram }
+
+valid: Order valid? { shape: diamond }
+
+reject: Reject + notify customer {
+  shape: rectangle
+  style.fill: "#ffcdd2"
+}
+
+stock: In stock? { shape: diamond }
+backorder: Place backorder { shape: rectangle; style.fill: "#fff9c4" }
+fulfill: Fulfill { shape: rectangle; style.fill: "#c8e6c9" }
+
+ship: Ship { shape: rectangle }
+notify: Send tracking email { shape: parallelogram }
+end: End { shape: oval; style.fill: "#a5d6a7" }
+
+start -> input -> valid
+
+valid -> reject: no
+valid -> stock: yes
+
+stock -> fulfill: yes
+stock -> backorder: no
+
+backorder -> end
+fulfill -> ship -> notify -> end
+reject -> end

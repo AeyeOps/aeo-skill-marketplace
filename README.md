@@ -61,7 +61,7 @@ Design systems, document decisions, and maintain quality.
 | Plugin | Description |
 |--------|-------------|
 | [**aeo-architecture**](./aeo-architecture) | 5 agents for system design, C4 diagrams, ADRs, and architecture review |
-| [**aeo-documentation**](./aeo-documentation) | Diataxis framework implementation with tutorial, how-to, reference, and explanation agents |
+| [**aeo-docs**](./aeo-docs) | Diataxis framework implementation with tutorial, how-to, reference, and explanation agents; bundles the d2 and markdown-mermaid diagramming skills |
 
 **Skills included:** MCP server design, Mermaid diagram creation
 **Commands:** `/code-review`, `/design-architecture`, `/refactor-code`
@@ -229,7 +229,7 @@ aeo-skill-marketplace/
 ├── aeo-claude/             # Developer tools
 ├── aeo-dev/                # Repo governance & VS Code extensions
 ├── aeo-deployment/         # Release management
-├── aeo-documentation/      # Diataxis framework
+├── aeo-docs/               # Diataxis framework + d2/mermaid skills
 ├── aeo-epcc-workflow/      # Development methodology
 ├── aeo-infra/              # Cloud infrastructure (AWS & Azure)
 ├── aeo-n8n/                # Workflow automation

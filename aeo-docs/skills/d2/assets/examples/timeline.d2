@@ -1,0 +1,42 @@
+# Process timeline using `steps:` for incremental build-up.
+# Render: d2 --animate-interval=1200 timeline.d2 timeline.svg
+direction: right
+
+title: Onboarding Timeline {
+  near: top-center
+  shape: text
+  style.font-size: 28
+  style.bold: true
+}
+
+steps: {
+  day1: {
+    title.label: "Day 1: Welcome"
+    welcome: Welcome email { shape: page }
+    accounts: Accounts created { shape: page }
+    welcome -> accounts
+  }
+
+  week1: {
+    title.label: "Week 1: Setup"
+    accounts -> training: enroll
+    training: Training {
+      shape: rectangle
+      style.multiple: true
+    }
+  }
+
+  month1: {
+    title.label: "Month 1: Productivity"
+    training -> first-pr: complete
+    first-pr: First PR merged { shape: hexagon; style.fill: "#a5d6a7" }
+  }
+
+  month3: {
+    title.label: "Month 3: Review"
+    first-pr -> review: 90-day check-in
+    review: Performance review {
+      shape: callout
+    }
+  }
+}

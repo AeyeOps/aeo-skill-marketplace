@@ -37,11 +37,11 @@
       "tags": ["deployment", "ci-cd", "rollout"]
     },
     {
-      "name": "aeo-documentation",
-      "description": "Documentation suite implementing the Diataxis framework with dedicated agents for tutorials, how-to guides, explanations, and reference materials",
+      "name": "aeo-docs",
+      "description": "Documentation skills: `diataxis` (user-facing tutorials/how-tos/references/explanations), `architecture-docs` (C4, ADRs, OpenAPI, system design), `d2` and `markdown-mermaid` (diagramming). Pure-skill plugin, no agents or commands.",
       "category": "development",
-      "source": "./aeo-documentation",
-      "tags": ["documentation", "diataxis", "technical-writing"]
+      "source": "./aeo-docs",
+      "tags": ["documentation", "diataxis", "c4", "adr", "openapi", "technical-writing", "d2", "mermaid", "diagrams"]
     },
     {
       "name": "aeo-epcc-workflow",

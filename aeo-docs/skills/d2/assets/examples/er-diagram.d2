@@ -1,0 +1,72 @@
+# Relational schema with crow's-foot cardinality.
+# Render: d2 --layout=elk er-diagram.d2 er-diagram.svg
+direction: right
+vars: { d2-config: { layout-engine: elk } }
+
+orgs: {
+  shape: sql_table
+  id:        int    { constraint: primary_key }
+  name:      string { constraint: not_null }
+  plan_tier: string
+}
+
+roles: {
+  shape: sql_table
+  id:    int    { constraint: primary_key }
+  name:  string { constraint: unique }
+}
+
+users: {
+  shape: sql_table
+  id:         int    { constraint: primary_key }
+  email:      string { constraint: [unique; not_null] }
+  org_id:     int    { constraint: foreign_key }
+  role_id:    int    { constraint: foreign_key }
+  created_at: timestamp
+}
+
+products: {
+  shape: sql_table
+  id:    int    { constraint: primary_key }
+  sku:   string { constraint: unique }
+  name:  string
+  price_cents: int
+}
+
+orders: {
+  shape: sql_table
+  id:           int    { constraint: primary_key }
+  user_id:      int    { constraint: foreign_key }
+  total_cents:  int    { constraint: not_null }
+  placed_at:    timestamp
+}
+
+order_items: {
+  shape: sql_table
+  order_id:    int { constraint: [primary_key; foreign_key] }
+  product_id:  int { constraint: [primary_key; foreign_key] }
+  quantity:    int { constraint: not_null }
+  price_cents: int
+}
+
+# Cardinalities (one to many; required on the parent side)
+users.org_id  -> orgs.id:  {
+  source-arrowhead.shape: cf-many
+  target-arrowhead.shape: cf-one-required
+}
+users.role_id -> roles.id: {
+  source-arrowhead.shape: cf-many
+  target-arrowhead.shape: cf-one-required
+}
+orders.user_id -> users.id: {
+  source-arrowhead.shape: cf-many
+  target-arrowhead.shape: cf-one-required
+}
+order_items.order_id -> orders.id: {
+  source-arrowhead.shape: cf-many
+  target-arrowhead.shape: cf-one-required
+}
+order_items.product_id -> products.id: {
+  source-arrowhead.shape: cf-many
+  target-arrowhead.shape: cf-one-required
+}

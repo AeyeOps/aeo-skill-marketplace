@@ -1,0 +1,86 @@
+# Multi-layer drill-down architecture using `layers:`.
+# Click services in the SVG to navigate into them.
+# Render: d2 multilayer.d2 multilayer.svg
+
+explain: |md
+  # Top-level system overview
+  Click any service to drill in.
+| { near: top-center }
+
+frontend: { link: layers.frontend }
+api:      { link: layers.api }
+worker:   { link: layers.worker }
+db: Postgres {
+  shape: cylinder
+  link: layers.db
+}
+
+frontend -> api: HTTPS
+api -> worker: enqueue
+api -> db: r/w
+worker -> db: write
+
+layers: {
+  # =========== FRONTEND LAYER ===========
+  frontend: {
+    explain: |md
+      ## Frontend internals
+      React SPA with code-split chunks.
+    | { near: top-center }
+    back: ← back to overview { link: _root_ }
+
+    cdn: CloudFront { shape: cloud }
+    spa: React SPA { shape: hexagon }
+    bundles: Code-split bundles { shape: stored_data }
+
+    cdn -> spa
+    spa -> bundles: load on-demand
+  }
+
+  # =========== API LAYER ===========
+  api: {
+    explain: |md
+      ## API internals
+      - Auth middleware
+      - Rate limiter
+      - Request handlers
+    | { near: top-center }
+    back: ← back to overview { link: _root_ }
+
+    auth: Auth Middleware { shape: hexagon }
+    rate: Rate Limiter { shape: hexagon }
+    handlers: Request Handlers { shape: rectangle; style.multiple: true }
+
+    auth -> rate -> handlers
+  }
+
+  # =========== WORKER LAYER ===========
+  worker: {
+    explain: |md
+      ## Worker internals
+      Queue consumers + retry logic.
+    | { near: top-center }
+    back: ← back to overview { link: _root_ }
+
+    consumer: Queue Consumer { shape: hexagon; style.multiple: true }
+    retries: DLQ + Retry { shape: queue }
+
+    consumer -> retries: on failure
+  }
+
+  # =========== DB LAYER ===========
+  db: {
+    explain: |md
+      ## Postgres cluster
+      Primary + 2 read replicas.
+    | { near: top-center }
+    back: ← back to overview { link: _root_ }
+
+    primary: Primary { shape: cylinder }
+    replica1: Read Replica 1 { shape: cylinder }
+    replica2: Read Replica 2 { shape: cylinder }
+
+    primary -> replica1: WAL stream
+    primary -> replica2: WAL stream
+  }
+}
