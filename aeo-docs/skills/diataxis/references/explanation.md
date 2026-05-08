@@ -78,7 +78,7 @@ The template below is a **maximal menu**, not a checklist. A focused decision-ex
 **Choice made**: [Which option and why]
 **Consequences**: [What this decision means for users / developers]
 
-[For deeper architectural decisions, an ADR may live in `docs/decisions/` instead — see `architecture-docs` skill. This section is for the *narrative* context that helps readers internalize the *why*.]
+[For deeper architectural decisions, an ADR may live in `docs/decisions/` instead — see `aeo-docs:architecture-docs` skill. This section is for the *narrative* context that helps readers internalize the *why*.]
 
 ## Trade-offs and alternatives
 

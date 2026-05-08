@@ -1,6 +1,6 @@
 {
   "name": "aeo-docs",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Documentation skills suite. The `diataxis` skill produces user-facing docs (tutorials, how-to guides, references, explanations) following the Diataxis framework. The `architecture-docs` skill produces C4 diagrams, ADRs, OpenAPI specs, and system / component design docs. The `d2` and `markdown-mermaid` skills cover diagramming. Pure-skill plugin with no agents or slash commands.",
   "author": {
     "name": "AeyeOps",

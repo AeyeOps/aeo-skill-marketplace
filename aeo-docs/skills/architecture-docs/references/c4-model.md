@@ -117,6 +117,6 @@ docs/architecture/
 
 ## Tools
 
-- **D2** (`d2` skill in this plugin) — has `shape: c4-person` and produces clean C4 output. Recommended.
+- **D2** (`aeo-docs:d2` skill) — has `shape: c4-person` and produces clean C4 output. Recommended.
 - **Mermaid** — works for simple C4-flavored diagrams via generic graph syntax, but lacks the c4-person shape and produces less canonical output.
 - **Structurizr** — purpose-built for C4 with its own DSL. Good for large architectures with many views from the same model. Outside the scope of these skills.

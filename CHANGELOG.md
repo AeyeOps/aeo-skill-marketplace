@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.35] - 2026-05-08
+
+### Changed
+
+- **aeo-docs**: Sibling-skill cross-references upgraded from bare names (`` `d2` skill in this plugin``) to plugin-qualified form (`aeo-docs:d2`). 11 references across 5 files in the new `diataxis` and `architecture-docs` skills now use `aeo-docs:<skill>` notation. Why: per the marketplace cross-coupling rule, skills should reference each other by `<plugin>:<skill>` so the loader resolves the correct location regardless of cache layout — bare names were ambiguous when two plugins ship a similarly-named skill. Plugin internal version 0.5.0 → 0.5.1 (v0.4.35)
+
 ## [0.4.34] - 2026-05-08
 
 ### Changed (breaking)

@@ -1,7 +1,7 @@
 ---
 name: diataxis
 description: |
-  Author user-facing technical documentation following the Diataxis framework — tutorials, how-to guides, reference material, and conceptual explanations. Picks the right of the four documentation modes for the request, applies that mode's structural template, and avoids cross-mode bleed (no comprehensive API listings inside a tutorial, no learning exercises inside reference docs, no step-by-step procedures inside an explanation). Use whenever someone asks to document something for users, write a getting-started guide, generate an API or config or CLI reference, write a deployment / migration / troubleshooting guide, explain a design decision, or produce any docs that will live in `docs/`. Trigger phrases include "write a tutorial", "create a how-to", "document the API", "explain why we chose", "generate config docs", "build a reference", "write user docs for X", and any open-ended request to produce user-facing documentation. Not for: README content, code comments, architecture / C4 / ADR / OpenAPI work (use `architecture-docs` instead), or internal design docs that aren't user-facing.
+  Author user-facing technical documentation following the Diataxis framework — tutorials, how-to guides, reference material, and conceptual explanations. Picks the right of the four documentation modes for the request, applies that mode's structural template, and avoids cross-mode bleed (no comprehensive API listings inside a tutorial, no learning exercises inside reference docs, no step-by-step procedures inside an explanation). Use whenever someone asks to document something for users, write a getting-started guide, generate an API or config or CLI reference, write a deployment / migration / troubleshooting guide, explain a design decision, or produce any docs that will live in `docs/`. Trigger phrases include "write a tutorial", "create a how-to", "document the API", "explain why we chose", "generate config docs", "build a reference", "write user docs for X", and any open-ended request to produce user-facing documentation. Not for: README content, code comments, architecture / C4 / ADR / OpenAPI work (use `aeo-docs:architecture-docs` instead), or internal design docs that aren't user-facing.
 ---
 
 # Diataxis — User-Facing Documentation
@@ -127,10 +127,10 @@ Common cases and how to resolve them:
 
 For diagrams inside any of the four modes:
 
-- **Mermaid** (flowcharts, sequence diagrams, class diagrams, gantt) → `markdown-mermaid` skill in this plugin. Renders natively on GitHub and most MD viewers.
-- **D2** (architecture, sequence_diagram, sql_table, class, grid, c4 — the full Terrastruct DSL) → `d2` skill in this plugin. More powerful, requires the `d2` CLI to render to SVG/PNG.
+- **Mermaid** (flowcharts, sequence diagrams, class diagrams, gantt) → `aeo-docs:markdown-mermaid` skill. Renders natively on GitHub and most MD viewers.
+- **D2** (architecture, sequence_diagram, sql_table, class, grid, c4 — the full Terrastruct DSL) → `aeo-docs:d2` skill. More powerful, requires the `d2` CLI to render to SVG/PNG.
 
-For C4 architecture / ADR / OpenAPI work, that's a different kind of documentation entirely — use the `architecture-docs` skill in this plugin, not Diataxis.
+For C4 architecture / ADR / OpenAPI work, that's a different kind of documentation entirely — use the `aeo-docs:architecture-docs` skill, not Diataxis.
 
 ## Why this skill exists
 

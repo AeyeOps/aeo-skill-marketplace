@@ -174,6 +174,6 @@ interface [ComponentName] {
 
 ## When this is not the right artifact
 
-- For end-user docs, use the `diataxis` skill (tutorials / how-tos / references / explanations)
+- For end-user docs, use the `aeo-docs:diataxis` skill (tutorials / how-tos / references / explanations)
 - For an API contract specifically, use OpenAPI directly (`references/openapi.md`) — a system overview can link to the spec, not duplicate it
 - For a single decision, write an ADR (`references/adr-template.md`) — system / component design docs are *broader* than a single decision

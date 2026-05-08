@@ -1,14 +1,14 @@
 ---
 name: architecture-docs
 description: |
-  Produce architecture documentation for technical audiences using established frameworks — the C4 model for system structure (Context / Container / Component / Code), Architectural Decision Records (ADRs) for capturing the why behind significant design choices, OpenAPI for HTTP API specifications, and system / component design documents for engineers who need to build against or reason about the architecture. Use when someone asks to document system architecture, write an ADR, capture an architectural decision, generate C4 diagrams (context / container / component), produce an OpenAPI spec, draft a component design doc, or document how services integrate. Trigger phrases include "create a C4 diagram", "write an ADR for X", "document the architecture", "specify the API", "OpenAPI spec for", "system design doc", "decision record", "architecture overview". Not for: end-user-facing docs (use the `diataxis` skill instead — tutorials, how-tos, references, explanations live there), README content, or code-level inline documentation.
+  Produce architecture documentation for technical audiences using established frameworks — the C4 model for system structure (Context / Container / Component / Code), Architectural Decision Records (ADRs) for capturing the why behind significant design choices, OpenAPI for HTTP API specifications, and system / component design documents for engineers who need to build against or reason about the architecture. Use when someone asks to document system architecture, write an ADR, capture an architectural decision, generate C4 diagrams (context / container / component), produce an OpenAPI spec, draft a component design doc, or document how services integrate. Trigger phrases include "create a C4 diagram", "write an ADR for X", "document the architecture", "specify the API", "OpenAPI spec for", "system design doc", "decision record", "architecture overview". Not for: end-user-facing docs (use the `aeo-docs:diataxis` skill instead — tutorials, how-tos, references, explanations live there), README content, or code-level inline documentation.
 ---
 
 # Architecture Documentation
 
 Architecture documentation serves a different audience and purpose than user-facing documentation. The reader is a developer, architect, or technical stakeholder who needs to *implement against*, *integrate with*, or *reason about* the system. The output is structural and decision-oriented, not learning-oriented.
 
-If the request is to write user-facing docs (tutorials, how-tos, references, explanations that live in `docs/`), use the `diataxis` skill instead. This skill covers the architectural-artifact side: structure diagrams, decision records, API specs, system / component design.
+If the request is to write user-facing docs (tutorials, how-tos, references, explanations that live in `docs/`), use the `aeo-docs:diataxis` skill instead. This skill covers the architectural-artifact side: structure diagrams, decision records, API specs, system / component design.
 
 ## The four artifact types
 
@@ -25,7 +25,7 @@ Most architecture-doc requests resolve to one of these four. Pick the one that m
 
 - **"Document our architecture"** → start with a C4 Context + Container diagram, plus a short System Overview. Drill into Component / Code only when an audience specifically needs that depth.
 - **"Why did we choose X over Y?"** or **"capture this decision"** → write an ADR. One decision per ADR; multiple decisions = multiple ADRs.
-- **"Document the API"** → OpenAPI spec for HTTP APIs. (For internal Python / TypeScript / etc. APIs that aren't HTTP, that's a *user-facing reference* — use the `diataxis` skill's reference mode instead.)
+- **"Document the API"** → OpenAPI spec for HTTP APIs. (For internal Python / TypeScript / etc. APIs that aren't HTTP, that's a *user-facing reference* — use the `aeo-docs:diataxis` skill's reference mode instead.)
 - **"Document this service / component"** → component design doc, possibly with an embedded C4 Component diagram and links to the relevant ADRs.
 
 ## C4 Model — what each level captures
@@ -67,8 +67,8 @@ These are prose-with-diagrams design docs that capture the structure and behavio
 
 C4, sequence, deployment, and data-flow diagrams are core to architecture docs. Two skill options in this plugin:
 
-- **D2** (`d2` skill) — declarative, full-featured, especially good for C4 (`shape: c4-person`), sequence diagrams, ER diagrams, and grid layouts. Renders to SVG / PNG / PDF / PPTX. Requires the `d2` CLI.
-- **Mermaid** (`markdown-mermaid` skill) — renders natively on GitHub and most MD viewers; good enough for sequence, flowchart, gantt, class. No CLI needed but less expressive than D2.
+- **D2** (`aeo-docs:d2` skill) — declarative, full-featured, especially good for C4 (`shape: c4-person`), sequence diagrams, ER diagrams, and grid layouts. Renders to SVG / PNG / PDF / PPTX. Requires the `d2` CLI.
+- **Mermaid** (`aeo-docs:markdown-mermaid` skill) — renders natively on GitHub and most MD viewers; good enough for sequence, flowchart, gantt, class. No CLI needed but less expressive than D2.
 
 For C4 specifically, D2's `c4-person` shape and explicit container boundaries produce cleaner output than mermaid's generic graph syntax. For sequence diagrams either works.
 
