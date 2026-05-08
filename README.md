@@ -61,10 +61,10 @@ Design systems, document decisions, and maintain quality.
 | Plugin | Description |
 |--------|-------------|
 | [**aeo-architecture**](./aeo-architecture) | 5 agents for system design, C4 diagrams, ADRs, and architecture review |
-| [**aeo-docs**](./aeo-docs) | Diataxis framework implementation with tutorial, how-to, reference, and explanation agents; bundles the d2 and markdown-mermaid diagramming skills |
+| [**aeo-docs**](./aeo-docs) | `diataxis` skill (tutorials, how-tos, references, explanations), `architecture-docs` skill (C4, ADRs, OpenAPI, system design), `d2` and `markdown-mermaid` diagramming skills. Pure-skill plugin, no agents or commands |
 
-**Skills included:** MCP server design, Mermaid diagram creation
-**Commands:** `/code-review`, `/design-architecture`, `/refactor-code`
+**Skills included:** MCP server design, Diataxis docs, architecture docs, d2 + Mermaid diagramming
+**Commands:** `/code-review`, `/design-architecture`, `/refactor-code` (from aeo-architecture)
 
 ---
 
