@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.43] - 2026-05-09
+
+### Changed
+
+- **aeo-infra**: `lima-vm-operations` skill (v0.5.1 → v0.5.2) refactored to a progressive-disclosure layout — the single `SKILL.md` is now a short dispatcher (scope, pre-flight, core principles, networking decision shortcuts, pointers) with deep content moved into seven on-demand reference files under `references/`: `installation.md`, `lifecycle.md`, `lima-yaml.md`, `networking.md`, `mounts.md`, `workflows.md`, `troubleshooting.md`. SKILL.md links each reference at least once and references cross-link only where context bridges them — DRY, no duplication, no orphans. Companion slash commands `/lima` and `/lima-doctor` updated to address the skill by plugin-qualified form `aeo-infra:lima-vm-operations` rather than by `${CLAUDE_PLUGIN_ROOT}` file path, matching the cross-coupling convention from v0.4.35. Personal/environment-specific tokens scrubbed from the skill content for marketplace publication. Plugin internal version 0.6.0 → 0.6.1 (v0.4.43)
+
+## [0.4.42] - 2026-05-09
+
+### Added
+
+- **aeo-infra**: New `mlx-serving` skill (v1.0.0) — Apple Silicon LLM serving expert covering both `mlx-lm` and `oMLX` backends. Five-file progressive-disclosure structure: `SKILL.md` (pre-flight, mlx-lm vs oMLX decision matrix, symptom→cause triage, core principles) plus four references — `symptoms.md` (OOM at load/inference, batch>1 crashes, tool-calls-as-text, throughput regression, server-log triage), `omlx-feature-flags.md` (server-level `omlx serve` flags verified from `--help` plus per-model `model_settings.json` keys), `bench-methodology.md` (backend-agnostic harness shape via `--base-url`, suite design, change attribution, regression detection), `upstream-bug-patterns.md` (architecture-specific cache-shape mismatch under batched scheduling; model-family tool-call format not parsed by server). Source content distilled from a fleet-tuning initiative covering 5 models including Llama-4-Scout, Mistral-Medium-3.5-128B, and three Gemma variants — with two upstream bugs identified and patched (ChunkedKVCache batch=1 in scheduler, Llama-3-style `{"name","parameters"}` JSON tool-call parsing). Skill content scrubbed of all machine-specific tokens (paths, IPs, hostnames, fork PR numbers) for marketplace publication. Plugin internal version 0.5.0 → 0.6.0; description and marketplace.json description updated to mention MLX/oMLX serving alongside AWS/Azure/Lima; keywords expanded with `mlx`, `omlx`, `mlx-lm`, `llm-serving`, `local-llm`, `llama`, `gemma`, `mistral`, `kv-cache`, `turboquant`, `dflash` (v0.4.42)
+
+## [0.4.41] - 2026-05-09
+
+### Added
+
+- **aeo-infra**: `lima-vm-operations` skill (v0.5.0 → v0.5.1) gains an "Opting out of the `lima` remap" subsection in Pre-Flight, written as agent-active guidance: when a user asks to give the in-guest user a custom name instead of the silent `lima` fallback, Claude is told to gather inputs directly from the host (`id -un`, `id -u`, `id -F`) rather than asking the user to look them up, derive a Linux-valid name, confirm the choice, and write `~/.lima/_config/override.yaml` with `user: { name, uid, comment }`. The override applies to newly-created VMs only and is reversible. Plugin internal version unchanged at 0.5.0 (skill-only patch) (v0.4.41)
+
+## [0.4.40] - 2026-05-09
+
+### Added
+
+- **aeo-infra**: Two slash commands for `lima-vm-operations` skill (v0.4.1 → v0.5.0) — agentic springboards designed for first-time discovery, not deterministic wrappers around `limactl`. (1) `/lima` — no-arg menu/intro that summarizes scope (Apple Silicon Mac, Lima 2.x; Intel/Linux/Colima out of scope) and offers 4–6 common starting tasks. (2) `/lima-doctor` — read-only diagnostic that runs the skill's Pre-Flight + `limactl list` and reports host fitness, install state, username-remap status, existing VMs, and up to 3 tailored next-action recommendations. Both command bodies are short (under ~15 lines) and explicitly point at SKILL.md as the source of truth — they don't duplicate the skill's content. SKILL.md's Pre-Flight section now cross-references both commands. Plugin internal version 0.4.0 → 0.5.0; description and marketplace.json description updated to mention the springboards. Why a divergence from the existing aws/az skills (which have no commands): Lima has more "decisions to make at start" than the AWS/Azure CLIs, and a discovery menu meaningfully closes the UX gap for users who don't already know Lima exists (v0.4.40)
+
+## [0.4.39] - 2026-05-09
+
+### Added
+
+- **aeo-infra**: New `lima-vm-operations` skill (v0.4.1) — Lima 2.x expert for Apple Silicon Macs covering install, configuration, VM lifecycle, networking modes (user-mode/vzNAT/socket_vmnet shared/bridged/host), virtiofs mounts, host↔guest reach via `host.lima.internal`, auto-port-forward semantics including the deny-list, troubleshooting startup failures, and a robust group-membership pattern for provisioned users. Apple Silicon scope only for v0.4 — Intel Macs, Lima-on-Linux, and Colima are out of scope. Plugin internal version 0.3.0 → 0.4.0; description updated; keywords expanded with `lima`, `limactl`, `vm`, `virtualization`, `apple-silicon`, `macos`, `linux-vm`, `vz`, `virtiofs` (v0.4.39)
+
 ## [0.4.38] - 2026-05-08
 
 ### Fixed
