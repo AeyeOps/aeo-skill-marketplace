@@ -122,10 +122,10 @@
     },
     {
       "name": "aeo-infra",
-      "description": "Infrastructure operations skills covering AWS CLI v2 and Azure CLI mastery, credential management, service patterns, and cloud operations best practices",
+      "description": "Infrastructure operations skills covering AWS CLI v2, Azure CLI, Lima (Linux VMs on Apple Silicon), and MLX/oMLX local LLM serving on Apple Silicon; plus /lima and /lima-doctor agentic springboards — credential management, service patterns, virtualization, local LLM tuning, and cloud operations best practices",
       "category": "infrastructure",
       "source": "./aeo-infra",
-      "tags": ["aws", "aws-cli", "azure", "az-cli", "infrastructure", "cloud", "s3", "ec2", "iam", "credentials", "sso", "jmespath", "operations"]
+      "tags": ["aws", "aws-cli", "azure", "az-cli", "lima", "limactl", "vm", "virtualization", "apple-silicon", "macos", "linux-vm", "infrastructure", "cloud", "s3", "ec2", "iam", "credentials", "sso", "jmespath", "operations", "mlx", "omlx", "mlx-lm", "llm-serving", "local-llm"]
     },
     {
       "name": "aeo-dev",
