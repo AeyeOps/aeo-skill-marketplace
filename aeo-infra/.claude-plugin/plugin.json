@@ -1,11 +1,11 @@
 {
   "name": "aeo-infra",
-  "version": "0.6.1",
-  "description": "Infrastructure operations skills covering AWS CLI v2, Azure CLI, Lima (Linux VMs on Apple Silicon), and MLX/oMLX local LLM serving on Apple Silicon; plus /lima and /lima-doctor agentic springboards — credential management, service patterns, virtualization, local LLM tuning, and cloud operations best practices",
+  "version": "0.6.2",
+  "description": "Infrastructure operations skills covering AWS CLI v2, Azure CLI, Lima (Linux VMs on Apple Silicon), MLX/oMLX local LLM serving on Apple Silicon, and GL-iNet Slate 7 travel router (Wi-Fi 7, VPN, SSH, recovery); plus /lima and /lima-doctor agentic springboards — credential management, service patterns, virtualization, local LLM tuning, cloud operations, and network appliance configuration",
   "author": {
     "name": "AeyeOps",
     "url": "https://github.com/AeyeOps"
   },
   "license": "MIT",
-  "keywords": ["aws", "aws-cli", "azure", "az-cli", "lima", "limactl", "vm", "virtualization", "apple-silicon", "macos", "linux-vm", "vz", "virtiofs", "infrastructure", "cloud", "s3", "ec2", "iam", "credentials", "sso", "jmespath", "operations", "vpc", "lambda", "dynamodb", "rds", "cloudwatch", "mlx", "omlx", "mlx-lm", "llm-serving", "local-llm", "llama", "gemma", "mistral", "kv-cache", "turboquant", "dflash"]
+  "keywords": ["aws", "aws-cli", "azure", "az-cli", "lima", "limactl", "vm", "virtualization", "apple-silicon", "macos", "linux-vm", "vz", "virtiofs", "infrastructure", "cloud", "s3", "ec2", "iam", "credentials", "sso", "jmespath", "operations", "vpc", "lambda", "dynamodb", "rds", "cloudwatch", "mlx", "omlx", "mlx-lm", "llm-serving", "local-llm", "llama", "gemma", "mistral", "kv-cache", "turboquant", "dflash", "glinet", "slate7", "router", "networking", "vpn", "wireguard", "openwrt"]
 }

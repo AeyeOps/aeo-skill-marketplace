@@ -1,6 +1,6 @@
 # aeo-infra
 
-Infrastructure operations skills for Claude Code — AWS CLI v2, Azure CLI, Lima (Linux VMs on Apple Silicon Macs), and MLX/oMLX local LLM serving on Apple Silicon.
+Infrastructure operations skills for Claude Code — AWS CLI v2, Azure CLI, Lima (Linux VMs on Apple Silicon Macs), MLX/oMLX local LLM serving on Apple Silicon, and GL-iNet Slate 7 travel router.
 
 ## Skills
 
@@ -82,6 +82,22 @@ Apple Silicon LLM serving expert covering mlx-lm and oMLX — diagnosing model l
 - Upstream bug patterns: architecture-specific cache-shape mismatch under batched scheduling; model-family tool-call format not parsed by server — recognize, work around, and report
 
 **Scope:** Apple Silicon (M-series) only. Cloud LLM hosting (Bedrock, OpenAI API, Anthropic API), non-MLX backends (llama.cpp, Ollama, vLLM), and model training are out of scope.
+
+### glinet-slate7
+
+Comprehensive reference for the GL-iNet Slate 7 (GL-BE3600) Wi-Fi 7 travel router.
+
+**Trigger phrases:** "GL-iNet Slate 7", "GL-BE3600", "Slate 7 VPN", "Slate 7 setup", "glinet admin panel", "192.168.8.1", "Slate 7 SSH", "GL-iNet WireGuard", "GL-iNet bricked", "U-Boot recovery GL", "Slate 7 factory reset", "GL-iNet AdGuard", "GL-iNet Tor"
+
+**What it covers:**
+- Hardware specs, 2.5G ports, touchscreen screen-by-screen map, buttons, physical layout
+- Full admin panel menu structure — every section explained, all navigation flows
+- VPN client setup: WireGuard and OpenVPN for 30+ providers (NordVPN, Mullvad, Surfshark, manual config)
+- VPN server setup: WireGuard and OpenVPN with client profile export
+- AdGuard Home, Tor, Tailscale, DDNS, Multi-WAN failover, Drop-in Gateway mode
+- Initial setup wizard, direct connection without internet, all network modes (Router/AP/Extender/WDS/Drop-in Gateway)
+- SSH/CLI access, useful commands, UCI configuration
+- Touchscreen-guided reset (Repair Mode vs Reset Mode), factory reset, firmware update, U-Boot bricked-device recovery
 
 ## Installation
 
