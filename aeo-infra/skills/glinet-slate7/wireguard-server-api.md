@@ -1,0 +1,217 @@
+# WireGuard Server — programmatic provisioning
+
+How to provision and operate the built-in WireGuard server end-to-end without using the admin UI. Verified on firmware 4.8.x; same shape applies across GL-iNet sdk4 firmware. See `json-rpc-api.md` for the auth flow that underlies every call here. The shell snippets below assume a `glinet-rpc.sh` helper as documented there, with `call <module> <method> <params-json>` as the invocation.
+
+---
+
+## Module identity
+
+| Item | Value |
+|------|-------|
+| RPC module name | `wg-server` |
+| Lua/UCI namespace | `wireguard_server` |
+| Backing kernel interface | `wgserver` (not `wg0`) |
+| Listen port (default) | `51820/udp` |
+| Default tunnel subnet | `10.1.0.0/24` (server `10.1.0.1`); IPv6 ULA auto-generated |
+| UCI config file | `/etc/config/wireguard_server` |
+
+The kernel interface is named `wgserver` rather than `wg0` because GL-iNet reserves `wg*` numbered interfaces for client-side WireGuard profiles. Verify on the device with `wg show` over SSH.
+
+---
+
+## Methods at a glance
+
+| Method | Params | Returns | Notes |
+|--------|--------|---------|-------|
+| `get_status` | `{}` | `{server: {...}, peers: [...]}` | `server.status`: 0=stopped, 2=running. `peers` here = active peers with handshakes, not the static config list |
+| `get_config` | `{}` | server keys, port, addresses, `initialization`, `local_access` | `initialization: true` means the server has not been finalized — first peer add will regenerate the keypair |
+| `set_config` | server config object | `[]` | Edit port, addresses, server keys |
+| `get_setting` | `{}` | `{client_to_client, masq, local_access}` | Booleans |
+| `set_setting` | full settings object | `[]` | Send all three booleans every time; partial updates are not supported |
+| `get_peer_list` | `{}` | `{peers: [{peer_id,name,client_ip,...}]}` | Sorted by `deprecated` flag |
+| `add_peer` | `{name, ...}` | `{peer_id}` | Auto-allocates next IP from the tunnel subnet |
+| `set_peer` | `{peer_id, ...}` | `[]` | Edit existing peer |
+| `remove_peer` | `{peer_id}` or `{all: true}` | `[]` | Use `{all: true}` to wipe all peers |
+| `generate_peer` | `{peer_id}` | full client config (see below) | Generates the peer keypair, PSK, returns the conf body the client needs |
+| `generate_publickey` | `{private_key}` | `{public_key}` | Server-side derivation; useful when you want to bring your own private key |
+| `generate_key` | `{}` | `[]` | Regenerates the *server's* keypair. Destroys existing peer relationships. |
+| `start` | `{}` | `[]` | Brings up the `wgserver` interface, installs forwarding rules |
+| `stop` | `{}` | `[]` | Tears it down |
+| `add_route` / `set_route` / `remove_route` / `get_route_list` | route object | `[]` or list | Per-peer policy routing rules (the "Route Rules" tab in the UI) |
+
+Successful no-op calls return `result: []`, not `result: {}`.
+
+---
+
+## `add_peer` parameter shape
+
+The Vue form maps to these fields:
+
+```jsonc
+{
+  "name":                  "client1",  // required, ≤64 chars, no leading dot, no `~`
+  "presharedkey":          "<base64>", // optional; provide your own PSK or omit for none
+  "presharedkey_enable":   true,       // boolean; pair with a non-empty presharedkey
+  "mtu":                   1280,       // integer; 0 = use default (1420). Range 576-65535.
+  "persistent_keepalive":  25,         // integer; 0 = none. Range 1-65535.
+  "dns":                   "1.1.1.1",  // optional; comma-separated. Omit if empty.
+  "allowed_ips":           "10.0.0.0/8" // optional; what the *client* will route through this peer. Omit for the server-side default of "0.0.0.0/0,::/0".
+}
+```
+
+Returns `{peer_id: <int>}`. The server auto-assigns:
+
+- Client IPv4: next available in the configured tunnel subnet (`10.1.0.2`, `10.1.0.3`, …)
+- Client IPv6: matching position in the IPv6 ULA range
+- Public/private keypair (revealed by a follow-up `generate_peer` call)
+- PSK (if `presharedkey_enable: true` and you supplied one; otherwise the server may generate one on `generate_peer`)
+
+> Pitfall: send only the fields you have values for. Including `"dns": ""` or `"allowed_ips": ""` causes the call to fail with `Invalid params`. Omit them entirely.
+
+---
+
+## `generate_peer` response (the client config)
+
+```jsonc
+{
+  "address":              "10.1.0.2/24,fd00:.../64",  // for [Interface].Address
+  "private_key":          "<base64>",                  // for [Interface].PrivateKey  ← the CLIENT's private key
+  "public_key":           "<base64>",                  // for [Peer].PublicKey         ← the SERVER's public key
+  "presharedkey":         "<base64>",                  // for [Peer].PresharedKey
+  "dns":                  "10.1.0.1,fd00:...:1",       // for [Interface].DNS
+  "mtu":                  1280,                        // for [Interface].MTU
+  "allowed_ips":          "0.0.0.0/0,::/0",            // for [Peer].AllowedIPs
+  "persistent_keepalive": "25",                        // for [Peer].PersistentKeepalive (note: string, not int)
+  "listen_port":          51820                        // server's listen port (build the Endpoint yourself)
+}
+```
+
+**Field naming is from the client's perspective.** Beginners assume `public_key` means "this peer's public key" (i.e., the client's). It does not — it is the value the client should put in its `[Peer]` block, which is the *server's* public key. Same with `private_key` (the client's own private key, returned because the server generates it for QR-code convenience).
+
+The response does not contain an `Endpoint`. Construct it yourself:
+
+- Local-only link (clients on the LAN): `Endpoint = 192.168.8.1:<listen_port>`
+- Remote link: `Endpoint = <public-IP-or-DDNS-hostname>:<listen_port>`
+
+---
+
+## Settings (`get_setting` / `set_setting`)
+
+| Field | Type | Meaning |
+|-------|------|---------|
+| `client_to_client` | bool | Allow peers to talk to each other across the tunnel |
+| `masq` | bool | NAT (masquerade) outgoing packets from peers to the WAN. **Required if peers should reach the internet through the server.** |
+| `local_access` | bool | Allow peers to reach the server's LAN side (`192.168.8.0/24`). Independent of `masq` |
+
+Both `set_setting` and `set_config` overwrite the entire object. Read the current value first, mutate the field you care about, write back.
+
+---
+
+## Provisioning flow
+
+End-to-end, fresh box → tunnel up → client config in hand:
+
+```bash
+# Helper assumes glinet-rpc.sh and ~/.glinet-pass set up (see json-rpc-api.md)
+RPC=glinet-rpc.sh
+
+# 1. Confirm WG server config exists (the GUI's "Generate Configuration" step seeds defaults)
+$RPC call wg-server get_config '{}' | jq '.result | {port, address_v4, initialization, public_key}'
+
+# 2. Configure settings: keep masq on, allow LAN access from peers, no peer-to-peer
+$RPC call wg-server set_setting '{"client_to_client":false,"masq":true,"local_access":true}'
+
+# 3. Add a peer (no need to send empty optional fields)
+PSK=$(wg genpsk)
+PEER_ID=$($RPC call wg-server add_peer "$(jq -nc --arg psk "$PSK" '{name:"client1",presharedkey:$psk,presharedkey_enable:true,mtu:1280,persistent_keepalive:25}')" \
+  | jq -r .result.peer_id)
+echo "peer_id=$PEER_ID"
+
+# 4. Pull the peer's full client config
+$RPC call wg-server generate_peer "$(jq -nc --argjson pid "$PEER_ID" '{peer_id:$pid}')" | jq .
+
+# 5. Start the server (idempotent; safe to call when already running)
+$RPC call wg-server start '{}'
+
+# 6. Verify
+$RPC call wg-server get_status '{}' | jq '.result.server.status'   # → 2 means running
+ssh root@192.168.8.1 'wg show'                                      # see peers + handshakes
+```
+
+Templating the `wg0.conf` from the `generate_peer` result:
+
+```
+[Interface]
+Address = <address>
+PrivateKey = <private_key>
+DNS = <dns>
+MTU = <mtu>
+
+[Peer]
+PublicKey = <public_key>
+PresharedKey = <presharedkey>
+AllowedIPs = <allowed_ips>
+Endpoint = <ip-or-host>:<listen_port>
+PersistentKeepalive = <persistent_keepalive>
+```
+
+`PersistentKeepalive` is returned as a string in the response; `wg-quick` accepts either, so no conversion needed.
+
+---
+
+## Server-side state inspection
+
+Authoritative state lives in three places. Cross-check them when something looks wrong:
+
+```bash
+# UCI (persistent config; what the GUI mutates)
+ssh root@192.168.8.1 'uci show wireguard_server'
+
+# Live wireguard interface (kernel state)
+ssh root@192.168.8.1 'wg show wgserver'           # add `dump` for machine-readable
+ssh root@192.168.8.1 'ip -br addr show wgserver'
+
+# Listening UDP socket
+ssh root@192.168.8.1 'netstat -lnup | grep 51820'
+
+# RPC view (what the GUI shows)
+glinet-rpc.sh call wg-server get_status '{}'
+glinet-rpc.sh call wg-server get_peer_list '{}'
+```
+
+If `uci show wireguard_server` has `main_server.private_key` and `.public_key` populated but `wg show` returns nothing, the server is configured but stopped — call `wg-server start`.
+
+---
+
+## Pitfalls and gotchas
+
+- **First peer regenerates server keys.** A fresh `Generate Configuration` from the UI sets `initialization: true` and stores a placeholder keypair. The first `add_peer` (or `start`) flips `initialization` to `false` and replaces the keypair. Any clients you handed pre-add are now invalid. Always read `get_config.public_key` *after* the first peer add and use that value in client `[Peer]` blocks.
+- **The interface is `wgserver`, not `wg0`.** Use that name in any `wg`, `ip`, `nft`, or `tcpdump` command run on the device. Client side, you choose your own (typically `wg0` via `wg-quick`).
+- **`local_access` is what makes admin UI access through the tunnel work.** With it off, peers can reach the WAN through `masq` but cannot reach `192.168.8.1` for management.
+- **Restarting via `start` does not always tear down stale peers.** If you've reshaped peers and they're not reflected, call `stop` then `start` (or `wg syncconf` from the device).
+- **`generate_peer` is destructive after the fact.** Re-calling it for the same `peer_id` rotates the client's keypair and PSK — the previously-handed-out config will no longer authenticate.
+- **PSK is optional but cheap.** Send `presharedkey_enable: true` with a `wg genpsk` value to add a layer of post-quantum-resistant pre-shared symmetric secrecy. Skip both fields for no PSK.
+- **`add_peer` rejects empty-string `dns` / `allowed_ips`.** Omit those keys entirely if you don't want to set them.
+- **MTU defaulting is tricky.** `mtu: 0` means "server picks default" (1420). For paths that traverse another tunnel (tunnel-in-tunnel, NAT'd VM/container guest networks, mesh overlays, ISP-imposed PPPoE), drop to `1280` to avoid PMTU black holes.
+
+---
+
+## Local-only link (Endpoint on LAN, no DDNS)
+
+When the client is on the same LAN as the server, set `Endpoint` to the LAN IP rather than a public IP or DDNS hostname:
+
+```
+Endpoint = 192.168.8.1:51820
+```
+
+This avoids the need for port-forwarding on an upstream router and keeps the WG handshake on the L2 segment (or hairpinning across a host's NAT, when the client is a guest VM or container that egresses through the host onto the same LAN/Wi-Fi). Combined with `AllowedIPs = 0.0.0.0/0, ::/0` on the client, every packet the client emits is wrapped as UDP/51820 and only the encrypted handshake/data leaves the client's NIC. Useful when you want a single defined egress shape and don't care about cross-network reachability.
+
+To verify the client is fully tunneling:
+
+```bash
+# On the client
+sudo timeout 10 tcpdump -i <client-NIC> -n \
+  'not (udp port 51820 and host <server-LAN-IP>) and not (arp or icmp6)'
+# Generate diverse traffic in another shell: curl, ping, DNS, TCP
+# Anything captured above is a leak. Existing inbound sessions (return packets) are expected and don't count.
+```

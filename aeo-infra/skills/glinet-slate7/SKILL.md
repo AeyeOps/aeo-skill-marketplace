@@ -6,10 +6,15 @@ description: |
   VPN client setup (WireGuard/OpenVPN; NordVPN, Mullvad, Surfshark, and 30+ providers),
   WireGuard/OpenVPN server setup, AdGuard Home, Tor, Tailscale, DDNS, network modes
   (Router/AP/Extender/WDS/Drop-in Gateway), SSH/CLI access with command reference,
-  factory reset, firmware update, and U-Boot bricked-device recovery.
+  factory reset, firmware update, and U-Boot bricked-device recovery. Also covers the
+  JSON-RPC admin API at /rpc (challenge/response auth, module/method discovery, reusable
+  bash helper) and programmatic WireGuard server provisioning via the wg-server module
+  (add_peer, generate_peer, settings, leak verification, local-only Endpoint pattern) —
+  applicable to most GL-iNet sdk4 firmware devices, not only the Slate 7.
   Use when a user specifically asks about the GL-iNet Slate 7 or GL-BE3600 — setup,
   initial connection, admin panel access, VPN configuration, SSH, troubleshooting lost
-  admin access, or device recovery. Do not trigger for generic router questions not
+  admin access, device recovery, scripting the admin API, or provisioning the built-in
+  WireGuard server without the UI. Do not trigger for generic router questions not
   specific to GL-iNet Slate 7.
 ---
 
@@ -73,6 +78,8 @@ The Slate 7 is purpose-built for three scenarios:
 | [hardware-and-features.md](hardware-and-features.md) | Hardware specs, ports, buttons, touchscreen screens, LED behavior, network modes comparison, feature limitations and known issues |
 | [web-ui-guide.md](web-ui-guide.md) | Admin panel menu structure, every section explained, VPN setup flows (WireGuard client/server, OpenVPN client/server), AdGuard, DDNS, Tailscale, Tor, Multi-WAN |
 | [setup-and-management.md](setup-and-management.md) | Initial connection and first-time setup wizard, direct connection (no internet), SSH/CLI access and useful commands, troubleshooting, firmware update, U-Boot recovery |
+| [json-rpc-api.md](json-rpc-api.md) | The `/rpc` JSON-RPC backend used by the admin panel — auth flow (challenge → SHA-256 crypt → sid), call envelope, module/method discovery via `.so` strings and gzipped Vue bundles in `/www/views/`, common modules table, reusable bash helper, error codes and pitfalls |
+| [wireguard-server-api.md](wireguard-server-api.md) | Programmatic provisioning of the built-in WireGuard server: `wg-server` module method reference, `add_peer` / `generate_peer` parameter shapes, end-to-end provisioning flow, server-side state inspection (UCI vs kernel vs RPC), local-only Endpoint pattern for LAN-side clients, leak verification |
 
 ---
 
@@ -98,6 +105,15 @@ Hold the reset button until the touchscreen shows **"Release to Reset Mode"**, t
 
 ### Run a VPN server (WireGuard)
 Admin Panel → VPN → WireGuard Server → Generate Configuration → Profiles tab → Add profile → export QR/config → Start server. Requires a public IP or DDNS hostname. Full flow in [web-ui-guide.md](web-ui-guide.md).
+
+### Provision WireGuard server programmatically (no UI)
+Auth to the `/rpc` API, then call `wg-server.set_setting`, `wg-server.add_peer`, `wg-server.generate_peer`, `wg-server.start`. End-to-end shell flow in [wireguard-server-api.md](wireguard-server-api.md). Underlying auth/envelope and reusable bash helper in [json-rpc-api.md](json-rpc-api.md).
+
+### Script the admin panel
+The admin UI is a Vue SPA over a JSON-RPC backend at `http://192.168.8.1/rpc`. Modules live in `/usr/lib/oui-httpd/rpc/`; method names and parameter shapes can be discovered from the gzipped Vue bundles in `/www/views/`. See [json-rpc-api.md](json-rpc-api.md) for the auth flow, request envelope, module/method discovery, and a reusable bash client.
+
+### Build a LAN-only WireGuard tunnel (no public IP / DDNS)
+Set `Endpoint = 192.168.8.1:<listen_port>` in the client config and `local_access: true` on the server. The handshake stays on the LAN segment and the client gets full-tunnel egress through the router with no external port-forwarding. Verification (tcpdump leak check) and pitfalls in [wireguard-server-api.md](wireguard-server-api.md).
 
 ### Router is unreachable at 192.168.8.1
 Mode may have been switched to AP or WDS. Hold the reset button until the touchscreen shows "Release to Repair Mode", then release — this reverts to Router Mode. See [setup-and-management.md](setup-and-management.md).
