@@ -91,6 +91,17 @@ Automated review-fix cycle that iterates until no actionable findings remain:
 - Continuous ultrareview → ultrareview-fix iterations
 - Stops when validation passes clean
 
+### 10. glinet-slate7
+
+Comprehensive reference for the GL-iNet Slate 7 (GL-BE3600) Wi-Fi 7 travel router:
+
+- **Hardware** — specs, 2.5G ports, touchscreen screen-by-screen map, buttons, physical layout
+- **Web Admin Panel** — every menu section explained, all navigation flows
+- **VPN flows** — WireGuard and OpenVPN client setup (30+ providers, NordVPN, Mullvad, Surfshark, manual config); WireGuard and OpenVPN server setup with client profile export
+- **Initial setup** — first-time wizard, direct connection without internet, network modes
+- **SSH / CLI** — connecting, useful commands, UCI configuration
+- **Troubleshooting** — reset button (Repair Mode vs Reset Mode), factory reset, firmware update, U-Boot bricked-device recovery
+
 ## Reference Documentation
 
 | File | Topic |

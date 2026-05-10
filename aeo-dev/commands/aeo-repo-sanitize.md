@@ -1,6 +1,6 @@
 ---
 name: aeo-repo-sanitize
-version: 0.4.0
+version: 0.4.3
 description: Scan repo for security risks, PII, secrets, local environment leaks, and supply chain issues before public push
 argument-hint: "[--auto-approve]"
 allowed-tools: Read, Edit, Write, Glob, Grep, Bash, Agent
@@ -10,6 +10,7 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash, Agent
 
 **Flags** (detected from `$ARGUMENTS`):
 - **--auto-approve**: After presenting the report, apply the recommended option's remediations without prompting.
+- **--include-untracked**: Also scan untracked files (`git ls-files --others --exclude-standard`). Use before `git add -A` to catch issues in new files before they enter the index.
 
 ## Step 1: Determine Scan Scope
 
@@ -20,17 +21,19 @@ Repo root: current working directory
 Remote: git remote -v (check if public/private)
 ```
 
-Collect the file inventory — all tracked files plus staged/unstaged changes. Exclude `.git/`, `.venv/`, `node_modules/`, `__pycache__/`, and binary files.
+Collect the file inventory. Exclude `.git/`, `.venv/`, `node_modules/`, `__pycache__/`, and binary files.
 
 ```
-Tracked files: git ls-files
+Tracked files:    git ls-files
 Staged new files: git diff --cached --name-only --diff-filter=A
-Unstaged new files: git ls-files --others --exclude-standard
+Untracked files:  git ls-files --others --exclude-standard   (only if --include-untracked)
 ```
+
+Default scope is tracked + staged only — untracked files are not pushed and scanning them without intent wastes focus. Pass `--include-untracked` when you intend to run `git add -A` and want to catch issues in new files before they enter the index.
 
 ## Step 2: Deep Scan
 
-Use Explore agents (subagent_type=Explore) to parallelize the scan. Launch up to 3 agents covering different categories simultaneously.
+Use Explore agents (subagent_type=Explore) to parallelize the scan. Launch up to 4 agents covering different categories simultaneously.
 
 **Scaling heuristic**: For repos under ~1000 tracked files, agents read every file. For larger repos, grep-first triage — pattern match to find candidates, then read flagged files for context.
 
@@ -64,6 +67,31 @@ Scan for:
 - **CI/CD leaks**: workflow files that echo secrets, use insecure action versions
 - **Gitignore gaps**: check whether `.env`, `*.key`, `*.pem`, `credentials*`, `secrets*` are covered — missing patterns become findings in the main table
 - **Large tracked files**: anything over 10MB
+
+### Category 4: Documentation & Skill Content
+Apply specifically to `.md`, `.txt`, and other prose/documentation files. These files often embed real environment context that slips past code-focused scans.
+
+Scan for:
+- **Real absolute paths in prose** — paths containing specific usernames or machine names (e.g., `/home/jdoe/`, `/Users/jdoe/`, `/opt/company-internal/`) embedded in skill reference tables, code blocks, or setup guides. Distinguish from generic tutorial paths like `/home/user/` (LOW) or repo-relative paths like `./scripts/` (not a finding).
+- **Machine-specific hostnames and internal FQDNs** — references to internal hostnames, `.local` domains, VPN hostnames, or intranet FQDNs in skill examples or config snippets.
+- **Private-range IPs beyond documented device defaults** — private IPs (10.x, 172.16–31.x, 192.168.x) that are environment-specific rather than device-default values documented by the product (e.g., `192.168.8.1` as a router's factory default is LOW; `192.168.1.50` as a specific machine's address is MEDIUM).
+- **Non-public URLs in content** — URLs pointing to intranet, VPN portals, private registries, internal CI/CD, or staging environments embedded in documentation or skill reference tables.
+- **Environment-specific config values in reference tables** — Quick Reference tables or config examples that contain real server addresses, account IDs, tenant IDs, or subscription identifiers rather than placeholders.
+- **Real usernames in path examples or SSH commands** — `ssh user@...` or `cp /home/realname/...` where `realname` matches a real person rather than a generic placeholder.
+- **Hardware fingerprinting** — specific chip model names (e.g., M5 Max, M4 Pro), exact RAM amounts (e.g., "128 GB machine", "137 GB"), GPU identifiers (e.g., `applegpu_g17s`), or storage capacities used as prose context that together identify the developer's specific rig. Generic tier descriptions ("high-RAM Mac", "Apple Silicon") are fine; specific model+capacity combinations are not.
+- **Internal service and agent names** — references to internal tools, agents, services, or systems by their internal names (e.g., "hermes-agent", "internal-proxy") embedded in documentation or comments that ship publicly. Replace with generic descriptions of the role the service performs.
+- **Changelog or commit message oversharing** — change descriptions that reference internal ticket systems, internal team names, private repo URLs, internal tooling names, or specific hardware configurations not visible to the public.
+
+Calibration for Category 4:
+- Router/device factory-default IPs documented in official product specs → LOW (public product information)
+- `192.168.8.1` as GL-iNet's documented default admin IP → LOW
+- Generic tutorial usernames (user, username, yourname, admin) → not a finding
+- Public third-party service URLs (GitHub, NordVPN, Tailscale dashboard) → not a finding
+- Repo-relative paths (`./skills/`, `aeo-claude/`) → not a finding
+- "Apple Silicon Mac" or "high-RAM machine" → not a finding (generic tier, not fingerprinting)
+- "M5 Max", "128 GB machine", `applegpu_g17s` in prose → MEDIUM (identifies specific rig)
+- "deploy-agent", "internal-proxy", internal service names in shipped docs → MEDIUM
+- "AeyeOps internal tool" or org-internal references in documentation that ships publicly → MEDIUM
 
 <viability-gate>
 Before passing a finding to Step 3, verify that the stated risk is actually realizable in the execution context where the flagged code runs. A risk whose premise cannot manifest is not a valid finding — drop it entirely.

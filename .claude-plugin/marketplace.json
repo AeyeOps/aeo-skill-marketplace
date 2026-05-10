@@ -10,10 +10,10 @@
   "plugins": [
     {
       "name": "aeo-claude",
-      "description": "Claude development skills: Agent SDK reference, skill creation, slash command creation, Opus 4.6 prompting, ultra validation workflows, team-coordinated planning, session retrospectives, and Cowork session migration",
+      "description": "Claude development skills: Agent SDK reference, skill creation, slash command creation, Opus 4.6 prompting, ultra validation workflows, team-coordinated planning, session retrospectives, Cowork session migration, and GL-iNet Slate 7 router reference (setup, VPN, SSH, recovery)",
       "category": "development",
       "source": "./aeo-claude",
-      "tags": ["claude", "agent-sdk", "skills", "prompting", "slash-commands", "ultrareview", "teams", "validation", "cowork"]
+      "tags": ["claude", "agent-sdk", "skills", "prompting", "slash-commands", "ultrareview", "teams", "validation", "cowork", "glinet", "slate7", "router", "networking", "vpn", "wireguard"]
     },
     {
       "name": "aeo-agile-tools",

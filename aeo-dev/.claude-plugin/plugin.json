@@ -1,6 +1,6 @@
 {
   "name": "aeo-dev",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Developer workflow tools: repository governance (bootstrap, curate-docs, roadmap alignment review, sanitize), VS Code extension development (stable and Insiders), WSL remote workflows, and TypeScript tooling",
   "author": {
     "name": "AeyeOps",
