@@ -8,14 +8,19 @@ description: |
   (Router/AP/Extender/WDS/Drop-in Gateway), SSH/CLI access with command reference,
   factory reset, firmware update, and U-Boot bricked-device recovery. Also covers the
   JSON-RPC admin API at /rpc (challenge/response auth, module/method discovery, reusable
-  bash helper) and programmatic WireGuard server provisioning via the wg-server module
-  (add_peer, generate_peer, settings, leak verification, local-only Endpoint pattern) —
-  applicable to most GL-iNet sdk4 firmware devices, not only the Slate 7.
+  bash helper), programmatic WireGuard server provisioning via the wg-server module
+  (add_peer, generate_peer, settings, leak verification, local-only Endpoint pattern),
+  and Linux client-side WG with overlay-VPN stacking — including the two leak modes
+  that appear when running Tailscale on top of a full-tunnel WG client (fwmark 0x80000
+  bypass and wg-quick catch-all shadowing the tailnet routes) plus the wg-quick
+  PostUp/PreDown ip-rule fixes. Applicable to most GL-iNet sdk4 firmware devices, not
+  only the Slate 7.
   Use when a user specifically asks about the GL-iNet Slate 7 or GL-BE3600 — setup,
   initial connection, admin panel access, VPN configuration, SSH, troubleshooting lost
-  admin access, device recovery, scripting the admin API, or provisioning the built-in
-  WireGuard server without the UI. Do not trigger for generic router questions not
-  specific to GL-iNet Slate 7.
+  admin access, device recovery, scripting the admin API, provisioning the built-in
+  WireGuard server without the UI, configuring a Linux WG client against the device,
+  or layering Tailscale/ZeroTier on top of that WG client. Do not trigger for generic
+  router questions not specific to GL-iNet Slate 7.
 ---
 
 # GL-iNet Slate 7 (GL-BE3600) Reference
@@ -80,6 +85,7 @@ The Slate 7 is purpose-built for three scenarios:
 | [setup-and-management.md](setup-and-management.md) | Initial connection and first-time setup wizard, direct connection (no internet), SSH/CLI access and useful commands, troubleshooting, firmware update, U-Boot recovery |
 | [json-rpc-api.md](json-rpc-api.md) | The `/rpc` JSON-RPC backend used by the admin panel — auth flow (challenge → SHA-256 crypt → sid), call envelope, module/method discovery via `.so` strings and gzipped Vue bundles in `/www/views/`, common modules table, reusable bash helper, error codes and pitfalls |
 | [wireguard-server-api.md](wireguard-server-api.md) | Programmatic provisioning of the built-in WireGuard server: `wg-server` module method reference, `add_peer` / `generate_peer` parameter shapes, end-to-end provisioning flow, server-side state inspection (UCI vs kernel vs RPC), local-only Endpoint pattern for LAN-side clients, leak verification |
+| [wg-client-stacked-tunnels.md](wg-client-stacked-tunnels.md) | **Read when:** configuring a Linux WireGuard client against the GL-iNet server, debugging a full-tunnel WG client that won't reach the internet or tailnet, layering Tailscale/ZeroTier/another overlay on top of a WG client, or seeing symptoms like *"`tailscale ping --tsmp` works but ICMP/SSH to a tailnet peer doesn't"*, *"`tailscale netcheck` reports UDP blocked"*, or *"large transfers stall while small probes succeed"*. **Contents:** wg-quick policy-routing internals (rules 5208/5209, table 51820, fwmark `0xca6c`), MTU selection for stacked tunnels, the two leak modes specific to Tailscale-on-WG (fwmark `0x80000` bypass at 5210/5230/5250, and wg-quick's 5209 catch-all shadowing the tailnet routes) with copy-pasteable `wg0.conf` `PostUp`/`PreDown` fixes, leak-verification recipe, and a diagnostic command table covering `ip route get … mark`, `ss -tunpe`, the three `tailscale ping` modes, and journalctl interpretation. Generalizes to ZeroTier/Nebula/OpenVPN. |
 
 ---
 
@@ -114,6 +120,9 @@ The admin UI is a Vue SPA over a JSON-RPC backend at `http://192.168.8.1/rpc`. M
 
 ### Build a LAN-only WireGuard tunnel (no public IP / DDNS)
 Set `Endpoint = 192.168.8.1:<listen_port>` in the client config and `local_access: true` on the server. The handshake stays on the LAN segment and the client gets full-tunnel egress through the router with no external port-forwarding. Verification (tcpdump leak check) and pitfalls in [wireguard-server-api.md](wireguard-server-api.md).
+
+### Layer Tailscale (or another overlay VPN) on top of a WG client tunnel
+Naive stacking leaks two ways on Linux: Tailscale's `fwmark 0x80000` bypass rules at priorities 5210/5230/5250 escape `wg0`, and `wg-quick`'s catch-all at 5209 shadows Tailscale's tailnet routes in table 52. Both fixes are `wg-quick` `PostUp`/`PreDown` rule inserts (priorities 5200, 5205, 5206). Full explanation, ready-to-paste rules, MTU guidance for stacked tunnels, and diagnostic command table in [wg-client-stacked-tunnels.md](wg-client-stacked-tunnels.md).
 
 ### Router is unreachable at 192.168.8.1
 Mode may have been switched to AP or WDS. Hold the reset button until the touchscreen shows "Release to Repair Mode", then release — this reverts to Router Mode. See [setup-and-management.md](setup-and-management.md).

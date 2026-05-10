@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.47] - 2026-05-10
+
+### Added
+
+- **aeo-infra**: `glinet-slate7` skill gains a third new reference file, `wg-client-stacked-tunnels.md`, covering the Linux client side of a WireGuard link to a GL-iNet sdk4 server and how to layer an overlay VPN (Tailscale, ZeroTier) on top without leaking. Documents `wg-quick`'s policy-routing internals for full-tunnel `AllowedIPs` (table 51820, fwmark `0xca6c`, rules at 5208 with `suppress_prefixlength 0` and 5209 catch-all), MTU selection rules-of-thumb for stacked tunnels (single layer, Wi-Fi to GL-iNet, NAT'd guest network, overlay-on-WG), and the two leak modes that appear when Tailscale is added on top: (1) Tailscale's `fwmark 0x80000/0xff0000` rules at priorities 5210/5230/5250 bypass the wg-quick default route to the underlying NIC; the fix is a higher-priority rule at 5200 that captures the same fwmark and sends it into table 51820 (so DERP fallback rides wg0 instead of leaking); (2) wg-quick's catch-all at 5209 shadows Tailscale's per-peer `/32` routes in table 52, so ICMP/TCP to mesh peers fail while only TSMP works; the fix is destination-based rules at 5205/5206 that send `100.64.0.0/10`, `100.100.100.100/32`, and the IPv6 ULA `fd7a:115c:a1e0::/48` to table 52 before 5209 fires. Includes a copy-pasteable `wg0.conf` `PostUp`/`PreDown` block, the final ip-rule layout for a working Tailscale-over-WG stack, a leak-verification recipe (tcpdump filter that captures only legitimate management plane traffic; anything else is a leak), and a diagnostic command table covering `ip route get … mark <fwmark>`, `ss -tunpe`, `tailscale ping --tsmp`, `tailscale ping --until-direct=false`, `tailscale netcheck`, and journalctl interpretation. Closes with a generalization to other overlay VPNs (ZeroTier, Nebula, OpenVPN) and a 5-step approach for any overlay-on-WG stack. SKILL.md frontmatter description widened, reference-files table extended, and a new common-task entry added ("Layer Tailscale (or another overlay VPN) on top of a WG client tunnel"). Plugin internal version 0.6.3 → 0.6.4 (v0.4.47)
+
 ## [0.4.46] - 2026-05-10
 
 ### Added
