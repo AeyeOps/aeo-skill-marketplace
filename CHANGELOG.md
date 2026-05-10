@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.48] - 2026-05-10
+
+### Changed
+
+- **aeo-infra**: `glinet-slate7` SKILL.md (plugin 0.6.4 → 0.6.5) — reference-files row for `wg-client-stacked-tunnels.md` reframed for progressive disclosure: leads with explicit **Read when:** triggers (configuring a Linux WG client against the GL-iNet server, debugging a full-tunnel WG client that won't reach the internet or tailnet, layering Tailscale/ZeroTier/another overlay on top of a WG client, or diagnosing symptoms like *`tailscale ping --tsmp` works but ICMP/SSH to a tailnet peer doesn't*, *`tailscale netcheck` reports UDP blocked*, or *large transfers stall while small probes succeed*) followed by **Contents:** describing what's inside, so an agent can decide whether to load the file before reading it. Also: the [0.4.46] and [0.4.47] release commits were rewritten in trunk to remove the `Co-Authored-By: Claude` trailer per the marketplace's no-attribution convention; anyone who pulled before this force-push will see a divergent local history and should reset to the new trunk hashes (v0.4.48)
+
 ## [0.4.47] - 2026-05-10
 
 ### Added
