@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.50] - 2026-05-23
+
+### Added
+
+- **aeo-infra**: new `tailscale-macos-headscale` skill (plugin 0.6.6 → 0.6.7) covering Tailscale.app installation via Homebrew Cask, the NetworkExtension permission grants on macOS Tahoe, recovery from a conflicting brew formula install, `tailscale up --login-server` against a self-hosted headscale, the deep-link `tailscale://changelogin` fallback when the CLI cannot reach the daemon, the `headscale preauthkeys create --user <numeric-id>` gotcha, and verification commands. Three files: SKILL.md + installing-tailscale-on-macos.md + joining-headscale-from-macos.md.
+
 ## [0.4.49] - 2026-05-23
 
 ### Changed
