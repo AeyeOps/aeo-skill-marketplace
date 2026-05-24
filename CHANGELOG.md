@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.49] - 2026-05-23
+
+### Changed
+
+- **aeo-infra**: `glinet-slate7` `wireguard-server-api.md` (plugin 0.6.5 → 0.6.6) updated to reflect actual `wg-server` RPC behavior — `set_peer` ignores `public_key`/`private_key`; `generate_peer` doesn't rotate; UCI and kernel state can diverge. Added a *Rotating an existing peer's keypair* section with the surgical `uci set` + `wg set` flow, and a PSK base64-padding pitfall.
+
 ## [0.4.48] - 2026-05-10
 
 ### Changed
