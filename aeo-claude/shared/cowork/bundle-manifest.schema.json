@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aeyeops.com/schemas/cowork-bundle-manifest-1.json",
+  "title": "Cowork bundle manifest",
+  "description": "The contract written by bundle-pack.py and read by bundle-unpack.py / cowork-to-hosted. One manifest per .coworkbundle. Path rewriting is deferred to import and driven by the anchors recorded here, so a single bundle can target either OS. Stdlib has no JSON Schema validator, so unpack enforces the required keys manually; this file is the authoritative spec.",
+  "type": "object",
+  "required": ["schemaVersion", "createdAt", "bundleType", "source", "project", "sessions", "components"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "createdAt": { "type": "string", "description": "ISO-8601 UTC export timestamp." },
+    "bundleType": { "const": "cowork-project" },
+    "source": {
+      "type": "object",
+      "description": "Everything import needs to know about the machine the bundle came from, to compute the path rewrite. Account and profile UUIDs are identical across machines on one login and are never rewritten; they are recorded so import can verify the destination matches.",
+      "required": ["os", "user", "home", "base", "sessionsRootName", "pathSep", "account", "profile"],
+      "additionalProperties": false,
+      "properties": {
+        "os": { "enum": ["windows", "macos"] },
+        "user": { "type": "string", "description": "Source username, the operand of the host-path rewrite." },
+        "home": { "type": "string", "description": "Source home dir, e.g. C:\\Users\\<user> or /Users/<user>." },
+        "base": { "type": "string", "description": "Source Claude support dir, e.g. ...\\AppData\\Roaming\\Claude or ~/Library/Application Support/Claude." },
+        "sessionsRootName": { "enum": ["local-agent-mode-sessions", "claude-code-sessions"] },
+        "pathSep": { "enum": ["\\", "/"] },
+        "account": { "type": "string", "description": "Account UUID." },
+        "profile": { "type": "string", "description": "Profile UUID." }
+      }
+    },
+    "project": {
+      "type": "object",
+      "description": "The space (Cowork project) being exported. Folders are the original host paths bound to the project; import remaps any that do not exist on the destination.",
+      "required": ["spaceId", "name", "slug", "folders"],
+      "additionalProperties": false,
+      "properties": {
+        "spaceId": { "type": "string" },
+        "name": { "type": "string" },
+        "slug": { "type": "string", "description": "Filesystem-safe project name used for the bundle directory." },
+        "linkedProjectUuid": { "type": ["string", "null"], "description": "The projects[].uuid that hydrates .project-cache, or null. The cache itself is derived and omitted from the bundle." },
+        "folders": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sessionId", "cliSessionId", "encodedCwd", "cwd", "hasTranscript"],
+        "additionalProperties": false,
+        "properties": {
+          "sessionId": { "type": "string", "description": "local_<uuid>, names the sidecar and working dir." },
+          "cliSessionId": { "type": ["string", "null"], "description": "Different UUID, names the transcript JSONL." },
+          "title": { "type": "string" },
+          "vmProcessName": { "type": ["string", "null"] },
+          "encodedCwd": { "type": ["string", "null"], "description": "The flattened-cwd directory name under .claude/projects. Import regenerates this from the rewritten cwd rather than editing it in place." },
+          "cwd": { "type": ["string", "null"], "description": "Absolute source outputs path the encodedCwd encodes; the rewrite anchor for the transcript dir." },
+          "userSelectedFolders": { "type": "array", "items": { "type": "string" } },
+          "fsDetectedFiles": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "hostPath": { "type": "string" },
+                "fileName": { "type": "string" },
+                "timestamp": {}
+              }
+            }
+          },
+          "compactBoundaryCount": { "type": "integer", "description": "If > 0, import must run the truncation stitch (stitch-boundaries.py)." },
+          "transcriptBytes": { "type": "integer" },
+          "hasTranscript": { "type": "boolean", "description": "False for a sidecar with no JSONL on disk; import still lays the session down so it appears in the list." },
+          "vmReferenced": { "type": "boolean", "description": "Transcript contains /sessions/<vmProcessName>/ references." },
+          "vmFilesIncluded": { "type": "boolean", "description": "VM-only files were extracted and packed under vm-files/." }
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "description": "Flat inventory of every payload file in the bundle, for integrity verification on import.",
+      "items": {
+        "type": "object",
+        "required": ["path", "kind", "portability", "bytes", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "path": { "type": "string", "description": "Bundle-relative POSIX path." },
+          "kind": { "enum": ["manifest", "sidecar", "transcript", "subagent", "subagent-meta", "tool-result", "output", "upload", "audit", "audit-key", "space-entry", "space-memory", "vm-file"] },
+          "portability": { "enum": ["host", "vm", "derived"] },
+          "bytes": { "type": "integer" },
+          "sha256": { "type": "string" }
+        }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  }
+}

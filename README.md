@@ -128,14 +128,14 @@ Skills for building AI-powered tooling.
 
 | Plugin | Description |
 |--------|-------------|
-| [**aeo-claude**](./aeo-claude) | Agent SDK reference, skill creation, prompt engineering, Opus prompting, ultra validation workflows, session retrospectives, Cowork session migration |
+| [**aeo-claude**](./aeo-claude) | Agent SDK reference, skill creation, prompt engineering, Opus prompting, ultra validation workflows, session retrospectives, Cowork session migration/export utilities |
 | [**aeo-deployment**](./aeo-deployment) | Release orchestration, compliance automation, progressive rollouts |
 | [**aeo-performance**](./aeo-performance) | Profiling, bottleneck identification, optimization planning |
 | [**aeo-nous**](./aeo-nous) | Self-improving memory — extracts learnings from sessions, injects context at startup |
 | [**aeo-dev**](./aeo-dev) | Repository governance (bootstrap, curate-docs, roadmap alignment, sanitize), VS Code extension development (stable and Insiders) |
 | [**aeo-vsc-cc-sessions-sidecar**](./aeo-vsc-cc-sessions-sidecar) | Hook sidecar for AEO VSC CC Sessions extension — per-process session state, event logging, and lineage |
 
-**Skills included:** Agent SDK patterns, skill authoring, command development, prompt engineering, Opus prompting, repo governance, VS Code extension APIs (TreeView, WebviewView, CSP), Claude Cowork session migration (cross-machine transcript stitching, path rewrites, compact_boundary truncation workaround)
+**Skills included:** Agent SDK patterns, skill authoring, command development, prompt engineering, Opus prompting, repo governance, VS Code extension APIs (TreeView, WebviewView, CSP), Claude Cowork session migration (cross-machine transcript stitching, path rewrites, compact_boundary truncation workaround), and shared Cowork export/manifest utilities
 **Commands:** `/aeo-retro`, `/aeo-create-claude-prompt`, `/aeo-review-claude-prompt`, `/aeo-repo-bootstrap`, `/aeo-repo-curate-docs`, `/aeo-repo-roadmap-alignment-review`, `/aeo-repo-sanitize`, `/aeo-reconcile`, `/setup`, `/analyze-performance`
 
 ---

@@ -1,6 +1,6 @@
 # AEO Claude Plugin
 
-Claude development skills: Agent SDK reference, skill creation, slash command creation, Opus prompting techniques, and session retrospectives.
+Claude development skills: Agent SDK reference, skill creation, slash command creation, Opus prompting techniques, session retrospectives, and Cowork session migration/export utilities.
 
 ## Installation
 
@@ -91,6 +91,15 @@ Automated review-fix cycle that iterates until no actionable findings remain:
 - Continuous ultrareview → ultrareview-fix iterations
 - Stops when validation passes clean
 
+### 10. cowork-migrate
+
+Claude Cowork session migration guidance for Windows-to-Windows moves under the same Cowork account:
+
+- Full transcript restoration, including compact_boundary stitching
+- Host path and VM working-directory rewrites
+- Sidecar restore handling after Cowork's first-load folder pruning
+- Shared Cowork storage-layout documentation and bundle utilities under `shared/cowork/`
+
 ## Reference Documentation
 
 | File | Topic |
@@ -100,6 +109,10 @@ Automated review-fix cycle that iterates until no actionable findings remain:
 | `skills/claude-agent-sdk/references/tools-mcp.md` | Tool design and MCP integration |
 | `skills/claude-agent-sdk/references/authentication.md` | Auth patterns and token lifecycle |
 | `skills/claude-agent-sdk/references/architecture-patterns.md` | GTVR, orchestration, production |
+| `shared/cowork/storage-layout.md` | Cowork profile/session/space storage layout |
+| `shared/cowork/session-enum.py` | Enumerate Cowork projects and sessions from local profile data |
+| `shared/cowork/bundle-pack.py` | Pack a Cowork project into a portable bundle directory |
+| `shared/cowork/bundle-manifest.schema.json` | Manifest contract for Cowork bundle import/export |
 
 ## Trigger Phrases
 
@@ -114,6 +127,7 @@ The skills activate when you ask about:
 - Validating plans, code changes, or configurations (ultrareview)
 - Fixing review findings automatically (ultrareview-fix, ultrareview-loop)
 - Running session retrospectives to extract and persist learnings (aeo-retro)
+- Migrating or exporting Claude Cowork sessions/projects between machines
 
 ## Commands
 

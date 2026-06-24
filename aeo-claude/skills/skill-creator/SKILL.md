@@ -108,6 +108,24 @@ cloud-deploy/
 ```
 Claude reads only the relevant reference file.
 
+#### Sharing resources across skills in a plugin
+
+The layout above keeps a skill's `scripts/`, `references/`, and `assets/` inside its own folder, which is the right default: a self-contained skill is easy to reason about and to move. But when several skills in one plugin lean on the same facts or the same helper — say a data-format reference that an `export` skill and an `import` skill have to agree on — copying it into each skill invites drift, where you fix one copy and miss the other.
+
+For that case, put the shared file once at the plugin root and point each skill at it with `${CLAUDE_PLUGIN_ROOT}`, which Claude Code substitutes inline anywhere it appears in skill content with the absolute path to the plugin's install directory:
+
+```
+my-plugin/
+├── .claude-plugin/plugin.json
+├── shared/
+│   └── data-format.md            ← single source of truth
+└── skills/
+    ├── export/SKILL.md           → "read ${CLAUDE_PLUGIN_ROOT}/shared/data-format.md"
+    └── import/SKILL.md           → "read ${CLAUDE_PLUGIN_ROOT}/shared/data-format.md"
+```
+
+Write it as a plain instruction in the body ("read `${CLAUDE_PLUGIN_ROOT}/shared/data-format.md` before starting"). Keep a skill's own bundled files relative (`references/foo.md`); reach for the variable only when the target lives outside the skill's own directory. The rule that bites if you skip it: never hardcode the resolved path, because the install directory is version-stamped and moves on every plugin update — the variable is what stays valid across the bump. Two siblings cover adjacent needs: `${CLAUDE_PLUGIN_DATA}` is a directory that persists across updates (use it for installed dependencies like a venv or `node_modules` you don't want to rebuild each version), and a top-level `bin/` is added to the Bash tool's PATH while the plugin is enabled, the tidiest way to share a runnable helper.
+
 #### Principle of Lack of Surprise
 
 This goes without saying, but skills must not contain malware, exploit code, or any content that could compromise system security. A skill's contents should not surprise the user in their intent if described. Don't go along with requests to create misleading skills or skills designed to facilitate unauthorized access, data exfiltration, or other malicious activities. Things like a "roleplay as an XYZ" are OK though.

@@ -4,13 +4,14 @@ description: |
   Migrate a Claude Cowork session from one Windows machine to another with full
   history, working file links, and no truncated-transcript rendering bug. Use this
   whenever the user mentions moving, importing, copying, or migrating a Cowork
-  session/conversation/project between machines — or troubleshoots symptoms of a
-  broken import like "session shows blank", "only 32 messages showing", "scratchpad
-  files don't open", "can't scroll past latest compaction", or "Loaded N messages
-  (truncated via tail/compaction)" in the Cowork log. Covers orphan sessions on
-  Windows→Windows (same Cowork account). Handles the undocumented two-layer
-  compact_boundary truncation filter in app.asar that silently clips imported
-  transcripts. Spaces/Projects and cross-platform are out of scope for this iteration.
+  session/conversation/project between machines, or troubleshoots symptoms of a
+  broken import like "session shows blank", "only the latest messages show",
+  "scratchpad files don't open", "can't scroll past the last compaction", or
+  "Loaded N messages (truncated via tail/compaction)" in the Cowork log. Covers
+  orphan sessions on Windows to Windows under the same Cowork account. Handles the
+  undocumented two-layer compact_boundary truncation filter in app.asar that
+  silently clips imported transcripts. Does not handle Cowork Spaces/Projects,
+  Linux/macOS, or cross-account migration.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task
 ---
 
@@ -40,57 +41,33 @@ Trigger on any of:
 - Questions about Cowork storage layout, sidecars, `local_<uuid>.json`,
   `sessiondata.vhdx`, `compact_boundary`, `preservedSegment`
 
-If the user is asking about Spaces/Projects (multi-session containers), Linux or
-Mac Cowork, or cross-account migration, say so — this iteration does not cover
-those and a different workflow is required.
+This skill covers single-session migration on Windows to Windows under one Cowork
+account. It does not cover Cowork Spaces/Projects (multi-session containers), Linux
+or macOS Cowork, or cross-account migration; those need a different procedure. If
+the user asks for one of those, say so and stop rather than improvising.
+
+## Before acting: read the references
+
+The on-disk structures this workflow manipulates (the profile path, the two session
+IDs, the per-session files, the sidecar's host-path fields, the VM filesystem, and
+the first-load sidecar rewrite) are documented in `${CLAUDE_PLUGIN_ROOT}/shared/cowork/storage-layout.md`.
+Read it before starting.
+
+The transcript truncation filter that step 6 fixes is documented in
+`references/truncation-filter.md`, including the reverse-engineered `app.asar`
+pseudocode and the two red-herring approaches that look correct but fail. Read it
+before touching any JSONL.
 
 ## Preconditions
 
 - Both machines run Claude Cowork for Windows and are logged into the **same Cowork
-  account** (account UUID and profile UUID must match — they're identical across
-  machines for the same login, so you do not invent new IDs).
+  account** (account UUID and profile UUID match across machines for the same login,
+  so you do not invent new IDs).
 - You can reach the source machine via SSH or have its files locally already.
 - The user has agreed to **quit Cowork on the source machine** — the
   `sessiondata.vhdx` is locked while Cowork is running.
 - You have the session's friendly title or `cliSessionId` prefix so you can
   disambiguate.
-
-## Key facts (read before acting)
-
-- Each Cowork profile lives at
-  `C:\Users\<user>\AppData\Roaming\Claude\local-agent-mode-sessions\<account-uuid>\<profile-uuid>\`.
-  Account and profile UUIDs are **the same on every machine** logged into the same
-  account — drop files into the identical path, do not rename.
-- A session consists of **two distinct IDs**:
-  - `sessionId` = `local_<uuid>` — the sidecar filename and the working dir name
-  - `cliSessionId` = a different UUID — names the JSONL transcript file
-  Don't conflate them.
-- Per-session files in the profile dir:
-  - `local_<uuid>.json` — sidecar (metadata, `userSelectedFolders`, `spaceId`,
-    `cliSessionId`, `initialMessage`, `systemPrompt`, MCP tool list, etc.).
-    Populates the session list and scratchpad. ~180 KB.
-  - `local_<uuid>/.claude/projects/<encoded-cwd>/<cliSessionId>.jsonl` — the
-    actual transcript, one event per line.
-  - `local_<uuid>/.claude/projects/<encoded-cwd>/<cliSessionId>/subagents/*.jsonl`
-    — subagent and compaction-summary transcripts.
-- Cowork runs Claude Code inside a VM (WSL2+Hyper-V). Session working dirs
-  `/sessions/<vmProcessName>/` live in a persistent ext4 image at
-  `C:\Users\<user>\AppData\Roaming\Claude\vm_bundles\claudevm.bundle\sessiondata.vhdx`.
-  Files the agent created inside `/sessions/<vmProcessName>/` (and not in a
-  host-mounted dir) only exist there — you extract them by mounting the VHDX.
-- Cowork **rewrites the sidecar on first load**, stripping
-  `userSelectedFolders` entries whose paths don't exist on the destination. Always
-  stash a pristine copy of the source sidecar before dropping anything in the dest
-  profile so you can re-apply it after the dest folders physically exist.
-- **The truncation filter.** Cowork's UI only renders messages after the last
-  `compact_boundary` event, using a two-layer filter in `app.asar`. Naively copying
-  a transcript with N compactions yields only the events after the most recent one.
-  Fixing this requires (a) ensuring the last 30 MB of the file contains a
-  `compact_boundary` line with a populated `compactMetadata.preservedSegment` so the
-  file reader loads the full file, and (b) stitching each boundary's `parentUuid`
-  so the walker can traverse from `tailUuid` back to `headUuid`. Full details and
-  the pseudocode from `app.asar` live in `references/truncation-filter.md` — read
-  that before touching the JSONL.
 
 ## Workflow
 
@@ -163,7 +140,13 @@ Transcripts reference absolute paths from the source machine. Four classes:
 | Source username in Windows paths | `C:\Users\<srcuser>\...` | Dest username |
 | Source-specific folder layout | e.g. source has a junction or symlink that the dest lacks | Ask the user what the right dest path is |
 | VM bind-mount paths | `/sessions/<vm>/mnt/<mountname>/...` | The real host dir the mount pointed at on source — **which is the folder whose basename matches `<mountname>`** in `userSelectedFolders`. E.g. a `userSelectedFolders` entry of `C:\Users\<srcuser>\Documents\work` produces a VM bind mount at `/sessions/<vm>/mnt/work`. Use that correspondence to discover what to rewrite to. |
-| VM working-dir paths | `/sessions/<vm>/...` (often thousands of refs) | Wherever you extracted VM files to on the dest. Do **not** rewrite the `.claude/projects/-sessions-<vm>/` subdirectory name itself — that encoded-cwd string is the directory layout Cowork expects and stays unchanged. Only `cwd` **values** inside transcript event JSON get rewritten. |
+| VM working-dir paths | `/sessions/<vm>/...` | Wherever you extracted VM files to on the dest. Do **not** rewrite the `.claude/projects/-sessions-<vm>/` subdirectory name itself — that encoded-cwd string is the directory layout Cowork expects and stays unchanged. Only `cwd` **values** inside transcript event JSON get rewritten. |
+
+In the sidecar, the class-1 username rewrite also has to reach the top-level `cwd`
+value and every `fsDetectedFiles[].hostPath`, not just the `userSelectedFolders`
+entries (see `${CLAUDE_PLUGIN_ROOT}/shared/cowork/storage-layout.md`). The whole-file pass below does this
+automatically; flagged here so a hand rewrite of only the folder fields does not
+silently skip them.
 
 Use `scripts/rewrite-paths.py` as a template. Copy it into a working dir, edit the
 `SRC_USER`, `DST_USER`, `VM_NAME`, `VM_FILES_DEST`, and `RULES` constants at the
@@ -308,8 +291,8 @@ criterion.
   first — it handles dedup automatically.
 - **Renaming `compact_boundary` is a red herring.** It gets layer 2 to return
   "keep everything" but makes layer 1 fall back to tail-only reading for any
-  file >50 MB. Net result: partial history that looks like success. Use the
-  stitch approach instead.
+  file over the 50 MB reader threshold. Net result: partial history that looks
+  like success. Use the stitch approach instead.
 - **`isCompactSummary: true` is also a red herring.** It only hides an
   individual summary message in the rendered timeline. It does not affect
   either truncation layer. Don't waste time on it.
@@ -319,24 +302,15 @@ criterion.
   dir are unrecoverable.** Click-to-open on those will 404 in the imported
   session. This is expected data loss, not a migration bug.
 
-## What this skill does NOT cover (yet)
+## Reference files
 
-- Cowork Spaces/Projects (multi-session containers with shared memory and
-  project-cache docs). Session linkage is via the `spaceId` field, and the
-  `spaces/<space-uuid>/` and `.project-cache/<project-uuid>/` directories also
-  need to come over. Iteration 2.
-- Linux or macOS Cowork migrations.
-- Cross-account migration (different Cowork accounts on source and dest —
-  account and profile UUIDs differ and the sidecar's `sessionId` must be
-  rewritten everywhere).
-
-If the user asks for any of these, explain the scope and stop. Do not improvise.
-
-## Bundled files
-
-- `references/truncation-filter.md` — full reverse-engineered pseudocode of
-  `cDn`, `sDn`, `iDn`, `lDn` from `app.asar`, the winning stitch configuration,
-  and the two red-herring approaches that look like they work but don't.
+- `${CLAUDE_PLUGIN_ROOT}/shared/cowork/storage-layout.md` — the on-disk storage layout: profile path, the
+  two session IDs, per-session files, the sidecar's host-path fields, the VM
+  filesystem, and the first-load sidecar rewrite. Read before starting.
+- `references/truncation-filter.md` — reverse-engineered `app.asar` pseudocode of
+  the two-layer truncation filter (`cDn`, `sDn`, `iDn`, `lDn`), the winning stitch
+  configuration, and the two red-herring approaches that look like they work but
+  don't. Read before touching the JSONL.
 - `scripts/stitch-boundaries.py` — fixes the transcript.
 - `scripts/chain-walker.py` — validator that simulates Cowork's parentUuid walk
   and reports whether it reaches `headUuid`.

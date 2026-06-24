@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.51] - 2026-06-24
+
+### Added
+
+- **aeo-claude**: Add shared Cowork storage and bundle utilities for future export/import workflows, with generated bundle and local Cowork state artifacts excluded from version control. Plugin internal version 0.4.32 → 0.4.33.
+
+### Changed
+
+- **aeo-claude**: Document plugin-level shared resources in `skill-creator`, so future skills can reference shared plugin files with `${CLAUDE_PLUGIN_ROOT}` instead of copying shared contracts into each skill.
+
 ## [0.4.50] - 2026-05-23
 
 ### Added

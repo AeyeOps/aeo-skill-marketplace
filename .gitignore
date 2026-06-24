@@ -35,5 +35,16 @@ secrets*
 # Claude Code local state
 .claude/
 
+# Claude Cowork exports and local state
+*.coworkbundle/
+*.coworkbundle
+cowork-bundles/
+local-agent-mode-sessions/
+claude-code-sessions/
+vm_bundles/
+spaces.json
+local_*.json
+sessiondata.vhdx
+
 # OMC ephemeral session state (sessions, mode state, project memory)
 .omc/

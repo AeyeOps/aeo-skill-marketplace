@@ -19,7 +19,7 @@ compaction. The log at
 `C:\Users\<user>\AppData\Roaming\Claude\logs\main.log`
 contains one of:
 
-- `Loaded 32 messages from transcript for session <id> (truncated via compaction)`
+- `Loaded N messages from transcript for session <id> (truncated via compaction)`
 - `Loaded N messages from transcript for session <id> (truncated via tail)`
 - (Winning) `Loaded N messages from transcript for session <id>` with no suffix
 
