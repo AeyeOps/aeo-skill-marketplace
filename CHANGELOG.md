@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.52] - 2026-06-26
+
+### Fixed
+
+- **aeo-claude**: `skill-creator` description-triggering optimizer (`scripts/run_eval.py`) scored every query as no-trigger in environments with MCP servers and pre-installed skills, so `run_loop.py` optimized against a dead signal (all-zero trigger rates). Three root causes fixed: (1) each nested `claude -p` probe booted the session's full MCP-server fleet, whose startup latency alone exceeded the per-query timeout — added `--strict-mcp-config` so probes load no MCP servers; (2) the `<name>-skill-<hash>` fixture was written into the real project's `.claude/skills/`, so the model triggered the actual same-named skill (or a global SessionStart-hook skill) instead of the fixture and the name-match detection never fired — the fixture now runs in an isolated `tempfile.mkdtemp()` project; (3) raised the default per-query `--timeout` from 30s to 60s for model pre-tool latency. Also fixed a temp-skill leak — cleanup now removes the whole isolated project in `finally` (the old path left the fixture behind on a subprocess timeout). Plugin internal version 0.4.33 → 0.4.34 (v0.4.52)
+
 ## [0.4.51] - 2026-06-24
 
 ### Added

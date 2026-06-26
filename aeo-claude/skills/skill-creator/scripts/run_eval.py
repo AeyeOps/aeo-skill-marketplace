@@ -12,6 +12,7 @@ import select
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import uuid
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -51,7 +52,14 @@ def run_single_query(
     """
     unique_id = uuid.uuid4().hex[:8]
     clean_name = f"{skill_name}-skill-{unique_id}"
-    skill_dir = Path(project_root) / ".claude" / "skills" / clean_name
+    # Isolate the fixture in a throwaway project dir, NOT the real project_root.
+    # If the skill being optimized already lives in the real .claude/skills/, the
+    # model triggers THAT (or a global SessionStart-hook skill) instead of this
+    # hash-named copy, so the name-match detection below never fires and every
+    # query reads as no-trigger. An empty isolated project also avoids booting the
+    # real project's hooks/CLAUDE.md. (project_root kept for signature compat.)
+    eval_root = Path(tempfile.mkdtemp(prefix="skilleval-"))
+    skill_dir = eval_root / ".claude" / "skills" / clean_name
     skill_file = skill_dir / "SKILL.md"
 
     try:
@@ -75,6 +83,10 @@ def run_single_query(
             "--output-format", "stream-json",
             "--verbose",
             "--include-partial-messages",
+            # Don't boot the session's MCP-server fleet on every nested call —
+            # that startup latency alone exceeds the per-query timeout and makes
+            # every query read as no-trigger.
+            "--strict-mcp-config",
         ]
         if model:
             cmd.extend(["--model", model])
@@ -88,7 +100,7 @@ def run_single_query(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
-            cwd=project_root,
+            cwd=str(eval_root),
             env=env,
         )
 
@@ -183,8 +195,7 @@ def run_single_query(
 
         return triggered
     finally:
-        if skill_dir.exists():
-            shutil.rmtree(skill_dir)
+        shutil.rmtree(eval_root, ignore_errors=True)
 
 
 def run_eval(
@@ -268,7 +279,7 @@ def main():
     parser.add_argument("--skill-path", required=True, help="Path to skill directory")
     parser.add_argument("--description", default=None, help="Override description to test")
     parser.add_argument("--num-workers", type=int, default=10, help="Number of parallel workers")
-    parser.add_argument("--timeout", type=int, default=30, help="Timeout per query in seconds")
+    parser.add_argument("--timeout", type=int, default=60, help="Timeout per query in seconds")
     parser.add_argument("--runs-per-query", type=int, default=3, help="Number of runs per query")
     parser.add_argument("--trigger-threshold", type=float, default=0.5, help="Trigger rate threshold")
     parser.add_argument("--model", default=None, help="Model to use for claude -p (default: user's configured model)")
