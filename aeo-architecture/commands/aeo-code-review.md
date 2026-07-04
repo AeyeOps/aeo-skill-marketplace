@@ -1,5 +1,5 @@
 ---
-name: code-review
+name: aeo-code-review
 description: Comprehensive code review with actionable feedback using extended thinking
 version: 0.1.0
 argument-hint: "[file-or-pr] [--focus:<aspect>]"
