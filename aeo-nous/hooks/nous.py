@@ -17,13 +17,13 @@ Stop (async): Flushes inboxes, fires extraction subprocesses at thresholds.
 
 from __future__ import annotations
 
-import fcntl
 import json
 import logging
 import os
 import re
 import subprocess
 import sys
+import tempfile
 import time
 from logging.handlers import RotatingFileHandler
 from collections import deque
@@ -31,6 +31,72 @@ from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+
+# =============================================================================
+# Cross-platform file locking + subprocess detachment
+# =============================================================================
+# POSIX uses fcntl.flock (advisory whole-file lock). Windows has no fcntl, so
+# fall back to msvcrt.locking over a fixed 1-byte region at offset 0 — the
+# stores here have a single append-writer per process, so a coarse advisory
+# lock is sufficient. This module must import cleanly regardless of platform.
+
+if sys.platform == "win32":
+    import msvcrt
+
+    _LOCK_REGION_BYTES = 1
+
+    def _lock_file(f) -> None:
+        """Acquire an exclusive advisory lock on an open file (Windows)."""
+        pos = f.tell()
+        f.seek(0)
+        try:
+            msvcrt.locking(f.fileno(), msvcrt.LK_LOCK, _LOCK_REGION_BYTES)
+        finally:
+            f.seek(pos)
+
+    def _unlock_file(f) -> None:
+        """Release the advisory lock acquired by _lock_file (Windows)."""
+        pos = f.tell()
+        f.seek(0)
+        try:
+            msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, _LOCK_REGION_BYTES)
+        finally:
+            f.seek(pos)
+
+    # No start_new_session on Windows; a new process group is the closest
+    # equivalent for detaching the fire-and-forget extraction subprocess.
+    _DETACH_KWARGS = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+else:
+    import fcntl
+
+    def _lock_file(f) -> None:
+        """Acquire an exclusive advisory lock on an open file (POSIX)."""
+        fcntl.flock(f, fcntl.LOCK_EX)
+
+    def _unlock_file(f) -> None:
+        """Release the advisory lock acquired by _lock_file (POSIX)."""
+        fcntl.flock(f, fcntl.LOCK_UN)
+
+    _DETACH_KWARGS = {"start_new_session": True}
+
+
+# Portable replacement for the coreutils `timeout` binary (absent on native
+# Windows, not present on stock macOS): a tiny inline supervisor that runs the
+# extraction command and hard-kills it after a deadline. subprocess.run(timeout=)
+# sends SIGKILL/TerminateProcess on expiry, identically across platforms, and
+# propagates the child's exit code otherwise (so immediate API failures are
+# still observable via the parent's short poll).
+_TIMEOUT_WATCHDOG = (
+    "import subprocess,sys\n"
+    "try:\n"
+    "    sys.exit(subprocess.run(sys.argv[2:], timeout=float(sys.argv[1])).returncode)\n"
+    "except subprocess.TimeoutExpired:\n"
+    "    sys.exit(124)\n"
+    "except FileNotFoundError:\n"
+    "    sys.exit(127)\n"
+)
+
 
 try:
     from pydantic import BaseModel, ValidationError
@@ -73,7 +139,7 @@ STATUSLINE_PATH = Path.home() / ".claude" / "statusline-activity.jsonl"
 INJECT_RECENT_COUNT = 10
 
 # SessionStart: total inline byte budget across both lenses (split evenly).
-# Entries beyond the budget drop to the /tmp spill file instead of being
+# Entries beyond the budget drop to the temp-dir spill file instead of being
 # truncated — sized to stay under the harness threshold that previously
 # spilled a 26 KB injection and left only a 2 KB preview in context.
 INJECT_BYTE_BUDGET = 5000
@@ -264,16 +330,16 @@ class StopInput(BaseModel):
 
 
 class _ProcessSafeRotatingHandler(RotatingFileHandler):
-    """RotatingFileHandler with fcntl.flock for multi-process safety."""
+    """RotatingFileHandler with an advisory file lock for multi-process safety."""
 
     def emit(self, record: logging.LogRecord) -> None:
         try:
             with open(self.baseFilename + ".lock", "a") as lf:
-                fcntl.flock(lf, fcntl.LOCK_EX)
+                _lock_file(lf)
                 try:
                     super().emit(record)
                 finally:
-                    fcntl.flock(lf, fcntl.LOCK_UN)
+                    _unlock_file(lf)
         except Exception:
             self.handleError(record)
 
@@ -440,7 +506,7 @@ def get_extraction_cursor(project_dir: Path) -> str:
     reason = "missing"
     try:
         with open(cursor_file, "a+") as f:  # a+ creates if not exists
-            fcntl.flock(f, fcntl.LOCK_EX)  # Exclusive lock (blocking)
+            _lock_file(f)  # Exclusive advisory lock (blocking)
             try:
                 f.seek(0)
                 content = f.read()
@@ -462,7 +528,7 @@ def get_extraction_cursor(project_dir: Path) -> str:
                 log(f"cursor_created reason={reason} ts={now}", session="?", project=str(project_dir))
                 return now
             finally:
-                fcntl.flock(f, fcntl.LOCK_UN)  # Release lock
+                _unlock_file(f)  # Release lock
     except OSError as e:
         # Fallback for file system errors only
         now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
@@ -485,14 +551,14 @@ def write_extraction_cursor(project_dir: Path, ts: str) -> None:
 
     try:
         with open(cursor_file, "a+") as f:
-            fcntl.flock(f, fcntl.LOCK_EX)  # Exclusive lock (blocking)
+            _lock_file(f)  # Exclusive advisory lock (blocking)
             try:
                 f.seek(0)
                 f.truncate()
                 f.write(json.dumps({"last_extracted_ts": ts}))
                 f.flush()
             finally:
-                fcntl.flock(f, fcntl.LOCK_UN)  # Release lock
+                _unlock_file(f)  # Release lock
     except OSError as e:
         log(f"WARN cursor_write_error: {e}", session="?", project=str(project_dir))
 
@@ -615,11 +681,11 @@ def handle_session_start(hook: SessionStartInput) -> int:
             knowledge_text = "\n".join(json.dumps(e) for e in knowledge)
             output_parts.append(f"<recent_knowledge>\n{knowledge_text}\n</recent_knowledge>")
 
-    # 3. Spill full corpus to /tmp so the model can Read the tail on demand.
+    # 3. Spill full corpus to a temp file so the model can Read the tail on demand.
     # Requires session_id for the per-session filename; no fallback if missing.
     spill_written = False
     if hook.session_id and (all_learnings or all_knowledge):
-        spill_path = Path(f"/tmp/nous-session-{hook.session_id}.md")
+        spill_path = Path(tempfile.gettempdir()) / f"nous-session-{hook.session_id}.md"
         spill_lines = [
             f"# Nous corpus for session {hook.session_id}",
             f"_Project: {hook.cwd}  ·  {len(all_learnings)} learnings, {len(all_knowledge)} knowledge_",
@@ -795,21 +861,23 @@ def _fire_extraction_subprocess(
         session=current.session_id, project=current.cwd)
 
     # Fire and forget - stdout goes to unique fragment file
-    # Use timeout(1) to kill claude if it runs too long
+    # A detached Python watchdog hard-kills claude after WORKER_TIMEOUT_SECONDS
+    # (portable replacement for the coreutils `timeout` binary).
     # --permission-mode bypassPermissions required for Read tool in non-interactive --print mode
     with open(fragment_file, "w") as f:
         _log_fh = open(LOG_PATH, "a")
         try:
             proc = subprocess.Popen(
-                ["timeout", str(WORKER_TIMEOUT_SECONDS), "claude", "--print",
+                [sys.executable, "-c", _TIMEOUT_WATCHDOG, str(WORKER_TIMEOUT_SECONDS),
+                 "claude", "--print",
                  "--no-session-persistence",
                  "--permission-mode", "bypassPermissions", "--model", EXTRACTION_MODEL, "-p", prompt],
                 stdout=f,
                 stderr=_log_fh,
-                start_new_session=True,  # Detach from parent
                 env={
                     **{k: v for k, v in os.environ.items() if k != "CLAUDECODE"},
                 },  # Unset CLAUDECODE to prevent hook recursion in nested claude --print
+                **_DETACH_KWARGS,  # Detach so the extraction outlives this hook
             )
         except OSError:
             _log_fh.close()

@@ -1,4 +1,6 @@
- ---
+---
+name: aeo-reconcile
+version: 0.3.0
 description: Reconcile nous stores — prune stale, resolve conflicts, deduplicate, fix misclassified entries
 argument-hint: [max-entries-per-lens]
 disable-model-invocation: true

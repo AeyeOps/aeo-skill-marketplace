@@ -16,7 +16,9 @@ if echo "$input" | jq -e '.context_window.used_percentage == null' >/dev/null 2>
 fi
 
 # Enrich and append
-ts=$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)
+# Fixed .000 millisecond field: BSD date (macOS) has no %N. meta_ts must match
+# nous.py's strict .NNNZ pattern (write_extraction_cursor), which .000Z does.
+ts=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
 host=$(hostname)
 echo "$input" | jq -c --arg ts "$ts" --arg host "$host" '{meta_ts: $ts, meta_host: $host} + .' >> "$LOGFILE"
 

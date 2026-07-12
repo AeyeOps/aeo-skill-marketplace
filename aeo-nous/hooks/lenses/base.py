@@ -6,7 +6,6 @@ Provides ExtractionLens dataclass and sync helpers for fire-and-forget extractio
 
 from __future__ import annotations
 
-import fcntl
 import json
 import sys
 import time
@@ -17,6 +16,44 @@ from typing import TYPE_CHECKING, Type
 # Minimum age (seconds) for fragment files before processing
 # Allows subprocess time to finish writing
 FRAGMENT_MIN_AGE_SECONDS = 2
+
+
+# POSIX uses fcntl.flock (advisory whole-file lock). Windows has no fcntl, so
+# fall back to msvcrt.locking over a fixed 1-byte region at offset 0. flush_inbox
+# appends under this lock; a coarse advisory lock is sufficient. This module must
+# import cleanly regardless of platform.
+if sys.platform == "win32":
+    import msvcrt
+
+    _LOCK_REGION_BYTES = 1
+
+    def _lock_file(f) -> None:
+        """Acquire an exclusive advisory lock on an open file (Windows)."""
+        pos = f.tell()
+        f.seek(0)
+        try:
+            msvcrt.locking(f.fileno(), msvcrt.LK_LOCK, _LOCK_REGION_BYTES)
+        finally:
+            f.seek(pos)
+
+    def _unlock_file(f) -> None:
+        """Release the advisory lock acquired by _lock_file (Windows)."""
+        pos = f.tell()
+        f.seek(0)
+        try:
+            msvcrt.locking(f.fileno(), msvcrt.LK_UNLCK, _LOCK_REGION_BYTES)
+        finally:
+            f.seek(pos)
+else:
+    import fcntl
+
+    def _lock_file(f) -> None:
+        """Acquire an exclusive advisory lock on an open file (POSIX)."""
+        fcntl.flock(f, fcntl.LOCK_EX)
+
+    def _unlock_file(f) -> None:
+        """Release the advisory lock acquired by _lock_file (POSIX)."""
+        fcntl.flock(f, fcntl.LOCK_UN)
 
 if TYPE_CHECKING:
     from pydantic import BaseModel
@@ -188,14 +225,14 @@ def flush_inbox(lens: ExtractionLens, project_dir: Path) -> int:
 
             # Append to encoded file
             with encoded_file.open("a") as ef:
-                fcntl.flock(ef.fileno(), fcntl.LOCK_EX)  # Lock for append
+                _lock_file(ef)  # Lock for append
                 try:
                     for entry in entries:
                         entry.setdefault('w', None)
                         entry.setdefault('w_at', None)
                         ef.write(json.dumps(entry) + "\n")
                 finally:
-                    fcntl.flock(ef.fileno(), fcntl.LOCK_UN)
+                    _unlock_file(ef)
 
             # Delete fragment and stderr after successful write
             fragment.unlink()
