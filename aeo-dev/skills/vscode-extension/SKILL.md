@@ -3,12 +3,14 @@ name: vscode-extension
 description: >
   Contains verified extension development workflows, webview CSP pitfall resolutions, and
   profile-based install fixes that produce more correct results than reasoning from general
-  training alone. Consult when building or debugging a VS Code extension, scaffolding with
-  esbuild, fixing blank webview panels or silent CSP violations, troubleshooting extensions
-  that won't load after install with profiles, adding dual TreeView+WebviewView toggle panels,
-  or publishing to the marketplace. Do NOT use for VS Code user configuration (themes,
-  keybindings, tasks.json), Chrome/browser extensions, Electron apps, JupyterLab plugins,
-  or Monaco Editor embeds.
+  training alone. Targets stable VS Code on Windows/macOS/Linux desktop — not code-insiders
+  on WSL/Linux (use vscode-insiders-extension for that). Consult when building or debugging a
+  VS Code extension, scaffolding with esbuild, fixing blank webview panels or silent CSP
+  violations, troubleshooting extensions that won't load after install with profiles, adding
+  dual TreeView+WebviewView toggle panels, or publishing to the marketplace. Do NOT use for
+  code-insiders on WSL/Linux (use vscode-insiders-extension), VS Code user configuration
+  (themes, keybindings, tasks.json), Chrome/browser extensions, Electron apps, JupyterLab
+  plugins, or Monaco Editor embeds.
 ---
 
 # VS Code Extension Development

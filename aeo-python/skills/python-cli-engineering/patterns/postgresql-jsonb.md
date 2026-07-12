@@ -428,7 +428,7 @@ END $$;
 
 **This Skill:**
 - [schema-resilience.md](schema-resilience.md) - 3-layer architecture for evolving APIs
-- [reference/database-migrations.md](../reference/database-migrations.md) - Idempotent migrations
+- [references/database-migrations.md](../references/database-migrations.md) - Idempotent migrations
 - [pydantic-flexible.md](pydantic-flexible.md) - Flexible validation
 
 **Example Applications:**

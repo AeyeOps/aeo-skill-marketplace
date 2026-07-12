@@ -2,6 +2,24 @@
 
 CRITICAL RESEARCH: This document addresses diagram width issues for letter-width viewport rendering.
 
+## Table of Contents
+
+1. [Executive Summary: Solving Width Issues](#executive-summary-solving-width-issues)
+2. [Layout Engines Available](#layout-engines-available)
+3. [Direction Control (TB, BT, LR, RL)](#direction-control-tb-bt-lr-rl)
+4. [CRITICAL: Creating Truly Independent Diagrams](#critical-creating-truly-independent-diagrams)
+5. [Node Spacing and Sizing Controls](#node-spacing-and-sizing-controls)
+6. [How Connections/Edges Affect Layout](#how-connectionsedges-affect-layout)
+7. [Breaking Large Diagrams into Smaller Pieces](#breaking-large-diagrams-into-smaller-pieces)
+8. [Render Width Constraints](#render-width-constraints)
+9. [Text Wrapping and Width Control](#text-wrapping-and-width-control)
+10. [Advanced ELK Configuration](#advanced-elk-configuration)
+11. [Complete Example: Optimizing for Letter Width](#complete-example-optimizing-for-letter-width)
+12. [Summary: Solving Width Issues](#summary-solving-width-issues)
+13. [References](#references)
+
+---
+
 ## Executive Summary: Solving Width Issues
 
 The CRITICAL solution to diagrams rendering too wide for letter-width viewports:

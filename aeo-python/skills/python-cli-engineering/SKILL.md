@@ -244,7 +244,7 @@ make check
 **PostgreSQL JSONB**: See [patterns/postgresql-jsonb.md](patterns/postgresql-jsonb.md) - Flexible schema with JSONB columns
 **Pydantic flexibility**: See [patterns/pydantic-flexible.md](patterns/pydantic-flexible.md) - Handle dynamic/unknown fields
 **Schema resilience**: See [patterns/schema-resilience.md](patterns/schema-resilience.md) - Robust API schema handling
-**Database migrations**: See @reference/database-migrations.md - Alembic migration patterns
+**Database migrations**: See @references/database-migrations.md - Alembic migration patterns
 
 ### CLI Command with Config
 

@@ -2,6 +2,24 @@
 
 Tested and working Mermaid templates for GitHub, GitLab, and VS Code. All templates use simple structures (under 10 nodes) and proven syntax.
 
+## Table of Contents
+
+1. [Simple Flowcharts](#1-simple-flowcharts)
+2. [Decision Trees](#2-decision-trees)
+3. [Process Flows](#3-process-flows)
+4. [System Architecture](#4-system-architecture)
+5. [Database ERD](#5-database-erd)
+6. [Sequence Diagrams](#6-sequence-diagrams)
+7. [State Machines](#7-state-machines)
+8. [Class Diagrams](#8-class-diagrams)
+9. [Gantt Charts](#9-gantt-charts)
+10. [Mindmaps](#10-mindmaps)
+11. [General Tips](#general-tips)
+12. [Common Issues](#common-issues)
+13. [References](#references)
+
+---
+
 ## 1. Simple Flowcharts
 
 ### Basic Vertical Flow (TB Direction)

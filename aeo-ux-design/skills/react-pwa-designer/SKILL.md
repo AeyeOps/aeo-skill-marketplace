@@ -18,6 +18,10 @@ Trigger this skill when the user requests:
 - Designing with Tailwind CSS and modern design systems
 - Converting designs to React components
 
+### MCP Server Prerequisites
+
+This skill expects two MCP servers to be configured: **shadcn** (`mcp__shadcn__*`) for live component discovery and variant details, and **context7** (`mcp__context7__*`) for official/latest library documentation. Both are optional. Without them the skill falls back to its bundled reference files (`@reference/shadcn-components.md` and the other `@reference/*` guides), so component listings may be incomplete and documentation may lag the latest releases.
+
 ## Reference File Index
 
 ### Getting Started

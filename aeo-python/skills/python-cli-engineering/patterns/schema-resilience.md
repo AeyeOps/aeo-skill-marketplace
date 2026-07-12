@@ -325,7 +325,7 @@ END $$;
 - Safe in CI/CD pipelines
 - Easy rollback (just re-run previous version)
 
-See [../reference/database-migrations.md](../reference/database-migrations.md) for detailed patterns
+See [../references/database-migrations.md](../references/database-migrations.md) for detailed patterns
 
 ---
 
@@ -371,7 +371,7 @@ region = get_field_safely(vendor, 'custom_fields.region.value', default='Unknown
 **This Skill:**
 - [postgresql-jsonb.md](postgresql-jsonb.md) - JSONB query patterns and indexing
 - [pydantic-flexible.md](pydantic-flexible.md) - Flexible validation patterns
-- [../reference/database-migrations.md](../reference/database-migrations.md) - Migration patterns
+- [../references/database-migrations.md](../references/database-migrations.md) - Migration patterns
 
 **Common Use Cases:**
 - **E-commerce APIs** - Product catalogs with varying attributes across categories

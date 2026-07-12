@@ -4,6 +4,21 @@
 
 Mermaid is a JavaScript-based diagramming tool that renders Markdown-inspired text definitions into dynamic diagrams in the browser. This document covers how Mermaid works when embedded in Markdown files (```mermaid blocks) across different platforms, their limitations, and platform-specific quirks.
 
+## Table of Contents
+
+1. [GitHub Flavored Markdown](#1-github-flavored-markdown)
+2. [GitLab Markdown](#2-gitlab-markdown)
+3. [VS Code Markdown Preview](#3-vs-code-markdown-preview)
+4. [Obsidian](#4-obsidian)
+5. [Other Common Markdown Renderers](#5-other-common-markdown-renderers)
+6. [Platform-Specific Rendering Differences](#6-platform-specific-rendering-differences)
+7. [Maximum Diagram Sizes and Performance](#7-maximum-diagram-sizes-and-performance)
+8. [Mobile vs Desktop Rendering](#8-mobile-vs-desktop-rendering)
+9. [Accessibility Considerations in Markdown](#9-accessibility-considerations-in-markdown)
+10. [Summary: Platform Selection Matrix](#summary-platform-selection-matrix)
+
+---
+
 ## 1. GitHub Flavored Markdown
 
 ### Implementation Architecture
