@@ -19,7 +19,7 @@ You are in the **EXPLORE** phase of the Explore-Plan-Code-Commit workflow. Your 
 
 ## Session Resume Detection
 
-@reference/session-protocols.md
+@../reference/session-protocols.md
 
 ## Exploration Target
 $ARGUMENTS
@@ -86,7 +86,7 @@ Before escalating to AskUserQuestion, ensure you've exhausted autonomous explora
 
 ## Exploration Methodology
 
-@reference/pattern-recognition.md
+@../reference/pattern-recognition.md
 
 ## Thoroughness-Based Heuristics
 
@@ -96,7 +96,7 @@ See pattern recognition methodology above for thoroughness-specific guidance.
 
 ### Output File: EPCC_EXPLORE.md
 
-@reference/exploration-report-templates.md
+@../reference/exploration-report-templates.md
 
 ## Exploration Best Practices
 

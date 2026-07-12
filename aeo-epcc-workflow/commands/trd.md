@@ -65,7 +65,7 @@ Generate comprehensive **TECH_REQ.md** through collaborative technical discovery
 
 ## Clarification Strategy
 
-@reference/question-patterns.md
+@../reference/question-patterns.md
 
 ## Interview Mode Selection
 
@@ -85,15 +85,15 @@ Present mode choice to user with clear time/depth tradeoffs:
 
 ## Discovery Phases
 
-@reference/trd-interview-phases.md
+@../reference/trd-interview-phases.md
 
 ## Adaptive Interview Heuristics
 
-@reference/trd-tech-evaluation.md
+@../reference/trd-tech-evaluation.md
 
 ## TECH_REQ.md Output Structure
 
-@reference/trd-templates.md
+@../reference/trd-templates.md
 
 ## After Generating TECH_REQ.md
 

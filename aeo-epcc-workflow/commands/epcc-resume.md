@@ -29,7 +29,7 @@ Parse mode from arguments:
 if [ ! -f "epcc-features.json" ] && [ ! -f "epcc-progress.md" ]; then
     if [ -f "PRD.md" ]; then
         # Legacy repo detected - trigger migration flow
-        # See @reference/resume-strategies.md
+        # See @../reference/resume-strategies.md
     else
         echo "No EPCC progress tracking found."
         echo "Start a new tracked project with: /prd or /epcc-plan"
@@ -40,7 +40,7 @@ fi
 
 ## Legacy Repo Detection
 
-@reference/resume-strategies.md
+@../reference/resume-strategies.md
 
 ## Session Startup Checklist (Default Mode)
 

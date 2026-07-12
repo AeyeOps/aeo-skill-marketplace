@@ -43,11 +43,11 @@ Parse mode from arguments:
 
 ## Quality Validation
 
-@reference/review-checklists.md
+@../reference/review-checklists.md
 
 ## Git Workflow
 
-@reference/commit-conventions.md
+@../reference/commit-conventions.md
 
 ## Documentation
 

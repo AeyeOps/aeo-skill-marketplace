@@ -18,7 +18,7 @@ $ARGUMENTS
 
 If `epcc-features.json` exists, this is a tracked multi-session project. Execute the session startup protocol before implementation.
 
-@reference/session-protocols.md
+@../reference/session-protocols.md
 
 ## Implementation Philosophy
 
@@ -101,7 +101,7 @@ Generate `EPCC_CODE.md`. See code implementation patterns below for output templ
 
 ## Specialized Sub-Agents
 
-@reference/code-implementation-patterns.md
+@../reference/code-implementation-patterns.md
 
 ## Debugging Heuristics
 

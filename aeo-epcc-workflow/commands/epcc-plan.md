@@ -38,7 +38,7 @@ $ARGUMENTS
 
 ## Clarification Strategy
 
-@reference/question-patterns.md
+@../reference/question-patterns.md
 
 **Check context files first**: Read EPCC_EXPLORE.md (brownfield) + PRD.md (product) + TECH_REQ.md (technical) → use found context → ask about gaps only.
 
@@ -96,7 +96,7 @@ fi
 
 ### Step 4: Identify Risks
 
-@reference/risk-assessment.md
+@../reference/risk-assessment.md
 
 ### Step 5: Define Test Strategy
 
@@ -111,7 +111,7 @@ See risk assessment above for trade-off analysis patterns.
 
 ## EPCC_PLAN.md Output
 
-@reference/plan-templates.md
+@../reference/plan-templates.md
 
 ## Feature List Finalization
 

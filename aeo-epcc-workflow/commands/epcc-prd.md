@@ -54,7 +54,7 @@ Create a PRD that answers the 5W+H:
 
 ## Clarification Strategy
 
-@reference/question-patterns.md
+@../reference/question-patterns.md
 
 ## Interview Mode Selection
 
@@ -70,11 +70,11 @@ Create a PRD that answers the 5W+H:
 
 ## Discovery Process Phases
 
-@reference/prd-interview-phases.md
+@../reference/prd-interview-phases.md
 
 ## PRD Output Structure
 
-@reference/prd-templates.md
+@../reference/prd-templates.md
 
 ## After Generating PRD
 
@@ -96,7 +96,7 @@ Questions or changes to the PRD?
 
 See PRD interview phases above for feature extraction. Also load output templates for formatting:
 
-@reference/output-templates.md
+@../reference/output-templates.md
 
 ## Usage Examples
 

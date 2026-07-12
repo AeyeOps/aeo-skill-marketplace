@@ -117,11 +117,11 @@ After creating PRD.md, automatically generate progress tracking files for multi-
 
 Parse the PRD "Core Features" section and create structured feature tracking.
 
-**See**: @reference/output-templates.md for epcc-features.json structure and feature extraction rules.
+**See**: @output-templates.md for epcc-features.json structure and feature extraction rules.
 
 ### Initialize epcc-progress.md
 
-**See**: @reference/output-templates.md for epcc-progress.md initialization pattern.
+**See**: @output-templates.md for epcc-progress.md initialization pattern.
 
 ### Create Initial Git Commit
 
