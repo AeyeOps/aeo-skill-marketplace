@@ -1,5 +1,5 @@
 ---
-name: skill-creator
+name: aeo-skill-creator
 description: Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, update or optimize an existing skill, run evals to test a skill, benchmark skill performance with variance analysis, or optimize a skill's description for better triggering accuracy.
 ---
 
@@ -242,7 +242,7 @@ Once all runs are done:
 
 1. **Grade each run** — `agents/grader.md` defines the canonical `grading.json` schema. Spawn a grader subagent that reads it, OR (recommended for assertions that can be checked programmatically — faster, more reliable, reusable across iterations) write a script that produces output conforming to that schema. **Two top-level keys are required**: `summary` (with `pass_rate`, `passed`, `failed`, `total`) and `expectations` (each item with `text`, `passed`, `evidence`). The viewer and `aggregate_benchmark.py` both depend on these exact names. Common breakage: skipping `summary` makes the per-eval Formal Grades footer in the viewer show `? — 0 passed, 0 failed of 0`; off-spec expectation field names (e.g. `name`/`met`/`details`) make assertions disappear from the list.
 
-2. **Aggregate into benchmark** — run the aggregation script from the skill-creator directory:
+2. **Aggregate into benchmark** — run the aggregation script from the aeo-skill-creator directory:
    ```bash
    python -m scripts.aggregate_benchmark <workspace>/iteration-N --skill-name <name>
    ```
@@ -253,7 +253,7 @@ Put each with_skill version before its baseline counterpart.
 
 4. **Launch the viewer** with both qualitative outputs and quantitative data:
    ```bash
-   nohup python <skill-creator-path>/eval-viewer/generate_review.py \
+   nohup python <aeo-skill-creator-path>/eval-viewer/generate_review.py \
      <workspace>/iteration-N \
      --skill-name "my-skill" \
      --benchmark <workspace>/iteration-N/benchmark.json \

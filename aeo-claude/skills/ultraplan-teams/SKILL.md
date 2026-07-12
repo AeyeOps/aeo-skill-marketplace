@@ -3,7 +3,9 @@ name: ultraplan-teams
 description: |
   Team-coordinated planning mode that creates an agent team for parallel implementation.
   Use for complex multi-component projects requiring coordinated parallel workstreams.
-  Extends ultraplan with Claude Code's teams feature for bidirectional agent communication.
+  Extends ultraplan with Claude Code's teams feature for bidirectional agent communication —
+  prefer this over ultraplan when teammates need to message each other mid-task (shared task
+  list, SendMessage) rather than work as independently verified subagents.
 ---
 
 # UltraPlan Teams: Coordinated Parallel Planning
@@ -107,7 +109,7 @@ tendencies that lead to poor outcomes.
   changes because training data lags behind current releases
 - Maintain dependency compatibility — don't blindly upgrade because
   transitive breaks are expensive to debug
-- Use Opus 4.6 optimized prompting patterns for agent communication
+- Use Opus-optimized prompting patterns for agent communication
   because structured prompts reduce misinterpretation in multi-agent contexts
 
 </principles>

@@ -1,4 +1,4 @@
-"""Shared utilities for skill-creator scripts."""
+"""Shared utilities for aeo-skill-creator scripts."""
 
 import os
 import subprocess

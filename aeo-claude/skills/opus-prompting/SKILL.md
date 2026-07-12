@@ -57,7 +57,7 @@ Read these artifact-type blocks to identify which patterns matter most for your 
 - Pattern 6 (Over-specification) — progressive disclosure: frontmatter triggers loading, body provides depth
 - Pattern 4 (Formatting) — match the skill's prose style to the output you want from the model
 
-**Guidance**: First sentence of `description` should be a verb phrase naming the activation behavior (e.g., "identifies X and surfaces Y" not "covers X, Y, and Z"). See also: `claude-skill-creator` skill.
+**Guidance**: First sentence of `description` should be a verb phrase naming the activation behavior (e.g., "identifies X and surfaces Y" not "covers X, Y, and Z"). See also: `aeo-skill-creator` skill.
 
 ### Slash Command Template
 

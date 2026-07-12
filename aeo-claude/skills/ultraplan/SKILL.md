@@ -3,7 +3,9 @@ name: ultraplan
 description: |
   Coordinator-delegated planning mode that breaks complex tasks into subtasks and delegates
   all implementation to Opus subagents. Use when tackling multi-step projects, large refactors,
-  or any work requiring parallel delegation with task tracking.
+  or any work requiring parallel delegation with task tracking. Subagents work independently
+  and report back for verification — for workstreams whose teammates need to coordinate with
+  each other mid-task, use ultraplan-teams instead.
 allowed-tools: Read, Glob, Grep, Task, TaskCreate, TaskUpdate, TaskList, TaskGet, AskUserQuestion, EnterPlanMode, ExitPlanMode
 ---
 

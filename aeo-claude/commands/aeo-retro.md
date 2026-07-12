@@ -3,6 +3,7 @@ name: aeo-retro
 version: 0.1.0
 description: Session retrospective that extracts improvements and reconciles stale guidance in CLAUDE.md files and project skills
 argument-hint: "[--approve-all]"
+disable-model-invocation: true
 allowed-tools: Read, Edit, Write, Glob, Grep, Bash, Skill
 ---
 
@@ -176,7 +177,7 @@ Each proposed item should:
 
 If findings include project-specific knowledge AND no project skill exists yet:
 
-Invoke the `aeo-claude:claude-skill-creator` skill and follow its guidance to create `.claude/skills/<project-name>/SKILL.md`:
+Invoke the `aeo-claude:aeo-skill-creator` skill and follow its guidance to create `.claude/skills/<project-name>/SKILL.md`:
 
 ```yaml
 ---

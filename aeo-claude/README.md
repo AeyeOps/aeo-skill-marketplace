@@ -27,14 +27,14 @@ Comprehensive guidance for building autonomous AI agents:
 - **Authentication** - API key vs subscription OAuth, token lifecycle
 - **Production** - Deployment patterns and best practices
 
-### 2. claude-skill-creator
+### 2. aeo-skill-creator
 
-Guidance for creating Claude Code skills:
+Create new skills, iteratively improve existing ones, and measure their performance:
 
-- Skill file structure and frontmatter
-- Progressive disclosure patterns
-- MCP tool references
-- Testing and validation
+- With-skill vs. baseline subagent runs graded against quantitative assertions
+- Eval viewer for qualitative side-by-side review of outputs
+- Description-optimization loop that scores trigger accuracy against held-out queries
+- Blind A/B comparison and packaging into a distributable `.skill` file
 
 ### 3. slash-command-creator
 
@@ -119,7 +119,7 @@ Claude Cowork session migration guidance for Windows-to-Windows moves under the 
 The skills activate when you ask about:
 
 - Building custom agents with Claude Agent SDK
-- Creating skills or slash commands for Claude Code
+- Creating, testing, or benchmarking skills or slash commands for Claude Code
 - Prompting techniques for Opus
 - Designing effective tools and MCP servers
 - Implementing permission models and guardrails
