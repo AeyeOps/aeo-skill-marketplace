@@ -15,8 +15,8 @@ Expert guidance for operation-aware node configuration with property dependencie
 
 Configuration best practices:
 - get_node_essentials is the most used discovery pattern
-- 56 seconds average between configuration edits
-- 91.7% success rate with essentials-based configuration
+- Configuration proceeds iteratively, one edit at a time
+- Essentials-based configuration succeeds for most nodes
 
 **Key insight**: Most configurations need only essentials, not full schema!
 
@@ -81,11 +81,11 @@ Configuration best practices:
 
 **Use the right tool for the right job**:
 
-1. **get_node_essentials** (91.7% success rate)
+1. **get_node_essentials** (reliable for most nodes)
    - Quick overview
    - Required fields
    - Common options
-   - **Use first** - covers 90% of needs
+   - **Use first** - covers most needs
 
 2. **get_property_dependencies** (for complex nodes)
    - Shows what fields depend on others
@@ -201,7 +201,7 @@ validate_node_operation({...});
 
 ### Use get_node_essentials When:
 
-**✅ Starting configuration** (91.7% success rate)
+**✅ Starting configuration** (reliable for most nodes)
 ```javascript
 get_node_essentials({
   nodeType: "nodes-base.slack"
@@ -214,7 +214,7 @@ get_node_essentials({
 - Basic examples
 - Operation list
 
-**Fast**: ~18 seconds average (from search → essentials)
+**Fast**: quick to retrieve (from search → essentials)
 
 ### Use get_node_info When:
 
@@ -694,7 +694,7 @@ get_node_essentials({
 ### ✅ Do
 
 1. **Start with get_node_essentials**
-   - 91.7% success rate
+   - Reliable for most nodes
    - Faster than get_node_info
    - Sufficient for most needs
 
@@ -754,7 +754,7 @@ For comprehensive guides on specific topics:
 ## Summary
 
 **Configuration Strategy**:
-1. Start with get_node_essentials (91.7% success)
+1. Start with get_node_essentials (reliable for most nodes)
 2. Configure required fields for operation
 3. Validate configuration
 4. Check dependencies if stuck

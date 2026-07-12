@@ -244,32 +244,32 @@ These skills work together with Workflow Patterns:
 
 ---
 
-## Pattern Statistics
+## Common Pattern Elements
 
-Common workflow patterns:
+Ordered from most to least common:
 
 **Most Common Triggers**:
-1. Webhook - 35%
-2. Schedule (periodic tasks) - 28%
-3. Manual (testing/admin) - 22%
-4. Service triggers (Slack, email, etc.) - 15%
+1. Webhook
+2. Schedule (periodic tasks)
+3. Manual (testing/admin)
+4. Service triggers (Slack, email, etc.)
 
 **Most Common Transformations**:
-1. Set (field mapping) - 68%
-2. Code (custom logic) - 42%
-3. IF (conditional routing) - 38%
-4. Switch (multi-condition) - 18%
+1. Set (field mapping)
+2. Code (custom logic)
+3. IF (conditional routing)
+4. Switch (multi-condition)
 
 **Most Common Outputs**:
-1. HTTP Request (APIs) - 45%
-2. Slack - 32%
-3. Database writes - 28%
-4. Email - 24%
+1. HTTP Request (APIs)
+2. Slack
+3. Database writes
+4. Email
 
-**Average Workflow Complexity**:
-- Simple (3-5 nodes): 42%
-- Medium (6-10 nodes): 38%
-- Complex (11+ nodes): 20%
+**Typical Workflow Complexity**:
+- Simple (3-5 nodes) — the majority
+- Medium (6-10 nodes) — common
+- Complex (11+ nodes) — less common
 
 ---
 
@@ -375,7 +375,7 @@ Use `search_templates` and `get_template` from n8n-mcp tools to find examples!
 
 ### ❌ Don't
 
-- Build workflows in one shot (iterate! avg 56s between edits)
+- Build workflows in one shot (iterate!)
 - Skip validation before activation
 - Ignore error scenarios
 - Use complex patterns when simple ones suffice
@@ -389,7 +389,7 @@ Use `search_templates` and `get_template` from n8n-mcp tools to find examples!
 ## Summary
 
 **Key Points**:
-1. **5 core patterns** cover 90%+ of workflow use cases
+1. **5 core patterns** cover the vast majority of workflow use cases
 2. **Webhook processing** is the most common pattern
 3. Use the **workflow creation checklist** for every workflow
 4. **Plan pattern** → **Select nodes** → **Build** → **Validate** → **Deploy**

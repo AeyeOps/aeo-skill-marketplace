@@ -11,7 +11,7 @@ Expert guidance for writing Python code in n8n Code nodes.
 
 ## ⚠️ Important: JavaScript First
 
-**Recommendation**: Use **JavaScript for 95% of use cases**. Only use Python when:
+**Recommendation**: Use **JavaScript for most use cases**. Only use Python when:
 - You need specific Python standard library functions
 - You're significantly more comfortable with Python syntax
 - You're doing data transformations better suited to Python
@@ -61,7 +61,7 @@ Same as JavaScript - choose based on your use case:
 
 ### Run Once for All Items (Recommended - Default)
 
-**Use this mode for:** 95% of use cases
+**Use this mode for:** most use cases
 
 - **How it works**: Code executes **once** regardless of input count
 - **Data access**: `_input.all()` or `_items` array (Native mode)
@@ -669,7 +669,7 @@ print(f"First item: {items[0] if items else 'None'}")
 - ✅ You need HTTP requests ($helpers.httpRequest())
 - ✅ You need advanced date/time (DateTime/Luxon)
 - ✅ You want better n8n integration
-- ✅ **For 95% of use cases** (recommended)
+- ✅ **For most use cases** (recommended)
 
 ### Consider Other Nodes When:
 - ❌ Simple field mapping → Use **Set** node

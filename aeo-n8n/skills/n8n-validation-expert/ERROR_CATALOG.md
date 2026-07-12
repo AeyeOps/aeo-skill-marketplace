@@ -927,11 +927,11 @@ info.properties.forEach(prop => {
 ## Summary
 
 **Most Common Errors**:
-1. `missing_required` (45%) - Always check get_node_essentials
-2. `invalid_value` (28%) - Check allowed values
-3. `type_mismatch` (12%) - Use correct data types
-4. `invalid_expression` (8%) - Use Expression Syntax skill
-5. `invalid_reference` (5%) - Clean stale connections
+1. `missing_required` - Always check get_node_essentials
+2. `invalid_value` - Check allowed values
+3. `type_mismatch` - Use correct data types
+4. `invalid_expression` - Use Expression Syntax skill
+5. `invalid_reference` - Clean stale connections
 
 **Auto-Fixed**:
 - `operator_structure` - Trust auto-sanitization!

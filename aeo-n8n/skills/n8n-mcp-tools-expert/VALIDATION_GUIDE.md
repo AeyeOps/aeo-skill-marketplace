@@ -14,7 +14,7 @@ Validation is typically iterative with validate → fix cycles
 
 ## validate_node_minimal (QUICK CHECK)
 
-**Success Rate**: 97.4% | **Speed**: <100ms
+**Reliability**: High | **Speed**: <100ms
 
 **Use when**: Checking what fields are required
 
@@ -40,7 +40,7 @@ validate_node_minimal({
 
 ## validate_node_operation (FULL VALIDATION)
 
-**Success Rate**: Varies | **Speed**: <100ms
+**Reliability**: Varies | **Speed**: <100ms
 
 **Use when**: Validating actual configuration before deployment
 
@@ -123,7 +123,7 @@ Choose based on your stage:
 
 ## validate_workflow (STRUCTURE VALIDATION)
 
-**Success Rate**: 95.5% | **Speed**: 100-500ms
+**Reliability**: High | **Speed**: 100-500ms
 
 **Use when**: Checking complete workflow before execution
 
@@ -156,16 +156,16 @@ validate_workflow({
 
 ## Validation Loop Pattern
 
-**Typical cycle**: 23s thinking, 58s fixing
+**Typical cycle**: check errors, then fix
 
 ```
 1. Configure node
    ↓
-2. validate_node_operation (23s thinking about errors)
+2. validate_node_operation
    ↓
 3. Fix errors
    ↓
-4. validate_node_operation again (58s fixing)
+4. validate_node_operation again
    ↓
 5. Repeat until valid
 ```
@@ -185,7 +185,7 @@ const result1 = validate_node_operation({
 });
 // → Error: Missing "name"
 
-// Iteration 2 (~58s later)
+// Iteration 2
 config.name = "general";
 
 const result2 = validate_node_operation({
@@ -298,7 +298,7 @@ Use **ai-friendly** profile to reduce false positives.
 
 - Use **runtime** profile for pre-deployment
 - Validate after every configuration change
-- Fix errors immediately (avg 58s)
+- Fix errors immediately
 - Iterate validation loop
 - Trust auto-sanitization for operator issues
 - Use minimal profile for quick checks
@@ -362,7 +362,7 @@ validate_workflow({
 
 **Key Points**:
 1. Use **runtime** profile (balanced validation)
-2. Validation loop: validate → fix (58s) → validate again
+2. Validation loop: validate → fix → validate again
 3. Auto-sanitization fixes operator structures automatically
 4. Binary operators ≠ singleValue, Unary operators = singleValue: true
 5. Iterate until validation passes

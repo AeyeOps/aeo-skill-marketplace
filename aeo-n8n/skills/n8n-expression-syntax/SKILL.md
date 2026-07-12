@@ -1,6 +1,6 @@
 ---
 name: n8n-expression-syntax
-description: Master n8n's double-curly-brace expression language for dynamic workflow data. Covers $json, $node, and $input variable access patterns, debugging syntax issues, and handling webhook payloads. Activate when crafting expressions, resolving evaluation failures, or mapping data between nodes.
+description: "Master n8n's double-curly-brace expression language for dynamic workflow data. Covers $json, $node, and $input variable access patterns, debugging syntax issues, and handling webhook payloads. Activate when crafting expressions, resolving evaluation failures, or mapping data between nodes. Not for: Code node scripting — see n8n-code-javascript / n8n-code-python."
 ---
 
 # n8n Expression Syntax

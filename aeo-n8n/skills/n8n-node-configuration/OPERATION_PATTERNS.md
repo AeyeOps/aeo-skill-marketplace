@@ -466,7 +466,7 @@ Database operations - 456 templates
 
 ### Set (nodes-base.set)
 
-Most used transformation - 68% of workflows!
+Most used transformation!
 
 #### Set Fixed Values
 
@@ -543,7 +543,7 @@ Most used transformation - 68% of workflows!
 
 ### Code (nodes-base.code)
 
-JavaScript execution - 42% of workflows
+JavaScript execution
 
 #### Simple Transformation
 
@@ -583,7 +583,7 @@ JavaScript execution - 42% of workflows
 
 ### IF (nodes-base.if)
 
-Conditional logic - 38% of workflows
+Conditional logic
 
 #### String Comparison
 
@@ -721,7 +721,7 @@ Conditional logic - 38% of workflows
 
 ### Switch (nodes-base.switch)
 
-Multi-way routing - 18% of workflows
+Multi-way routing
 
 #### Basic Switch
 
@@ -817,7 +817,7 @@ AI operations - 234 templates
 
 ### Schedule Trigger (nodes-base.scheduleTrigger)
 
-Time-based workflows - 28% have schedule triggers
+Time-based workflows
 
 #### Daily at Specific Time
 

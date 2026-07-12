@@ -8,18 +8,18 @@ Complete guide to avoiding the most common Code node errors.
 
 This guide covers the **top 5 error patterns** encountered in n8n Code nodes. Understanding and avoiding these errors will save you significant debugging time.
 
-**Error Frequency**:
-1. Empty Code / Missing Return - **38% of failures**
-2. Expression Syntax Confusion - **8% of failures**
-3. Incorrect Return Wrapper - **5% of failures**
-4. Unmatched Expression Brackets - **6% of failures**
+**Common Error Patterns** (most common first):
+1. Empty Code / Missing Return - **most common**
+2. Expression Syntax Confusion
+3. Incorrect Return Wrapper
+4. Unmatched Expression Brackets
 5. Missing Null Checks - **Common runtime error**
 
 ---
 
 ## Error #1: Empty Code or Missing Return Statement
 
-**Frequency**: Most common error (38% of all validation failures)
+**Frequency**: Most common error
 
 **What Happens**:
 - Workflow execution fails
@@ -115,7 +115,7 @@ if (items.length === 0) {
 
 ## Error #2: Expression Syntax Confusion
 
-**Frequency**: 8% of validation failures
+**Frequency**: Occasional
 
 **What Happens**:
 - Syntax error in code execution
@@ -221,7 +221,7 @@ return [{
 
 ## Error #3: Incorrect Return Wrapper Format
 
-**Frequency**: 5% of validation failures
+**Frequency**: Occasional
 
 **What Happens**:
 - Error: "Return value must be an array of objects"
@@ -372,7 +372,7 @@ return null;
 
 ## Error #4: Unmatched Expression Brackets
 
-**Frequency**: 6% of validation failures
+**Frequency**: Occasional
 
 **What Happens**:
 - Parsing error during save
@@ -744,10 +744,10 @@ console.log('Input structure:', JSON.stringify(items[0], null, 2));
 ## Summary
 
 **Top 5 Errors to Avoid**:
-1. **Empty code / missing return** (38%) - Always return data
-2. **Expression syntax `{{ }}`** (8%) - Use JavaScript, not expressions
-3. **Wrong return format** (5%) - Always `[{json: {...}}]`
-4. **Unmatched brackets** (6%) - Escape strings properly
+1. **Empty code / missing return** - Always return data
+2. **Expression syntax `{{ }}`** - Use JavaScript, not expressions
+3. **Wrong return format** - Always `[{json: {...}}]`
+4. **Unmatched brackets** - Escape strings properly
 5. **Missing null checks** - Use optional chaining `?.`
 
 **Quick Prevention**:

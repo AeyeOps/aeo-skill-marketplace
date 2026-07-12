@@ -474,7 +474,7 @@ Use environment variables: `{{$env.WEBHOOK_PATH_PREFIX}}/form-submit`
 
 ## Real Template Examples
 
-From n8n template library (1,085 webhook templates):
+From n8n template library:
 
 **Simple Form to Slack**:
 ```

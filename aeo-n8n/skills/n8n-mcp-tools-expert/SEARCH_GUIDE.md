@@ -6,7 +6,7 @@ Complete guide for finding and understanding n8n nodes.
 
 ## search_nodes (START HERE!)
 
-**Success Rate**: 99.9% | **Speed**: <20ms
+**Reliability**: Very high | **Speed**: <20ms
 
 **Use when**: You know what you're looking for (keyword, service, use case)
 
@@ -46,7 +46,7 @@ search_nodes({
 
 ## get_node_essentials (RECOMMENDED!)
 
-**Success Rate**: 91.7% | **Speed**: <10ms | **Size**: ~5KB
+**Reliability**: High | **Speed**: <10ms | **Size**: ~5KB
 
 **Use when**: You've found the node and need configuration details
 
@@ -66,7 +66,7 @@ get_node_essentials({
 
 **Why use this**:
 - 5KB vs 100KB+ (get_node_info)
-- 91.7% success vs 80%
+- Far more reliable than get_node_info
 - <10ms vs slower
 - Focused data (no information overload)
 
@@ -74,7 +74,7 @@ get_node_essentials({
 
 ## get_node_info (USE SPARINGLY!)
 
-**Success Rate**: 80% ⚠️ | **Size**: 100KB+
+**Reliability**: Low ⚠️ | **Size**: 100KB+
 
 **Use when**:
 - Debugging complex configuration
@@ -88,7 +88,7 @@ get_node_info({
 })
 ```
 
-**Warning**: 20% failure rate! Use get_node_essentials instead for most cases.
+**Warning**: Prone to failure! Use get_node_essentials instead for most cases.
 
 **Better alternatives**:
 1. get_node_essentials - operations list
@@ -99,7 +99,7 @@ get_node_info({
 
 ## list_nodes (BROWSE BY CATEGORY)
 
-**Success Rate**: 99.6% | **Speed**: <20ms
+**Reliability**: Very high | **Speed**: <20ms
 
 **Use when**: Exploring by category or listing all nodes
 
@@ -145,7 +145,7 @@ search_node_properties({
 
 ## get_node_documentation (READABLE DOCS)
 
-**Coverage**: 88% of nodes (470/537)
+**Coverage**: Most nodes
 
 **Use when**: Need human-readable documentation with examples
 
@@ -173,7 +173,7 @@ Step 1: Search
 search_nodes({query: "slack"})
 → Returns: nodes-base.slack
 
-Step 2: Get Operations (18s avg thinking time)
+Step 2: Get Operations
 get_node_essentials({
   nodeType: "nodes-base.slack",
   includeExamples: true
@@ -192,18 +192,18 @@ Step 4: Use in Workflow
 (Configuration ready!)
 ```
 
-**Most common pattern**: search → essentials (18s average)
+**Most common pattern**: search → essentials
 
 ---
 
 ## Quick Comparison
 
-| Tool | When to Use | Success | Speed | Size |
-|------|-------------|---------|-------|------|
-| search_nodes | Find by keyword | 99.9% | <20ms | Small |
-| get_node_essentials | Get config | 91.7% | <10ms | 5KB |
-| get_node_info | Full schema | 80% ⚠️ | Slow | 100KB+ |
-| list_nodes | Browse category | 99.6% | <20ms | Small |
+| Tool | When to Use | Reliability | Speed | Size |
+|------|-------------|-------------|-------|------|
+| search_nodes | Find by keyword | Very high | <20ms | Small |
+| get_node_essentials | Get config | High | <10ms | 5KB |
+| get_node_info | Full schema | Low ⚠️ | Slow | 100KB+ |
+| list_nodes | Browse category | Very high | <20ms | Small |
 | get_node_documentation | Learn usage | N/A | Fast | Medium |
 
 **Best Practice**: search → essentials → validate

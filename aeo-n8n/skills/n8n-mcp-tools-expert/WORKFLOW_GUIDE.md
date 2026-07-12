@@ -14,7 +14,7 @@ If unavailable, use template examples and validation-only workflows.
 
 ## n8n_create_workflow
 
-**Success Rate**: 96.8% | **Speed**: 100-500ms
+**Reliability**: High | **Speed**: 100-500ms
 
 **Use when**: Creating new workflows from scratch
 
@@ -77,11 +77,11 @@ n8n_create_workflow({
 
 ## n8n_update_partial_workflow (MOST USED!)
 
-**Success Rate**: 99.0% | **Speed**: 50-200ms | **Uses**: 38,287 (most used tool!)
+**Reliability**: Very high | **Speed**: 50-200ms | **Most used tool!**
 
 **Use when**: Making incremental changes to workflows
 
-**Common pattern**: 56s average between edits (iterative building!)
+**Common pattern**: iterative building!
 
 ### 15 Operation Types
 
@@ -231,7 +231,7 @@ n8n_update_partial_workflow({
 
 ## n8n_validate_workflow (by ID)
 
-**Success Rate**: 99.7% | **Speed**: Network-dependent
+**Reliability**: Very high | **Speed**: Network-dependent
 
 **Use when**: Validating workflow stored in n8n
 
@@ -264,7 +264,7 @@ n8n_validate_workflow({
    n8n_validate_workflow({id})
    → Check for errors
 
-3. EDIT (iterative! 56s avg between edits)
+3. EDIT (iterative!)
    n8n_update_partial_workflow({id, operations: [...]})
    → Make changes
 
@@ -296,32 +296,32 @@ n8n_validate_workflow({
 
 ---
 
-## Common Patterns from Telemetry
+## Common Patterns
 
-### Pattern 1: Edit → Validate (7,841 occurrences)
+### Pattern 1: Edit → Validate
 
 ```javascript
 // Edit
 n8n_update_partial_workflow({...})
-// ↓ 23s (thinking about what to validate)
+// ↓ (decide what to validate)
 // Validate
 n8n_validate_workflow({id})
 ```
 
-### Pattern 2: Validate → Fix (7,266 occurrences)
+### Pattern 2: Validate → Fix
 
 ```javascript
 // Validate
 n8n_validate_workflow({id})
-// ↓ 58s (fixing errors)
+// ↓ (fix the errors)
 // Fix
 n8n_update_partial_workflow({...})
 ```
 
-### Pattern 3: Iterative Building (31,464 occurrences)
+### Pattern 3: Iterative Building
 
 ```javascript
-update → update → update → ... (56s avg between edits)
+update → update → update → ...
 ```
 
 **This shows**: Workflows are built **iteratively**, not in one shot!
@@ -363,7 +363,7 @@ n8n_list_workflows({
 
 ### ✅ Do
 
-- Build workflows **iteratively** (avg 56s between edits)
+- Build workflows **iteratively**
 - Use **smart parameters** (branch, case) for clarity
 - Validate **after** significant changes
 - Use **atomic mode** (default) for critical updates
@@ -383,12 +383,12 @@ n8n_list_workflows({
 ## Summary
 
 **Most Important**:
-1. **n8n_update_partial_workflow** is most-used tool (38,287 uses, 99.0% success)
-2. Workflows built **iteratively** (56s avg between edits)
+1. **n8n_update_partial_workflow** is the most-used tool
+2. Workflows built **iteratively**
 3. Use **smart parameters** (branch="true", case=0) for clarity
 4. **AI connections** supported (8 types with sourceOutput)
 5. **Auto-sanitization** runs on all operations
-6. Validate frequently (7,841 edit → validate patterns)
+6. Validate frequently
 
 **Related**:
 - [SEARCH_GUIDE.md](SEARCH_GUIDE.md) - Find nodes to add

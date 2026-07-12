@@ -16,7 +16,7 @@ Expert guide for interpreting and fixing n8n validation errors.
 Validation is typically iterative:
 - Expect validation feedback loops
 - Usually 2-3 validate → fix cycles
-- Average: 23s thinking about errors, 58s fixing them
+- Each cycle involves reading errors and applying fixes
 
 **Key insight**: Validation is an iterative process, not one-shot!
 
@@ -73,19 +73,19 @@ Validation is typically iterative:
 
 ## The Validation Loop
 
-### Pattern from Telemetry
-**7,841 occurrences** of this pattern:
+### The Common Pattern
+This pattern is very common:
 
 ```
 1. Configure node
    ↓
-2. validate_node_operation (23 seconds thinking about errors)
+2. validate_node_operation
    ↓
 3. Read error messages carefully
    ↓
 4. Fix errors
    ↓
-5. validate_node_operation again (58 seconds fixing)
+5. validate_node_operation again
    ↓
 6. Repeat until valid (usually 2-3 iterations)
 ```
@@ -105,7 +105,7 @@ const result1 = validate_node_operation({
 });
 // → Error: Missing "name"
 
-// ⏱️  23 seconds thinking...
+// Read the error...
 
 // Iteration 2
 config.name = "general";
@@ -117,7 +117,7 @@ const result2 = validate_node_operation({
 });
 // → Error: Missing "text"
 
-// ⏱️  58 seconds fixing...
+// Apply the fix...
 
 // Iteration 3
 config.text = "Hello!";
@@ -670,7 +670,7 @@ For comprehensive error catalogs and false positive examples:
 ## Summary
 
 **Key Points**:
-1. **Validation is iterative** (avg 2-3 cycles, 23s + 58s)
+1. **Validation is iterative** (usually 2-3 cycles)
 2. **Errors must be fixed**, warnings are optional
 3. **Auto-sanitization** fixes operator structures automatically
 4. **Use runtime profile** for balanced validation

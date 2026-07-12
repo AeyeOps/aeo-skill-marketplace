@@ -16,23 +16,23 @@ n8n-mcp provides **40+ tools** organized into categories:
 1. **Node Discovery** → [SEARCH_GUIDE.md](SEARCH_GUIDE.md)
 2. **Configuration Validation** → [VALIDATION_GUIDE.md](VALIDATION_GUIDE.md)
 3. **Workflow Management** → [WORKFLOW_GUIDE.md](WORKFLOW_GUIDE.md)
-4. **Template Library** - Search and access 2,653 real workflows
+4. **Template Library** - Search and access thousands of real workflows
 5. **Documentation** - Get tool and node documentation
 
 ---
 
 ## Quick Reference
 
-### Most Used Tools (by success rate)
+### Most Used Tools
 
-| Tool | Use When | Success Rate | Speed |
-|------|----------|--------------|-------|
-| `search_nodes` | Finding nodes by keyword | 99.9% | <20ms |
-| `get_node_essentials` | Understanding node operations | 91.7% | <10ms |
+| Tool | Use When | Reliability | Speed |
+|------|----------|-------------|-------|
+| `search_nodes` | Finding nodes by keyword | Very high | <20ms |
+| `get_node_essentials` | Understanding node operations | High | <10ms |
 | `validate_node_operation` | Checking configurations | Varies | <100ms |
-| `n8n_create_workflow` | Creating workflows | 96.8% | 100-500ms |
-| `n8n_update_partial_workflow` | Editing workflows (MOST USED!) | 99.0% | 50-200ms |
-| `validate_workflow` | Checking complete workflow | 95.5% | 100-500ms |
+| `n8n_create_workflow` | Creating workflows | High | 100-500ms |
+| `n8n_update_partial_workflow` | Editing workflows (MOST USED!) | Very high | 50-200ms |
+| `validate_workflow` | Checking complete workflow | High | 100-500ms |
 
 ---
 
@@ -53,12 +53,12 @@ n8n-mcp provides **40+ tools** organized into categories:
 search_nodes({query: "slack"})
 // Returns: nodes-base.slack
 
-// Step 2: Get details (18s avg between steps)
+// Step 2: Get details
 get_node_essentials({nodeType: "nodes-base.slack"})
 // Returns: operations, properties, examples
 ```
 
-**Common pattern**: search → essentials (18s average)
+**Common pattern**: search → essentials
 
 ### Validating Configuration
 
@@ -69,7 +69,7 @@ get_node_essentials({nodeType: "nodes-base.slack"})
 3. [Repeat] Fix errors, validate again
 ```
 
-**Common pattern**: validate → fix → validate (23s thinking, 58s fixing per cycle)
+**Common pattern**: validate → fix → validate
 
 ### Managing Workflows
 
@@ -81,7 +81,7 @@ get_node_essentials({nodeType: "nodes-base.slack"})
 4. n8n_validate_workflow({id}) again
 ```
 
-**Common pattern**: iterative updates (56s average between edits)
+**Common pattern**: iterative updates
 
 ---
 
@@ -147,14 +147,14 @@ get_node_essentials({nodeType: "nodes-base.slack"})
 
 ### ❌ Mistake 2: Using get_node_info Instead of get_node_essentials
 
-**Problem**: 20% failure rate, slow response, huge payload
+**Problem**: frequent failures, slow response, huge payload
 
 ```javascript
 ❌ get_node_info({nodeType: "nodes-base.slack"})
-// Returns: 100KB+ data, 20% chance of failure
+// Returns: 100KB+ data, prone to failure
 
 ✅ get_node_essentials({nodeType: "nodes-base.slack"})
-// Returns: 5KB focused data, 91.7% success, <10ms
+// Returns: 5KB focused data, reliable, <10ms
 ```
 
 **When to use get_node_info**:
@@ -250,7 +250,7 @@ n8n_update_partial_workflow({id, operations: [...]})
 
 ### Pattern 1: Node Discovery (Most Common)
 
-**Common workflow**: 18s average between steps
+**Common workflow**: search, then get details
 
 ```javascript
 // Step 1: Search (fast!)
@@ -261,7 +261,7 @@ const results = await search_nodes({
 });
 // → Returns: nodes-base.slack, nodes-base.slackTrigger
 
-// Step 2: Get details (~18s later, user reviewing results)
+// Step 2: Get details (user reviewing results)
 const details = await get_node_essentials({
   nodeType: "nodes-base.slack",
   includeExamples: true  // Get real template configs
@@ -271,7 +271,7 @@ const details = await get_node_essentials({
 
 ### Pattern 2: Validation Loop
 
-**Typical cycle**: 23s thinking, 58s fixing
+**Typical cycle**: check errors, then fix
 
 ```javascript
 // Step 1: Validate
@@ -284,12 +284,12 @@ const result = await validate_node_operation({
   profile: "runtime"
 });
 
-// Step 2: Check errors (~23s thinking)
+// Step 2: Check errors
 if (!result.valid) {
   console.log(result.errors);  // "Missing required field: name"
 }
 
-// Step 3: Fix config (~58s fixing)
+// Step 3: Fix config
 config.name = "general";
 
 // Step 4: Validate again
@@ -298,7 +298,7 @@ await validate_node_operation({...});  // Repeat until clean
 
 ### Pattern 3: Workflow Editing
 
-**Most used update tool**: 99.0% success rate, 56s average between edits
+**Most used update tool**: highly reliable, used iteratively
 
 ```javascript
 // Iterative workflow building (NOT one-shot!)
@@ -308,7 +308,7 @@ await n8n_update_partial_workflow({
   operations: [{type: "addNode", node: {...}}]
 });
 
-// ~56s later...
+// later...
 
 // Edit 2
 await n8n_update_partial_workflow({
@@ -316,7 +316,7 @@ await n8n_update_partial_workflow({
   operations: [{type: "addConnection", source: "...", target: "..."}]
 });
 
-// ~56s later...
+// later...
 
 // Edit 3 (validation)
 await n8n_validate_workflow({id: "workflow-id"});
@@ -328,7 +328,7 @@ await n8n_validate_workflow({id: "workflow-id"});
 
 ### Node Discovery Tools
 See [SEARCH_GUIDE.md](SEARCH_GUIDE.md) for:
-- search_nodes (99.9% success)
+- search_nodes (highly reliable)
 - get_node_essentials vs get_node_info
 - list_nodes by category
 - search_node_properties for specific fields
@@ -437,15 +437,15 @@ If API tools unavailable, use templates and validation-only workflows.
 
 | Tool | Response Time | Payload Size | Reliability |
 |------|---------------|--------------|-------------|
-| search_nodes | <20ms | Small | 99.9% |
-| list_nodes | <20ms | Small | 99.6% |
-| get_node_essentials | <10ms | ~5KB | 91.7% |
-| get_node_info | Varies | 100KB+ | 80% ⚠️ |
-| validate_node_minimal | <100ms | Small | 97.4% |
+| search_nodes | <20ms | Small | Very high |
+| list_nodes | <20ms | Small | Very high |
+| get_node_essentials | <10ms | ~5KB | High |
+| get_node_info | Varies | 100KB+ | Low ⚠️ |
+| validate_node_minimal | <100ms | Small | High |
 | validate_node_operation | <100ms | Medium | Varies |
-| validate_workflow | 100-500ms | Medium | 95.5% |
-| n8n_create_workflow | 100-500ms | Medium | 96.8% |
-| n8n_update_partial_workflow | 50-200ms | Small | 99.0% |
+| validate_workflow | 100-500ms | Medium | High |
+| n8n_create_workflow | 100-500ms | Medium | High |
+| n8n_update_partial_workflow | 50-200ms | Small | Very high |
 
 ---
 
@@ -453,17 +453,17 @@ If API tools unavailable, use templates and validation-only workflows.
 
 ### ✅ Do
 
-- Use get_node_essentials over get_node_info (91.7% vs 80%)
+- Use get_node_essentials over get_node_info (far more reliable)
 - Specify validation profile explicitly
 - Use smart parameters (branch, case) for clarity
 - Follow search → essentials → validate workflow
-- Iterate workflows (avg 56s between edits)
+- Iterate workflows (make incremental edits)
 - Validate after every significant change
 - Use includeExamples: true for real configs
 
 ### ❌ Don't
 
-- Use get_node_info unless necessary (20% failure rate!)
+- Use get_node_info unless necessary (unreliable!)
 - Forget nodeType prefix (nodes-base.*)
 - Skip validation profiles (use "runtime")
 - Try to build workflows in one shot (iterate!)
@@ -475,12 +475,12 @@ If API tools unavailable, use templates and validation-only workflows.
 ## Summary
 
 **Most Important**:
-1. Use **get_node_essentials**, not get_node_info (5KB vs 100KB, 91.7% vs 80%)
+1. Use **get_node_essentials**, not get_node_info (5KB vs 100KB, far more reliable)
 2. nodeType formats differ: `nodes-base.*` (search) vs `n8n-nodes-base.*` (workflows)
 3. Specify **validation profiles** (runtime recommended)
 4. Use **smart parameters** (branch="true", case=0)
 5. **Auto-sanitization** runs on ALL nodes during updates
-6. Workflows are built **iteratively** (56s avg between edits)
+6. Workflows are built **iteratively** (incremental edits)
 
 **Common Workflow**:
 1. search_nodes → find node

@@ -34,7 +34,7 @@ import random
 import statistics
 ```
 
-**Recommendation**: Use **JavaScript** for 95% of use cases. JavaScript has more capabilities in n8n.
+**Recommendation**: Use **JavaScript** for most use cases. JavaScript has more capabilities in n8n.
 
 ---
 
@@ -963,7 +963,7 @@ return [{
 - NO external libraries (requests, pandas, numpy, etc.)
 
 **Recommended Approach**:
-- Use **JavaScript** for 95% of use cases
+- Use **JavaScript** for most use cases
 - Use Python only when specifically needed
 - Use n8n nodes for operations requiring external libraries
 

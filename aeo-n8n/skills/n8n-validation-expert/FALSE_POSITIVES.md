@@ -11,8 +11,8 @@ When validation warnings are acceptable and how to handle them.
 **Key insight**: Not all warnings need to be fixed!
 
 Many warnings are context-dependent:
-- ~40% of warnings are acceptable in specific use cases
-- Using `ai-friendly` profile reduces false positives by 60%
+- Many warnings are acceptable in specific use cases
+- Using `ai-friendly` profile reduces false positives
 
 ---
 

@@ -41,7 +41,7 @@ response = requests.get("https://api.example.com/data")
 
 ### The Solution
 
-**Option 1: Use JavaScript Instead** (Recommended for 95% of cases)
+**Option 1: Use JavaScript Instead** (Recommended for most cases)
 
 ```javascript
 // ✅ JavaScript Code node with $helpers.httpRequest()
@@ -590,7 +590,7 @@ return all_items if all_items else [{"json": {"message": "No data"}}]
 - ACCESS webhook data via `["body"]`
 
 **Remember**:
-- JavaScript is recommended for 95% of use cases
+- JavaScript is recommended for most use cases
 - Python has limitations (no requests, pandas, numpy)
 - Use n8n nodes for complex operations
 

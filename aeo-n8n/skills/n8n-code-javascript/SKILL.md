@@ -43,7 +43,7 @@ The Code node offers two execution modes. Choose based on your use case:
 
 ### Run Once for All Items (Recommended - Default)
 
-**Use this mode for:** 95% of use cases
+**Use this mode for:** most use cases
 
 - **How it works**: Code executes **once** regardless of input count
 - **Data access**: `$input.all()` or `items` array

@@ -6,7 +6,7 @@ Production-tested Python patterns for n8n Code nodes.
 
 ## ⚠️ Important: JavaScript First
 
-**Use JavaScript for 95% of use cases.**
+**Use JavaScript for most use cases.**
 
 Python in n8n has **NO external libraries** (no requests, pandas, numpy).
 
@@ -782,7 +782,7 @@ import numpy as np  # ModuleNotFoundError!
 - Return proper n8n format: `[{"json": {...}}]`
 
 **Remember**:
-- JavaScript is recommended for 95% of use cases
+- JavaScript is recommended for most use cases
 - Python has NO external libraries
 - Use n8n nodes for complex operations
 - Code node is for data transformation, not API calls
