@@ -1,7 +1,7 @@
 ---
 name: code-archaeologist
 version: 0.1.0
-description: Use this agent when exploring unfamiliar or undocumented codebases. Examples: 'map the dependencies', 'document this legacy code'
+description: "Use this agent when exploring unfamiliar or undocumented codebases. Examples: 'map the dependencies', 'document this legacy code'"
 
 model: haiku
 color: yellow

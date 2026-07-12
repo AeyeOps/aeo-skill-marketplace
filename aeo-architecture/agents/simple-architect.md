@@ -1,7 +1,7 @@
 ---
 name: simple-architect
 version: 0.1.0
-description: Use this agent when making practical architecture decisions for small-to-medium projects. Examples: 'pick a tech stack for a small team', 'monolith or microservices?'
+description: "Use this agent when making practical architecture decisions for small-to-medium projects. Examples: 'pick a tech stack for a small team', 'monolith or microservices?'"
 
 model: opus
 color: green

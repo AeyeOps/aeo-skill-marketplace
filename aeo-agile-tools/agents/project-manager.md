@@ -1,7 +1,7 @@
 ---
 name: project-manager
 version: 0.1.0
-description: Use this agent when planning delivery roadmaps or aligning team priorities. Examples: 'create a project plan', 'prioritize features with RICE'
+description: "Use this agent when planning delivery roadmaps or aligning team priorities. Examples: 'create a project plan', 'prioritize features with RICE'"
 
 model: sonnet
 color: blue

@@ -1,7 +1,7 @@
 ---
 name: ui-designer
 version: 0.1.0
-description: Use this agent when implementing visual designs or building component libraries. Examples: 'implement this UI mockup', 'create a design system'
+description: "Use this agent when implementing visual designs or building component libraries. Examples: 'implement this UI mockup', 'create a design system'"
 
 model: sonnet
 color: cyan

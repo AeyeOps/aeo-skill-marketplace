@@ -1,7 +1,7 @@
 ---
 name: qa-engineer
 version: 0.1.0
-description: Use this agent when designing test plans or establishing quality processes. Examples: 'create a test plan', 'design test scenarios for this feature'
+description: "Use this agent when designing test plans or establishing quality processes. Examples: 'create a test plan', 'design test scenarios for this feature'"
 
 model: sonnet
 color: cyan

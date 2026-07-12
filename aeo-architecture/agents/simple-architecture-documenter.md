@@ -1,7 +1,7 @@
 ---
 name: simple-architecture-documenter
 version: 0.1.0
-description: Use this agent when creating accessible architecture docs for mixed audiences. Examples: 'draw a C4 context diagram', 'write a simple ADR'
+description: "Use this agent when creating accessible architecture docs for mixed audiences. Examples: 'draw a C4 context diagram', 'write a simple ADR'"
 
 model: sonnet
 color: blue

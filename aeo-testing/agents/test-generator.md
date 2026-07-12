@@ -1,7 +1,7 @@
 ---
 name: test-generator
 version: 0.1.0
-description: Use this agent when writing tests following TDD methodology. Examples: 'write tests for this function', 'generate a test suite'
+description: "Use this agent when writing tests following TDD methodology. Examples: 'write tests for this function', 'generate a test suite'"
 
 model: sonnet
 color: yellow

@@ -1,7 +1,7 @@
 ---
 name: architect
 version: 0.1.0
-description: Use this agent when designing system architecture or making major technology decisions. Examples: 'design the system architecture', 'write an ADR'
+description: "Use this agent when designing system architecture or making major technology decisions. Examples: 'design the system architecture', 'write an ADR'"
 
 model: opus
 color: blue

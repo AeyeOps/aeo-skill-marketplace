@@ -1,7 +1,7 @@
 ---
 name: system-designer
 version: 0.1.0
-description: Use this agent when planning high-level system components and integration patterns. Examples: 'design service boundaries', 'model the data flow'
+description: "Use this agent when planning high-level system components and integration patterns. Examples: 'design service boundaries', 'model the data flow'"
 
 model: opus
 color: magenta
@@ -249,7 +249,7 @@ System design includes:
 
 ### Compatible Agents
 - **Upstream**: business-analyst (requirements), architect (technology choices)
-- **Downstream**: tech-evaluator (technology validation), architecture-documenter (documentation)
+- **Downstream**: tech-evaluator (technology validation), simple-architecture-documenter (documentation)
 - **Parallel**: security-reviewer (security patterns), performance-profiler (performance requirements)
 
 ## Edge Cases & Failure Modes

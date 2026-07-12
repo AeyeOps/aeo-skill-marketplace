@@ -1,7 +1,7 @@
 ---
 name: product-owner
 version: 0.1.0
-description: Use this agent when prioritizing backlog items or defining acceptance criteria. Examples: 'write user stories', 'prioritize the backlog'
+description: "Use this agent when prioritizing backlog items or defining acceptance criteria. Examples: 'write user stories', 'prioritize the backlog'"
 
 model: sonnet
 color: magenta

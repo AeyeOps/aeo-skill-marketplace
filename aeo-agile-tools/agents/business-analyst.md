@@ -1,7 +1,7 @@
 ---
 name: business-analyst
 version: 0.1.0
-description: Use this agent when clarifying stakeholder needs or documenting business workflows. Examples: 'analyze requirements', 'create a BRD'
+description: "Use this agent when clarifying stakeholder needs or documenting business workflows. Examples: 'analyze requirements', 'create a BRD'"
 
 model: sonnet
 color: blue

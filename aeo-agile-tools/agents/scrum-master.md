@@ -1,7 +1,7 @@
 ---
 name: scrum-master
 version: 0.1.0
-description: Use this agent when facilitating sprint ceremonies or improving team processes. Examples: 'run a retrospective', 'track sprint velocity'
+description: "Use this agent when facilitating sprint ceremonies or improving team processes. Examples: 'run a retrospective', 'track sprint velocity'"
 
 model: sonnet
 color: green

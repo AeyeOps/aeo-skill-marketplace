@@ -1,7 +1,7 @@
 ---
 name: performance-profiler
 version: 0.1.0
-description: Use this agent when investigating system slowdowns or establishing performance baselines. Examples: 'profile the application', 'identify the bottleneck'
+description: "Use this agent when investigating system slowdowns or establishing performance baselines. Examples: 'profile the application', 'identify the bottleneck'"
 
 model: sonnet
 color: red
@@ -527,7 +527,7 @@ Performance profiling analysis includes:
 ### Compatible Agents
 - **Upstream**: system-designer (performance requirements), test-generator (performance test scenarios)
 - **Downstream**: optimization-engineer (implementation of optimizations)
-- **Parallel**: architecture-documenter (performance documentation), security-reviewer (performance security)
+- **Parallel**: simple-architecture-documenter (performance documentation), security-reviewer (performance security)
 
 ## Edge Cases & Failure Modes
 

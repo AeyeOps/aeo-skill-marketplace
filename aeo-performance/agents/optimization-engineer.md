@@ -1,7 +1,7 @@
 ---
 name: optimization-engineer
 version: 0.1.0
-description: Use this agent when implementing specific performance improvements based on profiling data. Examples: 'optimize this database query', 'improve algorithm efficiency'
+description: "Use this agent when implementing specific performance improvements based on profiling data. Examples: 'optimize this database query', 'improve algorithm efficiency'"
 
 model: sonnet
 color: yellow
@@ -599,7 +599,7 @@ Performance optimization implementation includes:
 
 ### Compatible Agents
 - **Upstream**: performance-profiler (bottleneck identification)
-- **Downstream**: test-generator (optimization testing), architecture-documenter (documentation)
+- **Downstream**: test-generator (optimization testing), simple-architecture-documenter (documentation)
 - **Parallel**: security-reviewer (security implications), code-archaeologist (code impact analysis)
 
 ## Edge Cases & Failure Modes

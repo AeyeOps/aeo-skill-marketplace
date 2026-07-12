@@ -1,7 +1,7 @@
 ---
 name: security-reviewer
 version: 0.1.0
-description: Use this agent when auditing code for vulnerabilities or validating security controls. Examples: 'scan for OWASP issues', 'review authentication flow'
+description: "Use this agent when auditing code for vulnerabilities or validating security controls. Examples: 'scan for OWASP issues', 'review authentication flow'"
 
 model: sonnet
 color: red

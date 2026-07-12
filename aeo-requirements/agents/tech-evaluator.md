@@ -1,7 +1,7 @@
 ---
 name: tech-evaluator
 version: 0.1.0
-description: Use this agent when comparing technology options or assessing build-vs-buy tradeoffs. Examples: 'evaluate these frameworks', 'should we build or buy?'
+description: "Use this agent when comparing technology options or assessing build-vs-buy tradeoffs. Examples: 'evaluate these frameworks', 'should we build or buy?'"
 
 model: sonnet
 color: yellow

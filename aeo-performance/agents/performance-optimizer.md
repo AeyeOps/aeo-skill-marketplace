@@ -1,7 +1,7 @@
 ---
 name: performance-optimizer
 version: 0.1.0
-description: Use this agent when running end-to-end performance improvement initiatives. Examples: 'profile and optimize the API', 'find and fix performance bottlenecks'
+description: "Use this agent when running end-to-end performance improvement initiatives. Examples: 'profile and optimize the API', 'find and fix performance bottlenecks'"
 
 model: opus
 color: green
