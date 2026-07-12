@@ -45,7 +45,7 @@
     },
     {
       "name": "aeo-epcc-workflow",
-      "description": "Structured development methodology agents supporting the Explore-Plan-Code-Commit cycle from initial discovery through final delivery",
+      "description": "Structured development methodology commands supporting the Explore-Plan-Code-Commit cycle from initial discovery through final delivery",
       "category": "development",
       "source": "./aeo-epcc-workflow",
       "tags": ["workflow", "epcc", "development-process", "prd", "trd"]
@@ -59,7 +59,7 @@
     },
     {
       "name": "aeo-requirements",
-      "description": "Requirements gathering agents for product discovery, technical specifications, stakeholder interviews, and build-vs-buy analysis",
+      "description": "Requirements gathering commands, skills, and a tech-evaluator agent for product discovery, technical specifications, stakeholder interviews, and build-vs-buy analysis",
       "category": "productivity",
       "source": "./aeo-requirements",
       "tags": ["requirements", "product", "evaluation"]
@@ -73,7 +73,7 @@
     },
     {
       "name": "aeo-tdd-workflow",
-      "description": "Test-driven development agents enforcing red-green-refactor methodology with comprehensive test generation and quality validation",
+      "description": "Test-driven development commands and skills enforcing red-green-refactor methodology with comprehensive test generation and quality validation",
       "category": "testing",
       "source": "./aeo-tdd-workflow",
       "tags": ["tdd", "testing", "red-green-refactor"]
@@ -87,7 +87,7 @@
     },
     {
       "name": "aeo-troubleshooting",
-      "description": "Systematic debugging agents with structured problem-solving workflows and collaborative escalation mechanisms",
+      "description": "Systematic debugging commands and skills with structured problem-solving workflows and collaborative escalation mechanisms",
       "category": "development",
       "source": "./aeo-troubleshooting",
       "tags": ["debugging", "troubleshooting", "problem-solving"]
@@ -129,7 +129,7 @@
     },
     {
       "name": "aeo-dev",
-      "description": "Platform-specific development skills covering VS Code extension development (stable and Insiders), WSL remote workflows, TypeScript tooling, and developer environment configuration",
+      "description": "Developer workflow tools: repository governance skill with /aeo-repo-bootstrap, /aeo-repo-curate-docs, /aeo-repo-roadmap-alignment-review, and /aeo-repo-sanitize commands, VS Code extension development (stable and Insiders), WSL remote workflows, and TypeScript tooling",
       "category": "development",
       "source": "./aeo-dev",
       "tags": ["vscode", "vscode-insiders", "extension", "wsl", "webview", "csp", "esbuild", "typescript", "treeview"]

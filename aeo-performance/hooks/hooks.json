@@ -1,23 +1,13 @@
 {
-  "description": "Performance monitoring and cost tracking hooks for Claude Code operations",
+  "description": "Performance monitoring hook: logs per-tool timing and usage to .claude/performance.json",
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Read",
+        "matcher": "Read|Bash|Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "echo 'Read operation started' >&2",
-            "timeout": 5000
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo 'Command started' >&2",
+            "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/performance_logger.py || true",
             "timeout": 5000
           }
         ]

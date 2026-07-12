@@ -1,7 +1,7 @@
 {
   "name": "aeo-troubleshooting",
-  "version": "0.3.0",
-  "description": "Systematic debugging agents with structured problem-solving workflows and collaborative escalation mechanisms",
+  "version": "0.3.1",
+  "description": "Systematic debugging commands and skills with structured problem-solving workflows and collaborative escalation mechanisms",
   "author": {
     "name": "AeyeOps",
     "url": "https://github.com/AeyeOps"

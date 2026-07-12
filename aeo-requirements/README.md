@@ -215,12 +215,7 @@ This README serves as the primary reference. The commands and agents above provi
 
 ## Agents
 
-The Requirements Plugin leverages two specialized agents:
-
-### `@business-analyst`
-- **Purpose**: Assists with business requirements and product vision
-- **When Used**: During `/prd` command for product discovery
-- **Capabilities**: User research, feature prioritization, success metrics
+The Requirements Plugin includes one specialized agent:
 
 ### `@tech-evaluator`
 - **Purpose**: Provides technology evaluation and recommendations
@@ -348,7 +343,7 @@ Or use `/tech-req` directly without PRD for technology decisions only.
 
 ## Version History
 
-- **v1.0.0** (2025-01-21): Initial release
+- **v0.3.0** (2025-01-21): Initial release
   - `/prd` command for product requirements discovery
   - `/tech-req` command for technical requirements evaluation
   - Standalone plugin architecture

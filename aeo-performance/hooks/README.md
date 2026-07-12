@@ -1,72 +1,43 @@
-# Performance - Monitoring and Cost Tracking Hooks
+# Performance - Monitoring Hooks
 
-Performance monitoring, cost tracking, and efficiency optimization hooks for Claude Code operations.
+Lightweight per-tool usage logging for Claude Code operations.
 
-## Event Mapping Caveats
+## What exists
 
-| Original Event | New Mapping | Notes |
-|---------------|-------------|-------|
-| `PreToolUse` | `PreToolUse` (kept) | Already compliant structure. |
-| `PostToolUse` | `PostToolUse` (kept) | Already compliant structure. |
-| `SubagentStop` | `SubagentStop` (kept) | Wrapped flat array in correct `matcher`/`hooks` structure. |
-| `Stop` | `Stop` (kept) | Wrapped flat array in correct `matcher`/`hooks` structure. |
+### performance_logger.py
 
-## Metrics
+A `PreToolUse` hook that appends one log entry per matching tool invocation to `.claude/performance.json` in the current working directory. For each call it records:
 
-### Performance Metrics
-- **Response time:** Time between request and response
-- **Throughput:** Operations completed per minute
-- **Latency:** P50, P95, P99 latency percentiles
-- **Error rate:** Errors per 100 operations
-- **Resource usage:** CPU, memory, disk I/O
+- `timestamp`, `session_id`, `hook_event`, `tool_name`
+- `Read`: `file_path`, plus `file_size` when the file exists
+- `Bash`: `command_length`
+- `Edit` / `Write`: `file_path` and `content_length`
 
-### Cost Tracking
-| Model | Input | Output |
-|-------|-------|--------|
-| Sonnet | $0.003 per 1K tokens | $0.015 per 1K tokens |
-| Opus | $0.015 per 1K tokens | $0.075 per 1K tokens |
+The log is capped at the most recent 1000 entries. The script swallows all errors and always exits 0, so it never blocks or fails a tool call.
 
-Additional cost factors: API calls, agent execution time, web searches.
+## Wiring
 
-### Efficiency Metrics
-- Cache hit rate
-- Duplicate operations count
-- Unnecessary reads (files read but not modified)
-- Optimization opportunities
+`hooks.json` wires the script on `PreToolUse` for the tools it understands:
 
-## Monitoring Scripts
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Bash|Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "python3 ${CLAUDE_PLUGIN_ROOT}/hooks/performance_logger.py || true", "timeout": 5000 }
+        ]
+      }
+    ]
+  }
+}
+```
 
-### calculate_agent_cost.py
-Calculates agent execution cost based on model type and duration. Logs to `.claude/cost_tracking.json`.
-
-### generate_performance_report.py
-Parses `.claude/performance.log` and generates statistics (count, mean, median, P95) per operation type. Output: `.claude/performance_report.json`.
-
-### identify_bottlenecks.py
-Reads the performance report and flags operations with P95 latency exceeding 1000ms.
-
-## Dashboards
-
-### Grafana
-- Datasource: Prometheus
-- Panels: Response time histogram, Token usage over time, Cost breakdown by model, Error rate graph, Agent execution times
-
-### Custom Dashboard
-- URL: `http://localhost:3000/claude-metrics`
-- Refresh interval: 30s
-- Alerts: High error rate (>5%), Slow response time (>5s), Cost spike (>$10/hour), Memory usage (>80%)
-
-## Optimization Rules
-
-| Condition | Action | Estimated Savings |
-|-----------|--------|-------------------|
-| Same file read >3 times | Suggest caching | ~30% token reduction |
-| Opus model used for simple task | Suggest switching to Sonnet | ~80% cost reduction |
-| Large file reads (>10K lines) | Suggest targeted grep/search | ~50% token reduction |
-| Repeated similar operations | Suggest batch processing | ~40% time reduction |
+`|| true` keeps the hook advisory so it can never block a tool call, even though the script already self-guards by exiting 0 on any error.
 
 ## Notes
-- Adjust cost calculations based on current pricing
-- Set up alerting for cost or performance thresholds
-- Review metrics weekly to identify optimization opportunities
-- Consider implementing caching for frequently accessed resources
+
+- Requires `python3` on `PATH`.
+- Output lands in `.claude/performance.json` under the current working directory; delete the file to reset the log.
+- Analysis of the collected data (reporting, cost estimation, bottleneck detection) is left to your own tooling — no reporting scripts ship with this plugin.

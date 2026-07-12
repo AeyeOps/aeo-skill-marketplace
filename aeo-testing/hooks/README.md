@@ -2,7 +2,7 @@
 
 Pre-commit and code validation quality enforcement hooks for Claude Code operations.
 
-**Hooks are disabled by default.** The configuration below runs a full CI pipeline (black, isort, flake8, mypy, pytest + coverage) before every Bash command — far too heavy for general use. Copy the relevant sections into your `hooks.json` selectively, or add a guard script that checks whether the command is `git commit` before running the suite.
+**The lightweight per-file hooks are active by default.** `hooks.json` wires Black formatting (`black_formatter.py`) and Ruff linting (`python_lint.py`) on every Write/Edit — both advisory via `|| true` — plus UV enforcement (`use_uv.py`) on Bash commands. The heavy CI-gate suite below (black, isort, flake8, mypy, pytest + coverage) is **opt-in reference configuration**: it runs a full pipeline before every Bash command, far too heavy for general use. Copy the relevant sections into your `hooks.json` selectively, or add a guard script that checks whether the command is `git commit` before running the suite.
 
 ## Reference Configuration
 
