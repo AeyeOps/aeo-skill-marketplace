@@ -192,21 +192,21 @@ if should_process(a, b, c, d, e):
 
 ```bash
 # Full review
-/code-review
+/aeo-code-review
 
 # Quick review (focus on critical issues)
-/code-review --quick
+/aeo-code-review --quick
 
 # Specific focus area
-/code-review --focus security
-/code-review --focus performance
-/code-review --focus tests
+/aeo-code-review --focus security
+/aeo-code-review --focus performance
+/aeo-code-review --focus tests
 
 # Review specific files
-/code-review --files "src/api/*.py"
+/aeo-code-review --files "src/api/*.py"
 
 # Compare against base branch
-/code-review --base main
+/aeo-code-review --base main
 ```
 
 ## Integration with Workflows
@@ -217,7 +217,7 @@ stages:
   - name: automated_review
     tasks:
       - name: code_review
-        command: /code-review
+        command: /aeo-code-review
         fail_on: ["critical"]
       
       - name: post_comments
@@ -234,7 +234,7 @@ stages:
   "actions": [
     {
       "type": "command",
-      "command": "/code-review --quick",
+      "command": "/aeo-code-review --quick",
       "abort_on_critical": true
     }
   ]

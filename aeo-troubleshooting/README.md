@@ -289,20 +289,6 @@ Which path should we take?
 
 This README serves as the primary reference. The `/troubleshoot` command provides interactive guidance for systematic debugging workflows.
 
-## Agents
-
-The Troubleshooting Plugin leverages two specialized agents:
-
-### `@code-archaeologist`
-- **Purpose**: Analyzes complex code issues and traces data flows
-- **When Used**: During complex debugging (architectural issues, race conditions)
-- **Capabilities**: Reverse-engineering, dependency analysis, data flow tracing
-
-### `@qa-engineer`
-- **Purpose**: Validates fixes and suggests testing strategies
-- **When Used**: After solution found, to ensure comprehensive validation
-- **Capabilities**: Test case generation, edge case identification, regression prevention
-
 ## Best Practices
 
 ### ✅ DO:
@@ -489,6 +475,6 @@ MIT - See [LICENSE](../LICENSE) for details.
 
 ## Related Plugins
 
-- **requirements**: Product and technical requirements gathering before implementation
-- **epcc-workflow**: Explore → Plan → Code → Commit systematic development workflow
-- **documentation**: Generate documentation after implementation
+- **aeo-requirements**: Product and technical requirements gathering before implementation
+- **aeo-epcc-workflow**: Explore → Plan → Code → Commit systematic development workflow
+- **aeo-docs**: Generate documentation after implementation
