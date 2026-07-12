@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -11,7 +12,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 SCHEMA_VERSION = 2
 PROCESS_RETENTION_SECONDS = 24 * 60 * 60
@@ -146,23 +147,162 @@ def looks_like_claude(cmdline: list[str]) -> bool:
   return False
 
 
-def resolve_process_identity() -> ProcessIdentity | None:
+SUBPROCESS_TIMEOUT_SECONDS = 8
+
+
+def _win_split_command_line(command_line: str) -> list[str]:
+  # Tokenize a Windows command line with the same rules the C runtime uses,
+  # so quoted paths that contain spaces survive intact.
+  import ctypes
+  from ctypes import wintypes
+
+  parse = ctypes.windll.shell32.CommandLineToArgvW
+  parse.argtypes = [wintypes.LPCWSTR, ctypes.POINTER(ctypes.c_int)]
+  parse.restype = ctypes.POINTER(ctypes.c_wchar_p)
+  argc = ctypes.c_int(0)
+  argv = parse(command_line, ctypes.byref(argc))
+  if not argv:
+    return []
+  try:
+    return [argv[i] for i in range(argc.value) if argv[i]]
+  finally:
+    ctypes.windll.kernel32.LocalFree(argv)
+
+
+def _win_process_table() -> dict[int, ProcInfo]:
+  # One CIM query returns ancestry, command lines, and a per-process start
+  # token for every process, so the ancestry walk needs no further subprocesses.
+  script = (
+    "$ErrorActionPreference='Stop'; "
+    "Get-CimInstance Win32_Process | ForEach-Object { [PSCustomObject]@{ "
+    "pid=$_.ProcessId; ppid=$_.ParentProcessId; cmd=$_.CommandLine; name=$_.Name; "
+    "ft=$(if($_.CreationDate){$_.CreationDate.ToFileTimeUtc()}else{$null}) } } "
+    "| ConvertTo-Json -Compress"
+  )
+  completed = subprocess.run(
+    ['powershell.exe', '-NoProfile', '-NonInteractive', '-Command', script],
+    capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_SECONDS,
+  )
+  if completed.returncode != 0:
+    raise RuntimeError(f'powershell exited {completed.returncode}: {completed.stderr.strip()[:200]}')
+  out = completed.stdout.strip()
+  if not out:
+    raise RuntimeError('powershell returned no process data')
+  data = json.loads(out)
+  if isinstance(data, dict):
+    data = [data]
+  table: dict[int, ProcInfo] = {}
+  for entry in data:
+    if not isinstance(entry, dict):
+      continue
+    pid = entry.get('pid')
+    if not isinstance(pid, int):
+      continue
+    ppid_raw = entry.get('ppid')
+    ppid = ppid_raw if isinstance(ppid_raw, int) else None
+    ft = entry.get('ft')
+    start_ticks = ft if isinstance(ft, int) else None
+    cmd = entry.get('cmd')
+    if isinstance(cmd, str) and cmd.strip():
+      cmdline = _win_split_command_line(cmd)
+    else:
+      name = entry.get('name')
+      cmdline = [name] if isinstance(name, str) and name else []
+    table[pid] = ProcInfo(pid=pid, ppid=ppid, start_ticks=start_ticks, cmdline=cmdline)
+  return table
+
+
+def _mac_process_table() -> dict[int, ProcInfo]:
+  # `command` must be the last column because it contains spaces; the two
+  # leading numeric columns parse cleanly with a bounded split.
+  completed = subprocess.run(
+    ['ps', '-A', '-o', 'pid=,ppid=,command='],
+    capture_output=True, text=True, timeout=SUBPROCESS_TIMEOUT_SECONDS,
+  )
+  if completed.returncode != 0:
+    raise RuntimeError(f'ps exited {completed.returncode}: {completed.stderr.strip()[:200]}')
+  table: dict[int, ProcInfo] = {}
+  for line in completed.stdout.splitlines():
+    parts = line.split(None, 2)
+    if len(parts) < 2:
+      continue
+    try:
+      pid = int(parts[0])
+      ppid = int(parts[1])
+    except ValueError:
+      continue
+    command = parts[2] if len(parts) > 2 else ''
+    table[pid] = ProcInfo(pid=pid, ppid=ppid, start_ticks=None, cmdline=command.split())
+  return table
+
+
+def _table_resolver(table: dict[int, ProcInfo]) -> Callable[[int], ProcInfo]:
+  def resolve(pid: int) -> ProcInfo:
+    info = table.get(pid)
+    if info is not None:
+      return info
+    return ProcInfo(pid=pid, ppid=None, start_ticks=None, cmdline=[])
+  return resolve
+
+
+def _walk_ancestry(resolver: Callable[[int], ProcInfo]) -> tuple[ProcessIdentity | None, list[ProcInfo]]:
   ancestry: list[ProcInfo] = []
   seen: set[int] = set()
   current_pid = os.getpid()
-  current = proc_info(current_pid)
+  current = resolver(current_pid)
   ancestry.append(current)
   seen.add(current.pid)
 
   cursor = current
   while cursor.ppid and cursor.ppid > 1 and cursor.ppid not in seen:
-    cursor = proc_info(cursor.ppid)
+    cursor = resolver(cursor.ppid)
     ancestry.append(cursor)
     seen.add(cursor.pid)
     if looks_like_claude(cursor.cmdline):
-      return ProcessIdentity(hook_pid=current_pid, claude=cursor, ancestry=ancestry)
+      return ProcessIdentity(hook_pid=current_pid, claude=cursor, ancestry=ancestry), ancestry
 
-  return None
+  return None, ancestry
+
+
+def _emit_identity_failure(backend: str, reason: str, ancestry: list[ProcInfo]) -> None:
+  lines = [
+    '[aeo-vsc-cc-sessions-sidecar] could not resolve Claude process identity',
+    f'  platform={sys.platform} backend={backend} hook_pid={os.getpid()}',
+    f'  reason={reason}',
+  ]
+  for proc in ancestry:
+    exe = proc.cmdline[0] if proc.cmdline else '<no-cmdline>'
+    lines.append(f'  walked pid={proc.pid} ppid={proc.ppid} exe={exe}')
+  try:
+    sys.stderr.write('\n'.join(lines) + '\n')
+  except OSError:
+    pass
+
+
+def resolve_process_identity() -> ProcessIdentity | None:
+  platform = sys.platform
+  backend = 'unknown'
+  try:
+    if platform.startswith('linux'):
+      backend = 'proc'
+      resolver: Callable[[int], ProcInfo] = proc_info
+    elif platform == 'darwin':
+      backend = 'ps'
+      resolver = _table_resolver(_mac_process_table())
+    elif platform.startswith('win'):
+      backend = 'cim'
+      resolver = _table_resolver(_win_process_table())
+    else:
+      _emit_identity_failure('unsupported', f'unsupported platform {platform!r}', [])
+      return None
+  except Exception as exc:
+    _emit_identity_failure(backend, f'{type(exc).__name__}: {exc}', [])
+    return None
+
+  identity, ancestry = _walk_ancestry(resolver)
+  if identity is None:
+    _emit_identity_failure(backend, 'no Claude ancestor found in process tree', ancestry)
+  return identity
 
 
 def sidecar_root() -> Path:
@@ -880,8 +1020,11 @@ def main() -> int:
     'session_id': extract_text(payload, 'session_id'),
   }
   if identity is None:
+    # resolve_process_identity already wrote a diagnostic to stderr. Exit
+    # non-zero so the failure is loud in verbose mode, but not with code 2,
+    # which would block the tool use this passive sidecar only observes.
     capture_validation(None, payload, raw_stdin, event)
-    return 0
+    return 1
 
   root = sidecar_root()
   process_dir = root / 'processes' / identity.process_dir_name
