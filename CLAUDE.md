@@ -11,9 +11,12 @@ The root `.claude-plugin/marketplace.json` indexes all plugins. Each plugin live
 ## Validation
 
 ```bash
+make -j8 build                                      # full chain: per-plugin validate + regression gates (fail-fast)
 claude plugin validate ./aeo-architecture           # single plugin
-for dir in aeo-*/; do claude plugin validate "./$dir"; done  # all plugins
+make validate-aeo-architecture                      # same, via make
 ```
+
+The root `Makefile` is the build chain: `build` depends on `validate` (one target per plugin) and `gates` (greps for defect classes fixed in v0.5.0 — unquoted agent descriptions, reference docs under `commands/`, unguarded `fcntl` imports, `claude --agent` invocations, frontmatter-less commands). Any failure exits nonzero.
 
 ## Loading Plugins
 
