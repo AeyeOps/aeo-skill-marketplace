@@ -1,23 +1,19 @@
 ---
 name: tailscale-macos-headscale
 description: |
-  Onboard a macOS host (Tahoe / macOS 26 and later) as a Tailscale client of a
-  self-hosted headscale control plane. Covers Tailscale.app installation via
-  Homebrew Cask, the NetworkExtension permission grants required for the daemon
-  to start, the conflict that arises if the brew formula `tailscale` is also
-  installed alongside the cask, how to use `tailscale up --login-server` with
-  a headscale preauth key, the deep-link fallback flow when the CLI cannot
-  reach the daemon, the headscale-specific gotcha that `headscale preauthkeys
-  create --user <N>` expects a numeric user ID rather than a username on
-  recent builds, and bidirectional reach verification once joined.
-  Use when adding a macOS host to a headscale-controlled mesh, troubleshooting
-  symptoms like "failed to connect to local tailscale service", Tailscale.app
-  stuck on "Starting...", `tailscale up` hanging on "joining <coordinator>", a
-  blank menu-bar icon after a fresh install, deciding between the Homebrew
-  cask and formula distributions, or recovering from a state where both have
-  been installed and are fighting for the local IPC socket. Not for: official
-  Tailscale (controlplane.tailscale.com) onboarding, which is well documented
-  upstream; Tailscale on Linux or Windows; or headscale server-side install.
+  Use when adding a macOS host (macOS 26 Tahoe and later) to a self-hosted headscale mesh as a
+  Tailscale client, or when Tailscale on macOS misbehaves: "failed to connect to local tailscale
+  service", Tailscale.app stuck on "Starting...", `tailscale up` hanging on "joining", a blank
+  menu-bar icon after install, or the Homebrew cask and formula fighting over the daemon.
+  Covers the Homebrew Cask install, the NetworkExtension permission grants, `tailscale up
+  --login-server` with a headscale preauth key, the deep-link fallback when the CLI cannot
+  reach the daemon, headscale's numeric `--user` id pitfall, and reach verification. Not for
+  official Tailscale onboarding, Linux or Windows clients, or headscale server install.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.6.8"
+  summary: Onboard and repair a macOS Tailscale client against a self-hosted headscale control plane, including the Homebrew cask-versus-formula trap.
 ---
 
 # Tailscale on macOS against a self-hosted headscale
@@ -42,6 +38,15 @@ docs (which assume Linux clients).
 | Daemon socket | macOS-internal IPC managed by the NetworkExtension subsystem; not a Unix socket the operator interacts with directly |
 | Headscale preauth key minting | `headscale preauthkeys create --user <numeric-id> --expiration 1h` |
 | Required permissions before daemon starts | Network Extension allow, VPN configuration approve, system extension activation |
+
+### Symptoms and where to look
+
+| Symptom | Cause | Read |
+|---|---|---|
+| `failed to connect to local tailscale service`; blank menu-bar icon after a fresh install | NetworkExtension daemon not activated or not yet granted its permissions | [installing-tailscale-on-macos.md](installing-tailscale-on-macos.md), "Permission dance" |
+| Tailscale.app stuck on "Starting..."; `tailscale up` hangs on "joining <coordinator>" | brew formula `tailscale` installed alongside the cask, both fighting for the IPC socket | [installing-tailscale-on-macos.md](installing-tailscale-on-macos.md), mixed-install cleanup |
+| CLI runs but cannot drive the daemon through `tailscale up` | join from the app instead of the CLI | [joining-headscale-from-macos.md](joining-headscale-from-macos.md), deep-link fallback |
+| `headscale preauthkeys create --user <name>` rejected | recent headscale builds expect the numeric user id | [joining-headscale-from-macos.md](joining-headscale-from-macos.md), user-id pitfall |
 
 ---
 
@@ -109,3 +114,7 @@ Cross-skill references in this marketplace use the form
   hypervisor and the actual Tailscale client is a Linux VM inside Lima, the
   procedures here do not apply; install Tailscale inside the VM per the
   Linux path instead.
+
+## Keep this skill current
+
+When a macOS or headscale release changes a step here (permission flow, preauth key flags, cask contents), correct the step and the symptom table in the same session. Replace the superseded text; do not append a note.

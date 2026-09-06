@@ -1,11 +1,16 @@
 ---
 name: markdown-mermaid
 description: |
-  Craft Mermaid diagrams within Markdown for flowcharts, ERDs, sequence diagrams, state machines,
-  Gantt charts, and mindmaps. Includes validated syntax templates, layout optimization, and
-  cross-platform rendering for GitHub, GitLab, VS Code, and Obsidian. Use when: creating diagrams
-  in markdown files, debugging "diagram not rendering" errors, selecting diagram types for docs,
-  visualizing database schemas or API flows, or fixing Mermaid syntax issues.
+  Use when creating diagrams in Markdown files, debugging a "diagram not rendering" error,
+  choosing a diagram type for documentation, visualizing a database schema or API flow, or
+  fixing Mermaid syntax. Craft Mermaid flowcharts, ERDs, sequence diagrams, state machines,
+  Gantt charts, and mindmaps with validated syntax templates, layout optimization, and
+  cross-platform rendering notes for GitHub, GitLab, VS Code, and Obsidian.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.3"
+  summary: Mermaid diagrams in Markdown with validated templates for every diagram type and rendering notes for GitHub, GitLab, VS Code, and Obsidian.
 ---
 
 # Mermaid in Markdown
@@ -218,3 +223,7 @@ flowchart TB
 | Poor contrast or inconsistent colors | Use `%%{init: {'theme': 'dark'}}%%` for all diagrams |
 | Inline style declarations | Remove `style X fill:#hex` lines - use theme directive instead |
 | Platform differences | See [platforms.md](references/platforms.md) |
+
+## Keep this skill current
+
+When a Mermaid release adds a diagram type, or GitHub, GitLab, VS Code, or Obsidian changes what it renders, update the reference file for that diagram or platform in the same session. Replace the superseded text; do not append a note.

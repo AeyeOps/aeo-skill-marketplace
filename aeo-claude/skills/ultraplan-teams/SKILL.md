@@ -1,11 +1,17 @@
 ---
 name: ultraplan-teams
 description: |
-  Team-coordinated planning mode that creates an agent team for parallel implementation.
-  Use for complex multi-component projects requiring coordinated parallel workstreams.
-  Extends ultraplan with Claude Code's teams feature for bidirectional agent communication —
-  prefer this over ultraplan when teammates need to message each other mid-task (shared task
-  list, SendMessage) rather than work as independently verified subagents.
+  Use when a multi-component project in Claude Code needs an agent team whose teammates message
+  each other mid-task over a shared task list, rather than independent subagents: parallel
+  workstreams with file-ownership boundaries, cross-cutting changes where one teammate's output
+  unblocks another, or long builds coordinated with SendMessage. Extends ultraplan with Claude
+  Code's teams feature; the coordinator plans in plan mode, gets approval, creates the team, and
+  verifies. For independent subagents that report back, use ultraplan instead.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.1"
+  summary: Team-coordinated planning for Claude Code, where teammates share a task list and message each other while a coordinator verifies.
 ---
 
 # UltraPlan Teams: Coordinated Parallel Planning

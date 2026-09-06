@@ -1,9 +1,18 @@
 ---
 name: systematic-debugging
 description: |
-  Root cause analysis, hypothesis-driven debugging, and isolation techniques.
-  Activate when: debugging an issue, reading stack traces, performing root cause analysis,
-  troubleshooting errors, reproducing bugs, isolating failures, binary search debugging.
+  Use when debugging a failure, reading a stack trace, reproducing a flaky or intermittent
+  bug, isolating a regression, or running a root cause analysis. Hypothesis-driven debugging
+  with a recorded experiment at every step: reproduce, read the whole error, form and test one
+  hypothesis at a time, isolate by binary search over code and commits (git bisect), inputs,
+  environment, and dependencies, then trace the root cause with 5 Whys and a fault tree. Also
+  covers stack-trace anatomy, an error-pattern lookup table, and a debugger, profiler, and
+  network tools reference.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.2"
+  summary: Hypothesis-driven debugging from reproduction to root cause, isolating by bisection over code, inputs, environment, and dependencies.
 ---
 
 # Systematic Debugging
@@ -57,55 +66,11 @@ Reproduction checklist:
 
 ## Step 2: Read the Error
 
-### Stack Trace Anatomy
-
-```markdown
-Reading a stack trace (bottom-up for most languages):
-
-  Traceback (most recent call last):        ← Start reading here (most recent)
-    File "app.py", line 45, in main         ← Entry point
-      result = process_data(raw_input)
-    File "processor.py", line 23, in process_data  ← Called from main
-      validated = validate(data)
-    File "validator.py", line 12, in validate      ← Called from process_data
-      raise ValueError("Field 'email' missing")   ← ROOT CAUSE
-  ValueError: Field 'email' missing                ← Error type and message
-
-Key information to extract:
-1. Error type (ValueError, TypeError, NullPointerException)
-2. Error message (the specific complaint)
-3. File and line number of the failure
-4. The call chain that led to the failure
-5. Which layer of YOUR code (not library code) is nearest to the error
-```
-
-### Common Error Patterns
-
-```markdown
-TypeError / AttributeError:
-  → Variable is wrong type or None
-  → Check: what is the actual value? Add print/log before the failing line
-
-KeyError / IndexError:
-  → Accessing data that doesn't exist
-  → Check: what are the actual keys/indices? Log the container contents
-
-ConnectionError / TimeoutError:
-  → Network or service issue
-  → Check: is the service running? Is the URL correct? DNS resolving?
-
-PermissionError:
-  → File system or OS-level access denied
-  → Check: file ownership, permissions, SELinux context
-
-ImportError / ModuleNotFoundError:
-  → Missing or misconfigured dependency
-  → Check: is it installed? Right virtual environment? Correct version?
-
-MemoryError / OOM:
-  → Resource exhaustion
-  → Check: data size, unbounded loops, missing pagination, leaked resources
-```
+Read the whole message and the whole stack trace before forming any hypothesis; the root
+cause line is usually the deepest frame in your own code, not the last line printed.
+[references/stack-traces.md](references/stack-traces.md) has the stack-trace anatomy and the
+error-pattern table (TypeError, KeyError, ConnectionError, PermissionError, ImportError,
+MemoryError) with the first check to make for each.
 
 ## Step 3: Hypothesis-Driven Debugging
 
@@ -153,163 +118,21 @@ Record results:
 
 ## Step 4: Isolation Techniques
 
-### Binary Search Debugging
-
-When you don't know where the bug is, bisect the problem space.
-
-```markdown
-Code bisection:
-1. Identify a known-good point and a known-bad point
-2. Test the midpoint
-3. If midpoint is good → bug is in the second half
-4. If midpoint is bad → bug is in the first half
-5. Repeat until you find the exact line/commit
-
-Git bisect (for regression bugs):
-  git bisect start
-  git bisect bad HEAD           # Current is broken
-  git bisect good v1.2.0        # This version worked
-  # Git checks out midpoint — test it
-  git bisect good               # or "git bisect bad"
-  # Repeat until Git identifies the commit
-
-Code comment bisection:
-1. Comment out the bottom half of the suspect code
-2. If bug disappears → it's in the commented half
-3. If bug remains → it's in the uncommented half
-4. Repeat within the narrowed section
-```
-
-### Input Isolation
-
-```markdown
-Narrow down which input triggers the bug:
-
-1. Test with minimal input (empty, single item)
-2. Test with known-good input
-3. Gradually add complexity until the bug appears
-4. The last addition is the trigger
-
-For data-driven bugs:
-- Compare working and failing input sets
-- Diff the inputs to find the difference
-- Test each difference independently
-- Check for encoding issues, special characters, edge values
-```
-
-### Environment Isolation
-
-```markdown
-Determine if the bug is environment-specific:
-
-1. Does it reproduce locally? In staging? In production only?
-2. Compare: OS, language version, dependency versions
-3. Check: environment variables, configuration files, secrets
-4. Test in a clean environment (fresh container, new virtualenv)
-5. If environment-specific, diff the configurations
-
-Common environment differences:
-- Different dependency versions (check lock files)
-- Missing environment variables or secrets
-- File path differences (Windows vs Unix)
-- Timezone and locale settings
-- Resource limits (memory, file descriptors, CPU)
-- Network configuration (proxies, DNS, firewalls)
-```
-
-### Dependency Isolation
-
-```markdown
-Determine if a dependency is the cause:
-
-1. Check if the dependency was recently updated
-2. Pin to the previous version and test
-3. Read the dependency's changelog for breaking changes
-4. Search the dependency's issue tracker for similar reports
-5. Create a minimal reproduction using only the dependency
-
-Dependency debugging tools:
-- pip freeze / npm list → exact installed versions
-- git log -- requirements.txt → when dependencies changed
-- pip show [package] → version and location
-- pip install [package]==old.version → test previous version
-```
+When no hypothesis stands out, or the failure site is unknown, bisect the problem space
+instead of guessing. [references/isolation.md](references/isolation.md) covers binary search
+over code and commits (`git bisect`), input isolation, environment isolation, and dependency
+isolation, each with the commands to run.
 
 ## Step 5: Root Cause Analysis
 
-### The 5 Whys
+A fix at the failure site is a patch; the root cause is the condition that let the failure
+happen. [references/root-cause.md](references/root-cause.md) walks the 5 Whys and fault tree
+analysis with worked examples.
 
-```markdown
-Start with the symptom and ask "Why?" repeatedly:
+## Debugging Tools
 
-Symptom: The API returns 500 errors intermittently.
-Why? → The database query times out.
-Why? → The query scans the entire table (no index).
-Why? → The index was dropped during a migration.
-Why? → The migration script had a DROP INDEX without a corresponding CREATE.
-Why? → Migration code review didn't catch the missing index recreation.
-
-Root cause: Migration review process doesn't check for index preservation.
-Fix: Add migration checklist item for index verification.
-```
-
-### Fault Tree Analysis
-
-```markdown
-Work backwards from the failure:
-
-API returns 500
-├── Database error
-│   ├── Connection timeout
-│   │   ├── Pool exhausted (connections leaked?)
-│   │   └── Network latency spike
-│   └── Query error
-│       ├── Schema mismatch (migration issue?)
-│       └── Data integrity violation
-├── Application error
-│   ├── Null pointer (missing data?)
-│   ├── Logic error (wrong branch?)
-│   └── Resource exhaustion (memory/disk?)
-└── Infrastructure error
-    ├── Service down
-    ├── DNS failure
-    └── Certificate expired
-```
-
-## Debugging Tools Quick Reference
-
-```markdown
-Print/Log debugging:
-  - Add log statements before and after suspect code
-  - Log variable values, types, and lengths
-  - Use structured logging (key=value pairs)
-  - Remove debug logs after fixing (or use debug log level)
-
-Interactive debugger:
-  Python: import pdb; pdb.set_trace()  (or breakpoint())
-  Node.js: debugger; statement + --inspect flag
-  Java: IDE breakpoints (IntelliJ, Eclipse)
-
-  Debugger commands (pdb):
-    n (next)     — step over
-    s (step)     — step into
-    c (continue) — run to next breakpoint
-    p expr       — print expression
-    pp expr      — pretty print
-    w (where)    — show stack trace
-    l (list)     — show source code
-
-Profilers (when the bug is performance):
-  Python: cProfile, py-spy, line_profiler
-  Node.js: --prof, clinic.js
-  General: flame graphs, perf
-
-Network debugging:
-  curl -v  — verbose HTTP request/response
-  dig/nslookup — DNS resolution
-  traceroute — network path
-  tcpdump/Wireshark — packet capture
-```
+Logging, interactive debuggers (pdb, `node --inspect`), profilers, and network tools, with
+their commands: [references/tools.md](references/tools.md).
 
 ## Debugging Checklist
 
@@ -326,3 +149,7 @@ When you're stuck:
 - [ ] Did you take a break? (Fresh eyes find bugs faster)
 - [ ] Did you explain the problem to someone (rubber duck)?
 ```
+
+## Keep this skill current
+
+When a technique here fails in use, or a tool command no longer matches its current release, correct the step in the same session. Replace the superseded text; do not append a note.

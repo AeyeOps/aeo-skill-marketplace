@@ -1,5 +1,5 @@
 ---
-name: Claude Agent SDK Reference
+name: claude-agent-sdk
 description: |
   Build autonomous AI agents in Python using the Claude Agent SDK. Covers the GTVR execution pattern
   (gather, take action, verify, repeat), stateless query() and stateful ClaudeSDKClient APIs, streaming

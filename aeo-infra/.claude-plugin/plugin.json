@@ -1,6 +1,6 @@
 {
   "name": "aeo-infra",
-  "version": "0.6.7",
+  "version": "0.6.8",
   "description": "Infrastructure operations skills covering AWS CLI v2, Azure CLI, Lima (Linux VMs on Apple Silicon), MLX/oMLX local LLM serving on Apple Silicon, GL-iNet Slate 7 travel router (Wi-Fi 7, VPN, SSH, recovery), and Tailscale-on-macOS against self-hosted headscale (NetworkExtension permission flow, cask vs formula conflict, deep-link fallback); plus /lima and /lima-doctor agentic springboards — credential management, service patterns, virtualization, local LLM tuning, cloud operations, and network appliance configuration",
   "author": {
     "name": "AeyeOps",

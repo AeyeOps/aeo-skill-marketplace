@@ -1,11 +1,19 @@
 ---
 name: ultrareview-loop
 description: |
-  Automated ultrareview validation loop that cycles between review and fix phases until
-  no actionable findings remain. Use when you want continuous validation with automatic
-  fix iterations on plans or code changes.
-argument-hint: "[focus_area] [--max-iterations N]"
+  Use when a plan or a code change should go through a code review loop that keeps reviewing
+  and fixing until no actionable findings remain: PR review before merge, plan review before
+  implementation, or validation after a refactor. Runs /ultrareview, applies /ultrareview-fix
+  to the findings, and re-reviews until the review passes or the iteration cap is reached.
+  Unlike a single-pass reviewer, the loop closes its own findings.
+  Usage: /ultrareview-loop [focus_area] [--max-iterations N].
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, TaskCreate, TaskUpdate, TaskList, TaskGet
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.1"
+  argument-hint: "[focus_area] [--max-iterations N]"
+  summary: Review-and-fix loop that re-runs ultrareview until no actionable findings remain.
 ---
 
 # Ultrareview Loop

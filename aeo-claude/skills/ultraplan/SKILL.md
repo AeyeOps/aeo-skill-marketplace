@@ -1,12 +1,18 @@
 ---
 name: ultraplan
 description: |
-  Coordinator-delegated planning mode that breaks complex tasks into subtasks and delegates
-  all implementation to Opus subagents. Use when tackling multi-step projects, large refactors,
-  or any work requiring parallel delegation with task tracking. Subagents work independently
-  and report back for verification — for workstreams whose teammates need to coordinate with
-  each other mid-task, use ultraplan-teams instead.
+  Use when a multi-step task in Claude Code should be planned by a coordinator and implemented
+  by parallel subagents: multi-agent planning for large refactors, multi-component features, or
+  any work worth delegating to independent Opus subagents with a tracked task list. The
+  coordinator enters plan mode, gets the breakdown approved, delegates each task, and verifies
+  every result; subagents work independently and report back. When teammates must message each
+  other mid-task, use ultraplan-teams instead.
 allowed-tools: Read, Glob, Grep, Task, TaskCreate, TaskUpdate, TaskList, TaskGet, AskUserQuestion, EnterPlanMode, ExitPlanMode
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.1"
+  summary: Coordinator-delegated planning for Claude Code, where a plan-mode coordinator breaks the work down and parallel Opus subagents implement it.
 ---
 
 # UltraPlan: Coordinator-Delegated Planning
@@ -75,6 +81,9 @@ Before considering work complete:
 - Review all outputs against acceptance criteria
 - Confirm all tasks show completed status
 - Read modified files to verify correctness
+
+A complete run, from request to verified tasks, is in
+[examples/worked-example.md](examples/worked-example.md).
 
 ## Begin Planning
 

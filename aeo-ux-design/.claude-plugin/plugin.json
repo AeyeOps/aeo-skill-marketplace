@@ -1,6 +1,6 @@
 {
   "name": "aeo-ux-design",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "User experience agents for interface optimization, accessibility validation, and WCAG compliance verification. The react-pwa-designer skill uses the shadcn and context7 MCP servers when available.",
   "author": {
     "name": "AeyeOps",

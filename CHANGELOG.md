@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-09-05
+
+Skill-publication pass on the nine skills with the most external installs, driven by the skillpress review against the Agent Skills specification and the live skills.sh marketplace. Descriptions now lead with "Use when" and carry the words installers search for; every touched skill gains `license` and `metadata` (author, version, summary).
+
+### Fixed
+
+- **aeo-claude**: `ultrareview-loop` frontmatter carried the non-spec field `argument-hint`, which fails Agent Skills validation (`skills-ref validate`: "Unexpected fields in frontmatter"); it now lives under `metadata` and the usage line joins the description. `claude-agent-sdk` declared `name: Claude Agent SDK Reference` (spaces and capitals, unselectable by name in the `skills` CLI); the name now matches its directory (0.5.0 → 0.5.1)
+- **aeo-infra**: `tailscale-macos-headscale` description was 1,270 characters against the 1,024 limit; cut to 722 with the symptom list moved into a table in the body (0.6.7 → 0.6.8)
+- **aeo-ux-design**: `react-pwa-designer` SKILL.md linked `templates/.superdesign/README.md`, two levels deep in a hidden directory; replaced by a one-line pointer to `templates/` so every reference stays one level deep (0.3.1 → 0.3.2)
+
+### Changed
+
+- **aeo-troubleshooting**: `systematic-debugging` shares its name with a far larger skill on skills.sh, so the description now leads with what this one does (recorded experiments, bisection over code, inputs, environment, and dependencies, stack-trace anatomy, 5 Whys and fault tree); the 328-line body is split into the procedure in SKILL.md plus `references/` (stack-traces, isolation, root-cause, tools) with no content removed (0.3.1 → 0.3.2)
+- **aeo-tdd-workflow**: `red-green-refactor` and `test-design-patterns` descriptions add the words TDD, test strategy, QA, and test pyramid; both bodies split into SKILL.md plus `references/` (AAA pattern, fixtures, test isolation; anti-patterns, parameterized and property-based tests, mutation testing, coverage) with no content removed (0.3.0 → 0.3.1)
+- **aeo-claude**: `ultraplan`, `ultraplan-teams`, and `ultrareview-loop` descriptions rewritten around multi-agent planning, parallel subagents, agent teams, and the code review loop; `ultraplan` gains `examples/worked-example.md`, a full run from request to verified tasks
+- **aeo-ux-design**: `react-pwa-designer` description now names frontend design, PWA, shadcn/ui, offline-first, and mobile-first
+- **aeo-docs**: `markdown-mermaid` description leads with "Use when" (0.5.2 → 0.5.3)
+- **README**: skills.sh badge under the title; new "Start Here" section listing the nine skills above with the plugin each ships in and the `npx skills add` one-liner for each; skill count corrected from 41 to 47
+- **aeo-troubleshooting / aeo-tdd-workflow / aeo-docs / aeo-ux-design / aeo-infra**: the six knowledge skills above gain a "Keep this skill current" section naming what drifts (tool releases, pytest and Hypothesis, Mermaid and its renderers, shadcn/ui and Vite PWA, macOS and headscale). The three command-style skills in aeo-claude execute their body as a prompt and deliberately carry none
+
 ## [0.5.0] - 2026-07-12
 
 Marketplace-wide remediation release from a five-reviewer audit of all 19 plugins. Breaking: the `aeo-claude` skill `skill-creator` is renamed `aeo-skill-creator` (and `claude-skill-creator` is removed) — update any invocation of `aeo-claude:skill-creator` or `aeo-claude:claude-skill-creator` to `aeo-claude:aeo-skill-creator`.

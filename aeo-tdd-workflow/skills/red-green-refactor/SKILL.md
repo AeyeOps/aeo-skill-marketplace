@@ -1,9 +1,17 @@
 ---
 name: red-green-refactor
 description: |
-  TDD cycle mechanics, test-first patterns, and fixture strategies.
-  Activate when: practicing TDD, writing tests first, doing red-green-refactor,
-  learning test-driven development, choosing test types, writing unit tests.
+  Use when practicing TDD: writing the failing test first, making it pass with the minimum
+  code, refactoring under green, choosing between unit, integration, and end-to-end tests, or
+  deciding how to build fixtures (inline, factory functions, shared pytest fixtures). Covers
+  the red-green-refactor cycle with the mistakes at each phase, test-first case ordering, the
+  transformation priority premise, Arrange-Act-Assert, fixture strategies, and test isolation,
+  with Python examples.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.1"
+  summary: The TDD cycle in practice, from the first failing test to fixtures and test isolation, with Python examples.
 ---
 
 # Red-Green-Refactor: The TDD Cycle
@@ -157,176 +165,11 @@ End-to-end tests:
   - Write few of these; they're slow and brittle
 ```
 
-## AAA Pattern (Arrange-Act-Assert)
+## Test Structure, Fixtures, and Isolation
 
-```markdown
-Structure every test with three distinct sections:
-
-Arrange: Set up the test context
-  - Create objects, set state, configure mocks
-  - Prepare input data
-  - Set expectations for dependencies
-
-Act: Execute the behavior under test
-  - Call the function or method
-  - Trigger the event
-  - Should be ONE line (or very few)
-
-Assert: Verify the result
-  - Check return values
-  - Verify state changes
-  - Confirm interactions with dependencies
-```
-
-### Examples
-
-```python
-# Clean AAA structure
-def test_user_registration_sends_welcome_email():
-    # Arrange
-    email_service = MockEmailService()
-    user_service = UserService(email_service=email_service)
-    registration_data = {"email": "user@example.com", "name": "Ada"}
-
-    # Act
-    user = user_service.register(registration_data)
-
-    # Assert
-    assert user.email == "user@example.com"
-    assert email_service.sent_count == 1
-    assert email_service.last_recipient == "user@example.com"
-```
-
-```python
-# Multiple assertions about one behavior are fine
-def test_order_summary_includes_all_fields():
-    # Arrange
-    order = Order(items=[Item("Widget", 9.99)], customer="Ada")
-
-    # Act
-    summary = order.get_summary()
-
-    # Assert
-    assert summary["customer"] == "Ada"
-    assert summary["item_count"] == 1
-    assert summary["total"] == 9.99
-```
-
-### Anti-Patterns
-
-```markdown
-✗ Arrange-Assert (no act — testing setup, not behavior)
-✗ Act-Assert (no arrange — implicit state is fragile)
-✗ Arrange-Act-Act-Assert (testing two behaviors in one test)
-✗ Arrange-Act-Assert-Act-Assert (test should be split)
-✗ Assert-first (assertions before the action — confusing)
-```
-
-## Fixture Strategies
-
-### Inline Setup
-Define test data directly in the test. Best for simple tests where context matters.
-
-```python
-def test_full_name_combines_first_and_last():
-    user = User(first_name="Ada", last_name="Lovelace")
-    assert user.full_name == "Ada Lovelace"
-```
-
-### Factory Functions
-Create reusable builders for common objects. Best when many tests need similar data.
-
-```python
-def make_user(**overrides):
-    defaults = {
-        "first_name": "Ada",
-        "last_name": "Lovelace",
-        "email": "ada@example.com",
-        "role": "developer",
-    }
-    defaults.update(overrides)
-    return User(**defaults)
-
-def test_admin_users_have_elevated_permissions():
-    admin = make_user(role="admin")
-    assert admin.can_delete_users is True
-```
-
-### Shared Fixtures (pytest)
-Use `@pytest.fixture` for setup that multiple tests share.
-
-```python
-@pytest.fixture
-def database():
-    db = create_test_database()
-    db.migrate()
-    yield db
-    db.drop()
-
-@pytest.fixture
-def user_repo(database):
-    return UserRepository(database)
-
-def test_save_and_retrieve_user(user_repo):
-    user_repo.save(User(name="Ada"))
-    found = user_repo.find_by_name("Ada")
-    assert found is not None
-```
-
-### Fixture Best Practices
-
-```markdown
-DO:
-- Keep fixtures minimal — only what the test needs
-- Name fixtures after what they represent, not what they do
-- Use factory functions for variation (make_user, make_order)
-- Isolate tests — each test gets its own state
-- Clean up after tests (use yield + teardown or context managers)
-
-DON'T:
-- Share mutable state between tests
-- Create "god fixtures" that set up everything
-- Nest fixtures more than 2 levels deep
-- Use fixtures to test setup logic (test the fixture separately)
-- Rely on test execution order
-```
-
-## Test Isolation
-
-### Why Isolation Matters
-```markdown
-Tests must be independent:
-- Any test can run alone and pass
-- Any test can run in any order and pass
-- Tests can run in parallel without interfering
-- A failing test means ONE thing is broken, not cascading failures
-```
-
-### Isolation Techniques
-
-```markdown
-1. Fresh state per test
-   - Reset database/state before or after each test
-   - Use transactions that roll back (database tests)
-   - Create new object instances (don't reuse)
-
-2. Dependency injection
-   - Pass dependencies as parameters
-   - Replace real dependencies with test doubles
-   - Avoid global state and singletons in tests
-
-3. Test doubles
-   - Stub: Returns canned responses (for queries)
-   - Mock: Verifies interactions (for commands)
-   - Fake: Simplified working implementation (in-memory DB)
-   - Spy: Records calls for later assertion
-
-4. Environment isolation
-   - Use separate test configuration
-   - Isolate file system access (temp directories)
-   - Mock external HTTP calls (no network in unit tests)
-   - Use unique identifiers to prevent collisions
-```
+- [references/aaa-pattern.md](references/aaa-pattern.md): Arrange-Act-Assert structure, two worked examples, and the five structural anti-patterns.
+- [references/fixtures.md](references/fixtures.md): inline setup, factory functions, shared pytest fixtures, and the fixture rules.
+- [references/test-isolation.md](references/test-isolation.md): why every test must run alone and in any order, and the four isolation techniques.
 
 ## TDD Rhythm Tips
 
@@ -350,3 +193,7 @@ Signs something is wrong:
 - Tests break when refactoring → testing implementation, not behavior
 - Many tests fail for one change → tests are too coupled to each other
 ```
+
+## Keep this skill current
+
+When an example here stops matching current pytest behavior, or a rule proves wrong in use, correct it in the same session. Replace the superseded text; do not append a note.

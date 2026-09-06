@@ -1,5 +1,7 @@
 # AEO Skill Marketplace
 
+[![skills.sh](https://skills.sh/b/AeyeOps/aeo-skill-marketplace)](https://skills.sh/AeyeOps/aeo-skill-marketplace)
+
 **Reusable skills, agents, and workflows for AI-assisted development.**
 
 Stop reinventing the wheel. Get battle-tested automation for architecture design, testing workflows, documentation generation, and more — organized into installable plugins you can mix and match.
@@ -31,7 +33,7 @@ graph LR
 | **Design** | 1 plugin | UX optimization, React PWA patterns |
 | **Infrastructure** | 1 plugin | AWS and Azure CLI operations, cloud resource management |
 
-**Total:** 19 plugins · 41 skills · 25 agents · 37 commands
+**Total:** 19 plugins · 47 skills · 25 agents · 37 commands
 
 ---
 
@@ -51,6 +53,38 @@ Or load directly for development:
 ```bash
 claude --plugin-dir ./aeo-skill-marketplace/aeo-architecture
 ```
+
+---
+
+## Start Here
+
+The skills installers reach for most. Each installs on its own with the `skills` CLI, or with its plugin through Claude Code.
+
+| Skill | Plugin | Use it for |
+|-------|--------|------------|
+| `systematic-debugging` | aeo-troubleshooting | Hypothesis-driven debugging from reproduction to root cause |
+| `ultraplan` | aeo-claude | A plan-mode coordinator breaks the work down; parallel Opus subagents implement |
+| `ultraplan-teams` | aeo-claude | The same with an agent team that messages over a shared task list |
+| `ultrareview-loop` | aeo-claude | Review-and-fix loop that runs until no actionable findings remain |
+| `red-green-refactor` | aeo-tdd-workflow | The TDD cycle, fixtures, and test isolation |
+| `test-design-patterns` | aeo-tdd-workflow | Test pyramid, anti-patterns, parameterized and mutation testing, coverage |
+| `markdown-mermaid` | aeo-docs | Mermaid diagrams that render on GitHub, GitLab, VS Code, and Obsidian |
+| `react-pwa-designer` | aeo-ux-design | Frontend design for React progressive web apps on shadcn/ui |
+| `tailscale-macos-headscale` | aeo-infra | A macOS Tailscale client against a self-hosted headscale |
+
+```bash
+npx skills add AeyeOps/aeo-skill-marketplace --skill systematic-debugging
+npx skills add AeyeOps/aeo-skill-marketplace --skill ultraplan
+npx skills add AeyeOps/aeo-skill-marketplace --skill ultraplan-teams
+npx skills add AeyeOps/aeo-skill-marketplace --skill ultrareview-loop
+npx skills add AeyeOps/aeo-skill-marketplace --skill red-green-refactor
+npx skills add AeyeOps/aeo-skill-marketplace --skill test-design-patterns
+npx skills add AeyeOps/aeo-skill-marketplace --skill markdown-mermaid
+npx skills add AeyeOps/aeo-skill-marketplace --skill react-pwa-designer
+npx skills add AeyeOps/aeo-skill-marketplace --skill tailscale-macos-headscale
+```
+
+Or the whole plugin in Claude Code, for example `/plugin install aeo-troubleshooting@aeo-skill-marketplace`.
 
 ---
 

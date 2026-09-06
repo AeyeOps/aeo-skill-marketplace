@@ -1,6 +1,17 @@
 ---
 name: react-pwa-designer
-description: Architect modern React progressive web apps with offline-first capabilities and responsive interfaces. Integrates shadcn/ui component library, service worker patterns, and mobile-friendly layouts. Consult when building installable web applications or designing component-driven UIs.
+description: |
+  Use when designing or building frontend interfaces in React: a progressive web app (PWA) that
+  installs and works offline, a component-driven UI on shadcn/ui and Tailwind CSS, a responsive
+  mobile-first layout, or a React component library. Covers frontend design through the
+  SuperDesign workflow (layout, theme, animation, implementation), shadcn/ui component
+  selection, service worker and manifest setup, PWA icon validation, state management choices,
+  and WCAG AA accessibility. Uses the shadcn and context7 MCP servers when they are configured.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.2"
+  summary: Frontend design and build guide for React progressive web apps on shadcn/ui and Tailwind, from wireframe to installable offline-first PWA.
 ---
 
 # React PWA Designer
@@ -27,7 +38,7 @@ This skill expects two MCP servers to be configured: **shadcn** (`mcp__shadcn__*
 ### Getting Started
 - [README.md](README.md) - Complete skill overview
 - @reference/setup-guide.md - Project initialization, dependencies, configuration
-- [templates/.superdesign/README.md](templates/.superdesign/README.md) - SuperDesign directory usage
+- `templates/.superdesign/` - copy to the project root; design artifacts go in `.superdesign/design_iterations/` (naming rules in the README inside it)
 
 ### React Patterns
 - @reference/react-hooks.md - Custom hooks and patterns
@@ -169,3 +180,7 @@ What kind of state?
 8. **Avoid bootstrap blue colors** - use modern design systems
 9. **Mobile-first responsive** - always design for smallest screen first
 10. **Accessibility required** - ARIA labels, keyboard nav, semantic HTML, WCAG AA contrast
+
+## Keep this skill current
+
+When shadcn/ui, the Vite PWA plugin, or the MCP servers named here change an API or a component list, update the affected reference file in the same session. Replace the superseded text; do not append a note.
