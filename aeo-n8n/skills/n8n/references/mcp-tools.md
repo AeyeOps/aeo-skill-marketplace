@@ -463,14 +463,15 @@ example configurations.
 - search_templates ✅
 - get_template ✅
 
-**Requires n8n API** (N8N_API_URL + N8N_API_KEY) — the 21 management tools, including:
-- n8n_create_workflow ⚠️
-- n8n_update_partial_workflow ⚠️
-- n8n_validate_workflow (by ID) ⚠️
-- n8n_list_workflows, n8n_get_workflow ⚠️
-- n8n_executions, n8n_test_workflow ⚠️
-- n8n_manage_credentials, n8n_manage_folders, n8n_manage_datatable ⚠️
-- n8n_workflow_versions, n8n_deploy_template, n8n_audit_instance ⚠️
+**Requires n8n API** (N8N_API_URL + N8N_API_KEY) — all 21 management tools, per the n8n-mcp README:
+- Workflow management (10): n8n_create_workflow, n8n_get_workflow, n8n_update_full_workflow, n8n_update_partial_workflow,
+  n8n_delete_workflow, n8n_list_workflows, n8n_validate_workflow (by ID), n8n_autofix_workflow, n8n_workflow_versions,
+  n8n_deploy_template ⚠️
+- Executions (3): n8n_test_workflow, n8n_executions, n8n_evaluations ⚠️
+- Node resources (1): n8n_explore_node_resources ⚠️
+- Folders, data tables, credentials, agents (4): n8n_manage_folders, n8n_manage_datatable, n8n_manage_credentials,
+  n8n_manage_agents ⚠️
+- Security and system (3): n8n_audit_instance, n8n_health_check, n8n_list_catalog ⚠️
 
 **Requires a second secret** (`N8N_MCP_ACCESS_TOKEN`, on top of the API key): `n8n_manage_agents`,
 `n8n_explore_node_resources`, `n8n_test_workflow` for any `method` other than `auto`, `n8n_workflow_versions` with

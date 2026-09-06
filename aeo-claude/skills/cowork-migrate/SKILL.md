@@ -13,7 +13,7 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task
 license: MIT
 metadata:
   author: AeyeOps
-  version: "0.5.2"
+  version: "0.5.3"
   summary: Windows-to-Windows migration of a Claude Cowork session with intact history, file links, and no transcript truncation.
 ---
 

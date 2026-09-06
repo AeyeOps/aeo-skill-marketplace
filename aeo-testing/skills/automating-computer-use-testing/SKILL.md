@@ -11,7 +11,7 @@ description: |
 license: MIT
 metadata:
   author: AeyeOps
-  version: "0.3.2"
+  version: "0.3.3"
   summary: Generator for Gemini computer-use test harnesses and goal files that drive Playwright browser QA.
 ---
 

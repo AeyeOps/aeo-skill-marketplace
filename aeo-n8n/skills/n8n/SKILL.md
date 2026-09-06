@@ -11,7 +11,7 @@ description: |
 license: MIT
 metadata:
   author: AeyeOps
-  version: "0.4.0"
+  version: "0.4.1"
   summary: Router and cross-cutting rules for n8n workflow automation, with deep-dive references for expressions, Code nodes, node configuration, validation, n8n-mcp tools and workflow patterns.
 ---
 

@@ -10,7 +10,7 @@ description: |
 license: MIT
 metadata:
   author: AeyeOps
-  version: "0.5.2"
+  version: "0.5.3"
   summary: Create, improve, package, and evaluate Agent Skills, including description optimization measured by eval trigger rates.
 ---
 

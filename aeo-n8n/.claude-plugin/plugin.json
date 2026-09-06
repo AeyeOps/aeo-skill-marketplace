@@ -1,7 +1,7 @@
 {
   "name": "aeo-n8n",
-  "version": "0.4.0",
-  "description": "One n8n skill covering workflow automation end to end — expression syntax, JavaScript and Python Code nodes, node configuration, validation, the n8n-mcp tool surface, and the five production workflow patterns — with the detail in per-topic references. Adapted from the n8n-mcp project by Romuald Czlonkowski (aiadvisors.pl); see NOTICE.md.",
+  "version": "0.4.1",
+  "description": "One n8n skill covering workflow automation end to end \u2014 expression syntax, JavaScript and Python Code nodes, node configuration, validation, the n8n-mcp tool surface, and the five production workflow patterns \u2014 with the detail in per-topic references. Adapted from the n8n-mcp project by Romuald Czlonkowski (aiadvisors.pl); see NOTICE.md.",
   "author": {
     "name": "AeyeOps",
     "url": "https://github.com/AeyeOps"
