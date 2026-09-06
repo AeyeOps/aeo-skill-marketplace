@@ -450,9 +450,11 @@ const email = $json.body.email;
 
 ### this.helpers.httpRequest()
 
-Make HTTP requests from within code. The helper object is `helpers` on the sandbox context, reached as
-`this.helpers` inside the Code node — the same object that gives you `getBinaryDataBuffer`,
-`prepareBinaryData` and `binaryToString`:
+Make HTTP requests from within code. n8n's task runner exposes `helpers.httpRequest` on the Code node sandbox
+context (`EXPOSED_RPC_METHODS` in `packages/@n8n/task-runner/src/runner-types.ts`, alongside `helpers.request`,
+`getBinaryDataBuffer`, `prepareBinaryData` and `binaryToString`), and the n8n docs call these helpers through
+`this.helpers`, as in `await this.helpers.getBinaryDataBuffer(0, 'data')`. No docs page shows `httpRequest` itself
+in a Code node, so the call below follows the documented idiom for the same helper object:
 
 ```javascript
 const response = await this.helpers.httpRequest({

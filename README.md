@@ -90,7 +90,7 @@ Or the whole plugin in Claude Code, for example `/plugin install aeo-troubleshoo
 
 ## Every Skill
 
-The other 32 skills, grouped by plugin. Same one-liner, swap the name.
+The other 32 skills, grouped by plugin. Same one-liner, swap the name. To install several at once, repeat `--skill` (the CLI does not split a comma- or space-separated list).
 
 ```bash
 # aeo-claude
