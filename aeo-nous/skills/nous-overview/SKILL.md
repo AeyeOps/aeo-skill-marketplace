@@ -1,9 +1,18 @@
 ---
 name: nous-overview
 description: |
-  Nous self-improving context system overview. Use when the user asks about "nous",
-  "learnings", "knowledge extraction", "context injection", "how does memory work",
-  "how are learnings captured", or wants to understand the self-improvement pipeline.
+  Use when the user asks about nous, learnings, knowledge extraction, context injection, engram
+  or cortex storage, how memory works, how learnings are captured, or how the self-improving
+  context system works end to end. Explains the architecture - the SessionStart hook that injects
+  prior learnings and knowledge, the Stop hook that watches context-window usage and spawns
+  extraction workers, the statusline activity logger trigger, the learnings and knowledge lenses,
+  per-project .claude/nous storage, context thresholds, and reconciliation. Orientation and data
+  flow for the nous plugin, not a setup or command guide.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.4.12"
+  summary: Architecture and data flow of the nous self-improving context system, from statusline trigger to extraction lenses and context injection.
 ---
 
 # Nous: Self-Improving Context System

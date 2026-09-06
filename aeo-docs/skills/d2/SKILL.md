@@ -1,7 +1,19 @@
 ---
 name: d2
 description: |
-  Author D2 diagrams (the Terrastruct text-to-diagram language at https://d2lang.com). Use whenever the user wants to produce, edit, or render any kind of diagram with D2 — architecture, flowchart, sequence, ER/SQL schema, UML class, network topology, mind map, deployment, org chart, state machine, grid layout, mermaid-style flow, or anything similar — even when they don't say "D2" explicitly. Trigger on requests for `.d2` files, mentions of `d2`/`d2lang`, or open-ended diagramming tasks ("draw me a system diagram", "make a flowchart of X", "diagram the request flow", "give me an ER diagram for these tables"). Covers the full DSL — shapes, connections, containers, classes, vars, globs/filters, imports, layers/scenarios/steps, styling, themes, sketch mode, icons, markdown/LaTeX/code blocks, layout engines (dagre/elk/tala), CLI flags, and the specialized diagram shapes (sequence_diagram, sql_table, class, grid, hierarchy, c4-person, image, text/code).
+  Use whenever the user wants to produce, edit, or render any kind of diagram with D2, the Terrastruct
+  text-to-diagram language at https://d2lang.com — architecture, flowchart, sequence, ER/SQL schema, UML class,
+  network topology, mind map, deployment, org chart, state machine, grid layout, mermaid-style flow, or anything
+  similar — even when they don't say "D2" explicitly. Trigger on requests for `.d2` files, mentions of
+  `d2`/`d2lang`, or open-ended diagramming tasks ("draw me a system diagram", "make a flowchart of X", "diagram
+  the request flow", "give me an ER diagram for these tables"). Covers the full DSL — shapes, connections,
+  containers, classes, vars, globs/filters, imports, layers/scenarios/steps, styling, themes, sketch mode,
+  icons, markdown/LaTeX/code blocks, layout engines, CLI flags, and the specialized diagram shapes.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.4"
+  summary: Authoring D2 diagrams across the full Terrastruct DSL, from shapes and connections to layers, themes, and layout engines.
 ---
 
 # D2 — Authoring Diagrams

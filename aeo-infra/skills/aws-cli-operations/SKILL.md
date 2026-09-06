@@ -1,16 +1,19 @@
 ---
 name: aws-cli-operations
-version: 1.0.0
-description: >-
-  This skill should be used when the user asks about "AWS CLI commands",
-  "writing AWS CLI scripts", "querying AWS resources", "managing AWS
-  credentials", "aws login", "aws configure sso", "assume role", "credential
-  chain", or working with specific services via CLI (S3, EC2, IAM, Lambda,
-  VPC, RDS, DynamoDB, CloudWatch, SSM). Also applies when the user needs help
-  with "JMESPath query", "--query and --filters syntax", "CLI pagination",
-  "aws cli waiter", "output formatting", "cross-account access",
-  "safe destructive commands", "S3 sync dry run", "aws cli pager blocking
-  script", or "migrating from AWS CLI v1 to v2".
+description: |
+  Use when the user asks about AWS CLI commands, writing AWS CLI scripts, querying AWS
+  resources, managing AWS credentials, aws login, aws configure sso, assume role, or the
+  credential chain; when driving S3, EC2, IAM, Lambda, VPC, RDS, DynamoDB, CloudWatch, or SSM
+  from the command line; or when the question is JMESPath query syntax, --query versus
+  --filters, CLI pagination, an aws cli waiter, output formatting, cross-account access, safe
+  destructive commands, an S3 sync dry run, the aws cli pager blocking a script, or migrating
+  from AWS CLI v1 to v2. Covers the AWS CLI v2 command surface only, not the AWS SDKs, not
+  CloudFormation or Terraform authoring, and not Azure, which belongs to az-cli-operations.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.6.9"
+  summary: AWS CLI v2 operations covering the credential chain, JMESPath filtering, waiters, safe mutation patterns, and per-service command recipes.
 ---
 
 # AWS CLI v2 Operations

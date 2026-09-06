@@ -1,9 +1,19 @@
 ---
 name: secure-coding
 description: |
-  Secure coding practices covering input validation, secrets management, and authentication patterns.
-  Activate when: validating user input, managing secrets, implementing authentication,
-  handling authorization, encoding output, applying secure defaults, reviewing code security.
+  Use when validating user input, handling a file upload, managing secrets, implementing
+  authentication, handling authorization, encoding output, choosing cryptography, or applying
+  secure defaults while writing code. Covers validation strategy and common validations, XSS
+  prevention through output encoding and Content Security Policy, the secret storage hierarchy
+  and what to do after a secret is exposed, password handling, JWT tokens and session management,
+  role-based and resource-level access control, which cryptographic primitive to use when, and
+  secure random number generation. For writing safe code; to audit existing code against the
+  OWASP Top 10, use owasp-top-10.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.4.2"
+  summary: Secure coding practices for input validation, output encoding, secrets management, authentication, authorization, and cryptography.
 ---
 
 # Secure Coding Practices

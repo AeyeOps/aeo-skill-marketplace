@@ -1,6 +1,17 @@
 ---
 name: mcp-architect-designer
-description: Design and deploy Model Context Protocol servers with deep knowledge of the JSON-RPC 2.0 spec, transport mechanisms, and protocol lifecycle. Covers FastMCP framework patterns, production hardening, and diagnostic techniques for connectivity failures. Engage when architecting MCP integrations, building custom servers, or debugging protocol-level issues.
+description: |
+  Use when architecting a Model Context Protocol (MCP) integration, building or deploying a custom MCP server,
+  choosing a transport mechanism, or debugging protocol-level issues and connectivity failures. Covers the
+  JSON-RPC 2.0 spec, the MCP protocol lifecycle, FastMCP framework patterns, dual-client authentication,
+  deployment patterns, production hardening, and diagnostic techniques. Trigger phrases include "build an MCP
+  server", "MCP server won't connect", "server disconnected", stdio versus streamable HTTP transport, and
+  exposing tools, resources, or prompts to an MCP client.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.3"
+  summary: Design, build, deploy, and debug Model Context Protocol servers, from the JSON-RPC 2.0 wire format to FastMCP production deployment.
 ---
 
 # MCP Architect Designer

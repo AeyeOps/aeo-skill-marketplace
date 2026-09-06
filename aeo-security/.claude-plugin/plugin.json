@@ -1,6 +1,6 @@
 {
   "name": "aeo-security",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Security assessment agents for vulnerability scanning, compliance validation, code auditing, and remediation guidance. Requires companion plugins: aeo-testing, aeo-agile-tools, aeo-architecture",
   "author": {
     "name": "AeyeOps",

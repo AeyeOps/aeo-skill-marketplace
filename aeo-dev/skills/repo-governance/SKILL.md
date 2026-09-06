@@ -1,11 +1,16 @@
 ---
 name: repo-governance
-description: >
-  Guide the user through repository documentation governance using the aeo-repo-* command
-  family. Use when the user asks about AGENTS.md scaffolding, roadmap alignment reviews,
-  doc curation, repo bootstrap, or wants to know which governance command to run next.
-  Covers lifecycle sequencing: bootstrap a scaffold, iterate with alignment reviews and
-  curation passes, sanitize before publishing.
+description: |
+  Use when the user asks about repository documentation governance — AGENTS.md scaffolding, a repo bootstrap, a
+  roadmap alignment review, a doc curation pass, sanitizing a repository before publishing, or which governance
+  command to run next. Guides the `aeo-repo-*` command family and its lifecycle sequencing: bootstrap a scaffold,
+  iterate with alignment reviews and curation passes, sanitize before publishing. Trigger phrases include
+  "set up AGENTS.md", "curate the docs", "align the roadmap", and "is this repo safe to publish".
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.3"
+  summary: Chooses and sequences the aeo-repo-* governance commands across a repository's documentation lifecycle.
 ---
 
 # Repository Governance

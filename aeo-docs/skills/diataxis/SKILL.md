@@ -1,12 +1,27 @@
 ---
 name: diataxis
 description: |
-  Author user-facing technical documentation following the Diataxis framework — tutorials, how-to guides, reference material, and conceptual explanations. Picks the right of the four documentation modes for the request, applies that mode's structural template, and avoids cross-mode bleed (no comprehensive API listings inside a tutorial, no learning exercises inside reference docs, no step-by-step procedures inside an explanation). Use whenever someone asks to document something for users, write a getting-started guide, generate an API or config or CLI reference, write a deployment / migration / troubleshooting guide, explain a design decision, or produce any docs that will live in `docs/`. Trigger phrases include "write a tutorial", "create a how-to", "document the API", "explain why we chose", "generate config docs", "build a reference", "write user docs for X", and any open-ended request to produce user-facing documentation. Not for: README content, code comments, architecture / C4 / ADR / OpenAPI work (use `aeo-docs:architecture-docs` instead), or internal design docs that aren't user-facing.
+  Use whenever someone asks to document something for users — write a getting-started guide, generate an API,
+  config, or CLI reference, write a deployment, migration, or troubleshooting guide, explain a design decision,
+  or produce any docs that will live in `docs/`. Authors user-facing technical documentation following the
+  Diataxis framework: tutorials, how-to guides, reference material, and conceptual explanations, each with its
+  own structural template and no cross-mode bleed. Not for: README content, code comments, architecture / C4 /
+  ADR / OpenAPI work (use `aeo-docs:architecture-docs` instead), or internal design docs that aren't
+  user-facing.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.4"
+  summary: User-facing documentation in the four Diataxis modes, with the right mode chosen and its template applied.
 ---
 
 # Diataxis — User-Facing Documentation
 
 The [Diataxis framework](https://diataxis.fr) splits user-facing documentation into four modes that serve different reader needs. Most "bad documentation" comes from mixing modes — a tutorial that gets reference-dumpy, a reference that wanders into design rationale, a how-to that pauses to teach concepts. **Pick the mode first; the template flows from that.**
+
+Typical requests: "write a tutorial", "create a how-to", "document the API", "explain why we chose", "generate config docs", "build a reference", "write user docs for X", and any open-ended request to produce user-facing documentation.
+
+Cross-mode bleed to avoid: no comprehensive API listings inside a tutorial, no learning exercises inside reference docs, no step-by-step procedures inside an explanation.
 
 ## The four modes
 

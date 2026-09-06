@@ -1,6 +1,18 @@
 ---
 name: agent-tui-expert
-description: Construct rich terminal interfaces using Textual for multi-pane dashboards with CSS styling and Python Prompt Toolkit for interactive line editing with completions. Covers widget composition, key bindings, TUI testing strategies, and WSL2 layout quirks. Engage when building IDE-style interfaces, REPL shells, or dashboard applications.
+description: |
+  Use when building a terminal user interface in Python - a Textual multi-pane dashboard, an
+  IDE-style interface, a REPL shell, or an interactive line editor with completions and
+  validation using Python Prompt Toolkit. Covers widget composition, containers, CSS styling,
+  messages, key bindings, themes, command history, TUI testing with the Textual Pilot API and
+  snapshot tests, MCP server access and sub-agent delegation from a TUI, version requirements,
+  and WSL2 layout quirks. For full-screen Python terminal apps; for argument parsing and
+  command-line UX, use python-cli-engineering.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.2"
+  summary: Textual and Python Prompt Toolkit patterns for dashboards, REPL shells, and IDE-style terminal interfaces.
 ---
 
 # Agent TUI Expert

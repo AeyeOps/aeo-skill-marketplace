@@ -1,6 +1,6 @@
 {
   "name": "aeo-requirements",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Requirements gathering agents for product discovery, technical specifications, stakeholder interviews, and build-vs-buy analysis",
   "author": {
     "name": "AeyeOps",

@@ -1,6 +1,16 @@
 ---
 name: slash-command-creator
-description: Author custom Claude Code slash commands as reusable Markdown prompt templates. Covers frontmatter configuration, argument handling, variable substitution, and workflow automation patterns. Invoke when designing new commands, debugging command syntax, or converting repetitive prompts into reusable shortcuts.
+description: |
+  Use when authoring a custom Claude Code slash command, debugging slash command syntax, or converting a
+  repetitive prompt into a reusable shortcut under `.claude/commands/`. Covers the reusable Markdown prompt
+  template format, frontmatter configuration, argument handling, variable substitution, and workflow automation
+  patterns. Trigger phrases include "create a slash command", "make a /command", "custom command",
+  "argument-hint", and "my slash command does nothing".
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.2"
+  summary: Authoring guide for Claude Code slash commands as reusable Markdown prompt templates.
 ---
 
 # Slash Command Creator

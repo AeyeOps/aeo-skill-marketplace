@@ -1,17 +1,19 @@
 ---
 name: az-cli-operations
-version: 1.0.0
-description: >-
-  This skill should be used when the user asks about "Azure CLI commands",
-  "writing Azure CLI scripts", "managing Azure resources", "az login",
-  "az account", "service principal", "managed identity", "credential chain",
-  or working with specific Azure services via CLI (VMs, Storage, VNets, NSGs,
-  Key Vault, App Service, AKS, RBAC). Also applies when the user needs help
-  with "JMESPath query", "--query syntax", "az graph query", "CLI pagination",
-  "az wait", "output formatting", "multi-subscription", "resource locks",
-  "safe destructive commands", "az rest API calls", "az bicep",
-  "CLI extensions", "cost management", "cost analysis", "spending",
-  or "az resource" for services without dedicated CLI commands.
+description: |
+  Use when the user asks about Azure CLI commands, writing Azure CLI scripts, managing Azure
+  resources, az login, az account, service principals, managed identity, or the credential
+  chain; when driving VMs, Storage, VNets, NSGs, Key Vault, App Service, AKS, or RBAC from the
+  command line; or when the question is JMESPath --query syntax, az graph query, CLI pagination,
+  az wait, output formatting, multi-subscription work, resource locks, safe destructive commands,
+  az rest API calls, az bicep, CLI extensions, cost management, cost analysis and spending, or
+  az resource for services without a dedicated command. Covers the Azure CLI only, not the Azure
+  SDKs or portal walkthroughs, and not AWS, which belongs to aws-cli-operations.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.6.9"
+  summary: Azure CLI operations covering authentication, Resource Graph queries, JMESPath filtering, waiters, and safe mutation patterns.
 ---
 
 # Azure CLI Operations

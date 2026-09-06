@@ -1,6 +1,18 @@
 ---
 name: python-data-engineering
-description: Implement data pipelines with SQLAlchemy 2.0 patterns (TypeDecorator, hybrid properties, events) and warehouse architectures (Kimball star schemas, medallion layers, SCD handling). Covers ETL/ELT design, dim_/fact_/stg_ conventions, and orchestration with dbt, Airflow, or Dagster. Reference for API-to-database flows or dimensional modeling with Python and PostgreSQL.
+description: |
+  Use when implementing a data pipeline, ETL or ELT flow, or warehouse architecture in Python -
+  SQLAlchemy 2.0 patterns such as TypeDecorator, hybrid properties and events, Pydantic
+  integration, API-to-database flows, custom field schema evolution, incremental sync from an
+  external system, or multi-source integration. Covers Kimball star schemas, medallion layers,
+  slowly changing dimension handling, the dim_, fact_, and stg_ naming conventions, orchestration
+  with dbt, Airflow, or Dagster, and testing a pipeline. Aimed at dimensional modeling with
+  Python and PostgreSQL, not at BI tool configuration.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.2"
+  summary: Python data pipelines and warehouse modeling with SQLAlchemy 2.0, Pydantic, star schemas, and medallion layers.
 ---
 
 # Python Data Engineering

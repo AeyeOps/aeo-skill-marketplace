@@ -1,9 +1,18 @@
 ---
 name: profiling-guide
 description: |
-  Performance profiling methodologies, interpreting profiler output, and benchmarking techniques.
-  Activate when: profiling application performance, reading flame graphs, benchmarking code,
-  identifying bottlenecks, measuring CPU usage, analyzing memory allocation, I/O profiling.
+  Use when profiling application performance, reading a flame graph, benchmarking code,
+  identifying bottlenecks, measuring CPU usage, analyzing memory allocation, or profiling I/O and
+  database queries. Covers profiling methodology, cProfile and how to interpret its output,
+  py-spy sampling, line-level profiling, tracemalloc and memory_profiler, query and network I/O
+  profiling, reading and generating flame graphs, microbenchmarking with timeit, load testing,
+  and a decision tree for picking a profiler. Applies to measurement and diagnosis; to fix what
+  the profile reveals, use optimization-patterns.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.2"
+  summary: Profiling methodology and tooling for CPU, memory, and I/O, with flame graph reading and benchmarking technique.
 ---
 
 # Performance Profiling Guide

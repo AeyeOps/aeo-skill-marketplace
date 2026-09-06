@@ -1,10 +1,17 @@
 ---
 name: ultrareview
 description: |
-  Deep validation protocol that examines preceding context for errors, unvalidated assumptions,
-  alignment issues, gaps, and improvement opportunities. Produces a machine-parseable summary.
-  Use when validating plans, code changes, configurations, or any work product before proceeding.
+  Use when validating a plan, code change, configuration, or any other work product before proceeding — checking
+  the preceding context for errors, unvalidated assumptions, alignment issues, gaps, and improvement
+  opportunities, and producing a machine-parseable summary of what it found. Trigger phrases include
+  "ultrareview", "review this plan", "check my assumptions", "validate this before we build", and "what did we
+  miss". Reports findings only; the companion `ultrareview-fix` skill applies them.
 allowed-tools: Read, Glob, Grep, Bash(git status *), Bash(git diff *), Bash(find *)
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.2"
+  summary: Deep validation protocol over the preceding context that reports errors, assumptions, alignment issues, and gaps as a machine-parseable summary.
 ---
 
 # Ultra-Validation Protocol

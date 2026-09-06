@@ -1,9 +1,19 @@
 ---
 name: owasp-top-10
 description: |
-  OWASP Top 10 vulnerabilities with detection patterns, code examples, and prevention checklists.
-  Activate when: reviewing code for security, checking for OWASP vulnerabilities, performing security
-  audits, fixing injection flaws, preventing XSS, securing authentication, checking access control.
+  Use when reviewing code for security, performing a security audit, checking for OWASP Top 10
+  vulnerabilities, fixing injection flaws, preventing XSS, securing authentication, or checking
+  access control. Covers every category with detection patterns, vulnerable and fixed code
+  examples, and prevention checklists - broken access control, cryptographic failures, injection
+  including SQL and command injection, insecure design, security misconfiguration, vulnerable and
+  outdated components, identification and authentication failures, software and data integrity
+  failures, security logging and monitoring failures, and SSRF. For auditing existing code; for
+  writing new code safely, use secure-coding.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.4.2"
+  summary: OWASP Top 10 walkthrough with detection patterns, vulnerable and fixed code examples, and prevention checklists.
 ---
 
 # OWASP Top 10 Vulnerabilities

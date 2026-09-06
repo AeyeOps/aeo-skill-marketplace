@@ -1,10 +1,18 @@
 ---
 name: common-failure-patterns
 description: |
-  Common failure patterns organized by category with symptoms, causes, and fixes.
-  Activate when: diagnosing dependency conflicts, environment issues, PATH problems,
-  permission errors, CORS errors, DNS failures, timeout issues, async bugs,
-  concurrency problems, race conditions, memory leaks, deadlocks.
+  Use when diagnosing a dependency conflict or version mismatch, a diamond dependency, an
+  environment issue, a PATH problem, a permission error, an environment variable that is not
+  taking effect, a CORS error, a DNS failure, a timeout, an async bug, a concurrency problem, a
+  race condition, a deadlock, an unhandled promise rejection, or a memory leak. Every pattern is
+  listed with its symptoms, causes, and fixes, so a recognized failure can be matched and closed
+  quickly. A catalogue of known failures; for an unknown failure that needs a hypothesis-driven
+  investigation, use systematic-debugging.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.3"
+  summary: Catalogue of common failure patterns by category, each with symptoms, causes, and fixes.
 ---
 
 # Common Failure Patterns

@@ -33,7 +33,7 @@ graph LR
 | **Design** | 1 plugin | UX optimization, React PWA patterns |
 | **Infrastructure** | 1 plugin | AWS and Azure CLI operations, cloud resource management |
 
-**Total:** 19 plugins · 47 skills · 25 agents · 37 commands
+**Total:** 19 plugins · 41 skills · 25 agents · 37 commands
 
 ---
 
@@ -88,6 +88,60 @@ Or the whole plugin in Claude Code, for example `/plugin install aeo-troubleshoo
 
 ---
 
+## Every Skill
+
+The other 32 skills, grouped by plugin. Same one-liner, swap the name.
+
+```bash
+# aeo-claude
+npx skills add AeyeOps/aeo-skill-marketplace --skill aeo-skill-creator
+npx skills add AeyeOps/aeo-skill-marketplace --skill claude-agent-sdk
+npx skills add AeyeOps/aeo-skill-marketplace --skill cowork-migrate
+npx skills add AeyeOps/aeo-skill-marketplace --skill opus-prompting
+npx skills add AeyeOps/aeo-skill-marketplace --skill slash-command-creator
+npx skills add AeyeOps/aeo-skill-marketplace --skill ultrareview
+npx skills add AeyeOps/aeo-skill-marketplace --skill ultrareview-fix
+# aeo-architecture
+npx skills add AeyeOps/aeo-skill-marketplace --skill mcp-architect-designer
+# aeo-docs
+npx skills add AeyeOps/aeo-skill-marketplace --skill architecture-docs
+npx skills add AeyeOps/aeo-skill-marketplace --skill d2
+npx skills add AeyeOps/aeo-skill-marketplace --skill diataxis
+# aeo-dev
+npx skills add AeyeOps/aeo-skill-marketplace --skill repo-governance
+npx skills add AeyeOps/aeo-skill-marketplace --skill vscode-extension
+npx skills add AeyeOps/aeo-skill-marketplace --skill vscode-insiders-extension
+# aeo-infra
+npx skills add AeyeOps/aeo-skill-marketplace --skill aws-cli-operations
+npx skills add AeyeOps/aeo-skill-marketplace --skill az-cli-operations
+npx skills add AeyeOps/aeo-skill-marketplace --skill glinet-slate7
+npx skills add AeyeOps/aeo-skill-marketplace --skill lima-vm-operations
+npx skills add AeyeOps/aeo-skill-marketplace --skill mlx-serving
+# aeo-n8n
+npx skills add AeyeOps/aeo-skill-marketplace --skill n8n
+# aeo-python
+npx skills add AeyeOps/aeo-skill-marketplace --skill agent-tui-expert
+npx skills add AeyeOps/aeo-skill-marketplace --skill python-cli-engineering
+npx skills add AeyeOps/aeo-skill-marketplace --skill python-data-engineering
+# aeo-performance
+npx skills add AeyeOps/aeo-skill-marketplace --skill optimization-patterns
+npx skills add AeyeOps/aeo-skill-marketplace --skill profiling-guide
+# aeo-requirements
+npx skills add AeyeOps/aeo-skill-marketplace --skill build-vs-buy
+npx skills add AeyeOps/aeo-skill-marketplace --skill requirements-elicitation
+# aeo-security
+npx skills add AeyeOps/aeo-skill-marketplace --skill owasp-top-10
+npx skills add AeyeOps/aeo-skill-marketplace --skill secure-coding
+# aeo-testing
+npx skills add AeyeOps/aeo-skill-marketplace --skill automating-computer-use-testing
+# aeo-troubleshooting
+npx skills add AeyeOps/aeo-skill-marketplace --skill common-failure-patterns
+# aeo-nous
+npx skills add AeyeOps/aeo-skill-marketplace --skill nous-overview
+```
+
+---
+
 ## Architecture & Design
 
 Design systems, document decisions, and maintain quality.
@@ -123,7 +177,7 @@ Structured methodologies for complex development tasks.
 | Plugin | Description |
 |--------|-------------|
 | [**aeo-epcc-workflow**](./aeo-epcc-workflow) | Explore-Plan-Code-Commit cycle with 7 commands and 16 reference files |
-| [**aeo-n8n**](./aeo-n8n) | 7 skills for n8n workflow automation — expressions, nodes, validation, patterns |
+| [**aeo-n8n**](./aeo-n8n) | One `n8n` skill for workflow automation — expressions, Code nodes (JavaScript and Python), node configuration, validation, n8n-mcp tools, and workflow patterns, each in its own reference file |
 | [**aeo-python**](./aeo-python) | CLI engineering, data pipelines, terminal UI development |
 
 **Commands:** `/epcc-explore`, `/epcc-plan`, `/epcc-code`, `/epcc-commit`, `/epcc-prd`, `/epcc-resume`, `/trd`

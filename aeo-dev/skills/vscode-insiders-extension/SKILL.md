@@ -1,14 +1,18 @@
 ---
 name: vscode-insiders-extension
-description: >
-  Contains verified WSL-specific extension development workflows, webview CSP pitfall resolutions,
-  and profile-based install fixes that produce more correct results than reasoning from general
-  training alone. Targets code-insiders on WSL/Linux — not stable VS Code on Windows/macOS.
-  Consult when building or debugging a VS Code extension under WSL, scaffolding with esbuild,
-  fixing blank webview panels or silent CSP violations, troubleshooting extensions that won't
-  load after install with profiles, or publishing to the marketplace with code-insiders. Do NOT
-  use for stable VS Code, VS Code user configuration (themes, keybindings, tasks.json),
-  Chrome/browser extensions, Electron apps, JupyterLab plugins, or Monaco Editor embeds.
+description: |
+  Use when building or debugging a VS Code extension under WSL with code-insiders — scaffolding with esbuild,
+  fixing blank webview panels or silent CSP violations, troubleshooting extensions that won't load after install
+  with profiles, or publishing to the marketplace with code-insiders. Contains verified WSL-specific extension
+  development workflows, webview CSP pitfall resolutions, and profile-based install fixes that produce more
+  correct results than reasoning from general training alone. Targets code-insiders on WSL/Linux. Do NOT use for
+  stable VS Code on Windows/macOS (use vscode-extension), VS Code user configuration (themes, keybindings,
+  tasks.json), Chrome/browser extensions, Electron apps, JupyterLab plugins, or Monaco Editor embeds.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.3"
+  summary: Verified WSL-specific workflows for building, debugging, and publishing VS Code extensions with code-insiders.
 ---
 
 # VS Code Extension Development (WSL + Code Insiders)

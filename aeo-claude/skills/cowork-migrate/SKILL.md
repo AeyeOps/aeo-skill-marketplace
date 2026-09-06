@@ -1,18 +1,20 @@
 ---
 name: cowork-migrate
 description: |
-  Migrate a Claude Cowork session from one Windows machine to another with full
-  history, working file links, and no truncated-transcript rendering bug. Use this
-  whenever the user mentions moving, importing, copying, or migrating a Cowork
-  session/conversation/project between machines, or troubleshoots symptoms of a
-  broken import like "session shows blank", "only the latest messages show",
-  "scratchpad files don't open", "can't scroll past the last compaction", or
-  "Loaded N messages (truncated via tail/compaction)" in the Cowork log. Covers
-  orphan sessions on Windows to Windows under the same Cowork account. Handles the
-  undocumented two-layer compact_boundary truncation filter in app.asar that
-  silently clips imported transcripts. Does not handle Cowork Spaces/Projects,
-  Linux/macOS, or cross-account migration.
+  Use when moving, importing, copying, or migrating a Claude Cowork session, conversation, or project from one
+  Windows machine to another, or when troubleshooting symptoms of a broken import like "session shows blank",
+  "only the latest messages show", "scratchpad files don't open", "can't scroll past the last compaction", or
+  "Loaded N messages (truncated via tail/compaction)" in the Cowork log. Delivers full history, working file
+  links, and no truncated-transcript rendering bug, handling the undocumented two-layer compact_boundary
+  truncation filter in app.asar that silently clips imported transcripts. Covers orphan sessions on Windows to
+  Windows under the same Cowork account. Does not handle Cowork Spaces/Projects, Linux/macOS, or cross-account
+  migration.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Task
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.2"
+  summary: Windows-to-Windows migration of a Claude Cowork session with intact history, file links, and no transcript truncation.
 ---
 
 # cowork-migrate

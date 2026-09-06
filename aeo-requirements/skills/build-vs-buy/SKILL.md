@@ -1,9 +1,18 @@
 ---
 name: build-vs-buy
 description: |
-  Build-vs-buy decision framework with TCO analysis, vendor evaluation, and migration planning.
-  Activate when: evaluating build vs buy, comparing vendors, assessing make or buy decisions,
-  analyzing total cost of ownership, planning vendor migrations, evaluating SaaS vs custom.
+  Use when evaluating build vs buy, comparing vendors, assessing a make or buy decision,
+  analyzing total cost of ownership, evaluating SaaS against a custom build, or planning a vendor
+  migration. Covers the decision framework, TCO models for both build and buy including upfront
+  and ongoing costs, a vendor evaluation scorecard, feature-fit assessment, vendor due diligence,
+  integration complexity and API evaluation, lock-in assessment, migration phases and a data
+  migration checklist, and a decision document template. For the commercial decision; gathering
+  the requirements themselves belongs to requirements-elicitation.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.2"
+  summary: Build-vs-buy decision framework with TCO analysis, vendor evaluation, lock-in assessment, and migration planning.
 ---
 
 # Build vs Buy Decision Framework

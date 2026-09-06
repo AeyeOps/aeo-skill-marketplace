@@ -1,9 +1,18 @@
 ---
 name: requirements-elicitation
 description: |
-  Stakeholder interview techniques, requirement types, prioritization frameworks, and acceptance criteria patterns.
-  Activate when: eliciting requirements, writing user stories, interviewing stakeholders,
-  prioritizing features, defining acceptance criteria, building a requirements document.
+  Use when eliciting requirements, interviewing stakeholders, running a contextual inquiry or
+  focus group, writing user stories, building a story map, prioritizing features, defining
+  acceptance criteria, or building a requirements document. Covers structured interview and
+  reverse-engineering techniques, functional and non-functional requirement types and
+  constraints, MoSCoW, RICE, and Kano prioritization, story splitting patterns, Given-When-Then
+  Gherkin, checklist and rule-based acceptance criteria, and requirements traceability. For
+  discovery and specification; for the buy-or-build call, use build-vs-buy.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.2"
+  summary: Requirements elicitation covering interview techniques, requirement types, prioritization frameworks, and acceptance criteria patterns.
 ---
 
 # Requirements Elicitation

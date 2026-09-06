@@ -1,6 +1,19 @@
 ---
 name: python-cli-engineering
-description: Engineer production-grade Python CLI tools with UV for package management, Ruff for linting, Pyright for strict typing, Typer for commands, and Rich for polished output. Addresses fail-fast patterns, pydantic-settings configuration, modular code organization, and professional UX conventions. Apply when creating admin utilities, data processors, or developer tooling.
+description: |
+  Use when building or hardening a production-grade Python CLI tool, admin utility, data
+  processor, or developer tooling - with UV for package management, Ruff for linting, Pyright for
+  strict typing, Typer for commands, and Rich for polished output. Covers fail-fast patterns and
+  custom exception hierarchies, modular code organization and module size limits,
+  pydantic-settings configuration from YAML and .env, Makefile tasks and pre-commit checks, Rich
+  progress bars, strict type-checking patterns, pytest structure for CLI commands, professional
+  UX conventions, and building and installing the distribution. For command-line tools; for
+  full-screen terminal UIs, use agent-tui-expert.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.2"
+  summary: Production Python CLI engineering with UV, Ruff, Pyright, Typer, and Rich, from project layout to distribution.
 ---
 
 # Python CLI Engineering

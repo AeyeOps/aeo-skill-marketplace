@@ -1,21 +1,19 @@
 ---
 name: lima-vm-operations
-version: 0.5.2
-description: >-
-  This skill should be used when the user asks about "Lima", "limactl",
-  "lima.yaml", "lima start", "lima shell", "creating a Linux VM on Mac",
-  "running Linux on Apple Silicon", "macOS Linux VM", "Apple Silicon VM",
-  or wants to "install Lima", "configure a Lima VM", "edit lima config",
-  "spin up an Ubuntu VM on my Mac", or "use Lima to run Docker on macOS".
-  Also applies for "lima vmType vz", "lima vz vs qemu", "host.lima.internal",
-  "socket_vmnet", "lima networking", "lima shared network", "lima bridged
-  network", "virtiofs mount", "9p mount", "lima port forward", "lima mount
-  writable", "limactl edit", "limactl validate", "limactl template", "lima
-  Rosetta", "running x86 in lima", "lima debug startup", or any task involving
-  spinning up, configuring, troubleshooting, or shelling into a Lima VM on an
-  Apple Silicon Mac. Use this skill whenever Lima is mentioned even if the user
-  doesn't explicitly ask for "help" — the right configuration choices (vz vs
-  qemu, mount type, network mode) are non-obvious and easy to get wrong.
+description: |
+  Use when the user asks about Lima, limactl, lima.yaml, lima start, or lima shell; wants to
+  install Lima, configure or edit a Lima VM, create a Linux VM on a Mac, spin up an Ubuntu VM,
+  run Docker on macOS, or run Linux on Apple Silicon. Also use for lima vmType vz, vz versus
+  qemu, host.lima.internal, socket_vmnet, shared and bridged lima networking, virtiofs and 9p
+  mounts, writable mounts, lima port forward, limactl edit, validate and template, Rosetta for
+  running x86 binaries, and debugging a VM that will not start. Applies whenever Lima is
+  mentioned even without an explicit request for help, because the vz-versus-qemu, mount-type,
+  and network-mode choices are easy to get wrong. Apple Silicon Macs only.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.6.9"
+  summary: Lima on Apple Silicon covering install, VM configuration, networking and mount choices, and startup troubleshooting.
 ---
 
 # Lima VM Operations (Apple Silicon)

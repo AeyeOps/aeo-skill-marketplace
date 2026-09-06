@@ -1,9 +1,18 @@
 ---
 name: optimization-patterns
 description: |
-  Caching strategies, database optimization, algorithmic complexity, and when NOT to optimize.
-  Activate when: optimizing performance, implementing caching, fixing N+1 queries,
-  improving database queries, reducing latency, choosing data structures, deciding whether to optimize.
+  Use when optimizing performance, implementing caching, fixing N+1 queries, improving database
+  queries, adding indexes, reducing latency, choosing a data structure, deciding whether to
+  optimize at all, or reviewing code for performance anti-patterns. Covers caching strategies and
+  the cache hierarchy, cache invalidation, the Python LRU cache and its pitfalls, N+1 detection
+  and eager loading, index strategy, algorithmic complexity and Big-O tradeoffs, lazy loading,
+  and connection pooling. Applies once a bottleneck is known; to find the bottleneck first, use
+  profiling-guide.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.2"
+  summary: Caching, database, and algorithmic optimization patterns, including when not to optimize.
 ---
 
 # Optimization Patterns

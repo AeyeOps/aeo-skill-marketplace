@@ -1,12 +1,17 @@
 ---
 name: claude-agent-sdk
 description: |
-  Build autonomous AI agents in Python using the Claude Agent SDK. Covers the GTVR execution pattern
-  (gather, take action, verify, repeat), stateless query() and stateful ClaudeSDKClient APIs, streaming
-  versus batch modes, custom tool creation with @tool decorator, MCP server integration, hook-based
-  execution control, permission boundaries, API key and OAuth token management, multi-agent coordination,
-  and production deployment strategies. Suited for programmatic agents, tool chains, and multi-agent
-  systems. Not designed for basic chat interfaces.
+  Use when building autonomous AI agents in Python with the Claude Agent SDK — programmatic agents, tool chains,
+  or multi-agent systems — and when deciding which SDK API or option a task needs. Covers the GTVR execution
+  pattern (gather, take action, verify, repeat), the stateless query() and stateful ClaudeSDKClient APIs,
+  streaming versus batch modes, custom tool creation with the @tool decorator, MCP server integration,
+  hook-based execution control, permission boundaries, API key and OAuth token management, multi-agent
+  coordination, and production deployment strategies. Not designed for basic chat interfaces.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.2"
+  summary: Python reference for the Claude Agent SDK, covering its APIs, custom tools, hooks, permissions, authentication, and multi-agent deployment.
 ---
 
 # Claude Agent SDK - Python Expert

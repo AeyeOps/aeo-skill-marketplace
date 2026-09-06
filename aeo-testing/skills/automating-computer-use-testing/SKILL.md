@@ -1,6 +1,18 @@
 ---
 name: automating-computer-use-testing
-description: Generate Gemini 2.5 computer-use automation scripts and natural-language goal files for web application QA. Produces Playwright-based test harnesses for browser automation with scenario generation capabilities. Activate for UI test automation, visual regression testing, or AI-driven browser interaction workflows.
+description: |
+  Use when automating browser or UI testing with a computer-use model - generating Gemini 2.5
+  computer-use automation scripts, natural-language goal files, or Playwright-based test
+  harnesses for web application QA. Covers requirements analysis, goal file generation and
+  validation, harness script generation, test iteration, scenario generation, visual regression
+  testing, form automation, decision trees for automation type and goal scope, and the templates,
+  examples, and validator scripts that ship with the skill. For AI-driven browser interaction
+  workflows, not for unit or API test suites.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.3.2"
+  summary: Generator for Gemini computer-use test harnesses and goal files that drive Playwright browser QA.
 ---
 
 # Automating Computer-Use Testing

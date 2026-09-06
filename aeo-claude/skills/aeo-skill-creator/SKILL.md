@@ -1,6 +1,17 @@
 ---
 name: aeo-skill-creator
-description: Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, update or optimize an existing skill, run evals to test a skill, benchmark skill performance with variance analysis, or optimize a skill's description for better triggering accuracy.
+description: |
+  Use when creating a new skill from scratch, modifying or improving an existing skill, packaging one for
+  distribution, or measuring skill performance — running evals to test a skill, benchmarking skill performance
+  with variance analysis, or optimizing a skill's description for better triggering accuracy. Covers SKILL.md
+  frontmatter, progressive disclosure, bundled references, scripts and assets, and the eval, benchmark, and
+  description-optimization pipeline. Trigger phrases include "create a skill", "improve this skill", "run evals
+  on my skill", and "why isn't my skill triggering".
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.2"
+  summary: Create, improve, package, and evaluate Agent Skills, including description optimization measured by eval trigger rates.
 ---
 
 # Skill Creator
@@ -124,7 +135,7 @@ my-plugin/
     └── import/SKILL.md           → "read ${CLAUDE_PLUGIN_ROOT}/shared/data-format.md"
 ```
 
-Write it as a plain instruction in the body ("read `${CLAUDE_PLUGIN_ROOT}/shared/data-format.md` before starting"). Keep a skill's own bundled files relative (`references/foo.md`); reach for the variable only when the target lives outside the skill's own directory. The rule that bites if you skip it: never hardcode the resolved path, because the install directory is version-stamped and moves on every plugin update — the variable is what stays valid across the bump. Two siblings cover adjacent needs: `${CLAUDE_PLUGIN_DATA}` is a directory that persists across updates (use it for installed dependencies like a venv or `node_modules` you don't want to rebuild each version), and a top-level `bin/` is added to the Bash tool's PATH while the plugin is enabled, the tidiest way to share a runnable helper.
+Write it as a plain instruction in the body ("read `${CLAUDE_PLUGIN_ROOT}/shared/data-format.md` before starting"). Keep a skill's own bundled files relative, as a path under the skill's own references directory; reach for the variable only when the target lives outside the skill's own directory. The rule that bites if you skip it: never hardcode the resolved path, because the install directory is version-stamped and moves on every plugin update — the variable is what stays valid across the bump. Two siblings cover adjacent needs: `${CLAUDE_PLUGIN_DATA}` is a directory that persists across updates (use it for installed dependencies like a venv or `node_modules` you don't want to rebuild each version), and a top-level `bin/` is added to the Bash tool's PATH while the plugin is enabled, the tidiest way to share a runnable helper.
 
 #### Principle of Lack of Surprise
 

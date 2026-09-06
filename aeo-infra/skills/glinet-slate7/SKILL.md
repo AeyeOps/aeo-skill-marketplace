@@ -1,29 +1,25 @@
 ---
 name: glinet-slate7
 description: |
-  Comprehensive reference for the GL-iNet Slate 7 travel router (model GL-BE3600, Wi-Fi 7).
-  Covers hardware specs, 2.5G ports, touchscreen interface, full admin panel menu structure,
-  VPN client setup (WireGuard/OpenVPN; NordVPN, Mullvad, Surfshark, and 30+ providers),
-  WireGuard/OpenVPN server setup, AdGuard Home, Tor, Tailscale, DDNS, network modes
-  (Router/AP/Extender/WDS/Drop-in Gateway), SSH/CLI access with command reference,
-  factory reset, firmware update, and U-Boot bricked-device recovery. Also covers the
-  JSON-RPC admin API at /rpc (challenge/response auth, module/method discovery, reusable
-  bash helper), programmatic WireGuard server provisioning via the wg-server module
-  (add_peer, generate_peer, settings, leak verification, local-only Endpoint pattern),
-  and Linux client-side WG with overlay-VPN stacking — including the two leak modes
-  that appear when running Tailscale on top of a full-tunnel WG client (fwmark 0x80000
-  bypass and wg-quick catch-all shadowing the tailnet routes) plus the wg-quick
-  PostUp/PreDown ip-rule fixes. Applicable to most GL-iNet sdk4 firmware devices, not
-  only the Slate 7.
-  Use when a user specifically asks about the GL-iNet Slate 7 or GL-BE3600 — setup,
-  initial connection, admin panel access, VPN configuration, SSH, troubleshooting lost
-  admin access, device recovery, scripting the admin API, provisioning the built-in
-  WireGuard server without the UI, configuring a Linux WG client against the device,
-  or layering Tailscale/ZeroTier on top of that WG client. Do not trigger for generic
-  router questions not specific to GL-iNet Slate 7.
+  Use when the user asks about the GL-iNet Slate 7 or GL-BE3600 travel router (Wi-Fi 7) -
+  first connection and setup, admin panel access, VPN client or server configuration with
+  WireGuard or OpenVPN (NordVPN, Mullvad, Surfshark and 30+ providers), AdGuard Home, Tor,
+  Tailscale or ZeroTier, DDNS, network modes, SSH and CLI access, lost admin access, factory
+  reset, firmware update, or U-Boot recovery of a bricked device. Also use when scripting the
+  device through its JSON-RPC admin API at /rpc, provisioning the built-in WireGuard server
+  without the UI (wg-server, add_peer, generate_peer), or configuring a Linux WireGuard client
+  with an overlay VPN stacked on top of it. Applies to most GL-iNet sdk4 firmware devices, not
+  to generic router questions.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.6.9"
+  summary: Reference for the GL-iNet Slate 7 travel router, from admin panel and VPN setup to the JSON-RPC API and stacked WireGuard tunnels.
 ---
 
 # GL-iNet Slate 7 (GL-BE3600) Reference
+
+**Applies to:** the GL-iNet Slate 7 (GL-BE3600, Wi-Fi 7). The JSON-RPC admin API, WireGuard server provisioning, and stacked-tunnel material apply to most GL-iNet sdk4 firmware devices, not only the Slate 7.
 
 ---
 

@@ -1,20 +1,20 @@
 ---
 name: mlx-serving
-version: 1.0.0
-description: >-
-  This skill should be used when the user asks about "MLX serving",
-  "mlx_lm.server", "oMLX", "Apple Silicon LLM serving", or "local LLM on
-  Mac" — and when troubleshooting symptoms like model fails to load, OOM
-  during load or inference, server hangs or crashes at batch>1, tool calls
-  returning as plaintext content, throughput regression, or choosing between
-  mlx-lm and oMLX. Also applies to oMLX feature-flag tuning ("turboquant_kv",
-  "dflash", "MTP", "specprefill", "thinking_budget",
-  "max-concurrent-requests", "force_sampling"), OptiQ proxy for models
-  exceeding RAM, Llama-4 ChunkedKVCache batch handling, Llama-3 tool-call
-  JSON format ("name"/"parameters"), and bench-driven validation of serving
-  configs. For Apple Silicon (M-series) only — not for cloud LLM hosting
-  (Bedrock, OpenAI API, Anthropic API), not for non-MLX backends
-  (llama.cpp, Ollama, vLLM), not for model training.
+description: |
+  Use when the user asks about MLX serving, mlx_lm.server, oMLX, Apple Silicon LLM serving, or
+  running a local LLM on a Mac, and when troubleshooting a model that fails to load, OOM during
+  load or inference, a server that hangs or crashes at batch>1, tool calls returned as plaintext
+  content, a throughput regression, or the choice between mlx-lm and oMLX. Also covers oMLX
+  feature-flag tuning (turboquant_kv, dflash, MTP, specprefill, thinking_budget,
+  max-concurrent-requests, force_sampling), the OptiQ proxy for models exceeding RAM, Llama-4
+  ChunkedKVCache batch handling, Llama-3 tool-call JSON format, and bench-driven validation of
+  serving configs. Apple Silicon M-series only, not cloud LLM hosting, non-MLX backends such as
+  llama.cpp, Ollama and vLLM, or model training.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.6.9"
+  summary: Local LLM serving on Apple Silicon with mlx-lm and oMLX, from backend choice to symptom triage and feature-flag tuning.
 ---
 
 # Apple Silicon LLM Serving (MLX / oMLX)

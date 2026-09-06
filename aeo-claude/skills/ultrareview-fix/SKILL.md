@@ -1,10 +1,16 @@
 ---
 name: ultrareview-fix
 description: |
-  Systematically address all findings from a preceding ultrareview validation. Works through
-  errors, alignment issues, gaps, and improvements by priority. Use after running ultrareview
-  to fix identified issues in plans or code.
+  Use when working through the findings of a preceding ultrareview validation — systematically addressing the
+  reported errors, alignment issues, gaps, and improvements by priority and applying each fix to the plan or the
+  code. Trigger phrases include "ultrareview-fix", "fix the review findings", "address the ultrareview", and
+  "apply those fixes". Expects an ultrareview summary in the conversation; the `ultrareview` skill produces it.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, TaskCreate, TaskUpdate, TaskList, TaskGet
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.2"
+  summary: Applies the findings of an ultrareview validation to the plan or code, in priority order.
 ---
 
 # Ultra-Fix Protocol

@@ -1,7 +1,18 @@
 ---
 name: architecture-docs
 description: |
-  Produce architecture documentation for technical audiences using established frameworks — the C4 model for system structure (Context / Container / Component / Code), Architectural Decision Records (ADRs) for capturing the why behind significant design choices, OpenAPI for HTTP API specifications, and system / component design documents for engineers who need to build against or reason about the architecture. Use when someone asks to document system architecture, write an ADR, capture an architectural decision, generate C4 diagrams (context / container / component), produce an OpenAPI spec, draft a component design doc, or document how services integrate. Trigger phrases include "create a C4 diagram", "write an ADR for X", "document the architecture", "specify the API", "OpenAPI spec for", "system design doc", "decision record", "architecture overview". Not for: end-user-facing docs (use the `aeo-docs:diataxis` skill instead — tutorials, how-tos, references, explanations live there), README content, or code-level inline documentation.
+  Use when someone asks to document system architecture for a technical audience — write an ADR, capture an
+  architectural decision, generate C4 diagrams (Context / Container / Component / Code), produce an OpenAPI spec
+  for an HTTP API, draft a system or component design document, or document how services integrate. Covers the
+  C4 model, Architectural Decision Records, OpenAPI specifications, and design documents for engineers who need
+  to build against or reason about the architecture. Not for: end-user-facing docs (use the `aeo-docs:diataxis`
+  skill instead — tutorials, how-tos, references, explanations live there), README content, or code-level inline
+  documentation.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.4"
+  summary: Architecture documentation for technical audiences using C4, ADRs, OpenAPI, and system or component design docs.
 ---
 
 # Architecture Documentation
@@ -9,6 +20,8 @@ description: |
 Architecture documentation serves a different audience and purpose than user-facing documentation. The reader is a developer, architect, or technical stakeholder who needs to *implement against*, *integrate with*, or *reason about* the system. The output is structural and decision-oriented, not learning-oriented.
 
 If the request is to write user-facing docs (tutorials, how-tos, references, explanations that live in `docs/`), use the `aeo-docs:diataxis` skill instead. This skill covers the architectural-artifact side: structure diagrams, decision records, API specs, system / component design.
+
+Typical requests: "create a C4 diagram", "write an ADR for X", "document the architecture", "specify the API", "OpenAPI spec for", "system design doc", "decision record", "architecture overview".
 
 ## The four artifact types
 

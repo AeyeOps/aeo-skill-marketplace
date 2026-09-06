@@ -1,18 +1,19 @@
 ---
 name: opus-prompting
 description: |
-  Use this skill when the user is writing, reviewing, debugging, or rewriting any
-  instructions that Claude itself will read — including CLAUDE.md files, skill files
-  (SKILL.md, frontmatter descriptions), slash command templates (.claude/commands/*.md),
-  and agent definitions (.claude/agents/*.md). Trigger on symptoms like: an agent firing
-  too often or on the wrong things, a prompt that's too long or full of MUST/NEVER/ALWAYS,
-  Claude ignoring sections of a command, agents looping on tools instead of stopping,
-  skills not activating when they should, descriptions that don't trigger correctly, or
-  asking how to structure a system prompt so Claude behaves a certain way. Also trigger
-  when converting docs/runbooks into skills, drafting agent frontmatter from scratch, or
-  asking what's "pulling weight" in a prompt. Do not trigger for general code review, MCP
-  server design, hook scripts, or API/SDK questions unless the artifact under discussion
-  is a prompt Claude reads.
+  Use when writing, reviewing, debugging, or rewriting instructions that Claude itself will read — CLAUDE.md
+  files, skill files (SKILL.md, frontmatter descriptions), slash command templates (.claude/commands/*.md), and
+  agent definitions (.claude/agents/*.md) — and when converting docs or runbooks into skills, drafting agent
+  frontmatter from scratch, or asking what is "pulling weight" in a prompt. Symptoms it covers: an agent firing
+  too often or on the wrong things, a prompt that is too long or full of MUST/NEVER/ALWAYS, Claude ignoring
+  sections of a command, agents looping on tools instead of stopping, skills not activating, and descriptions
+  that do not trigger correctly. Not for general code review, MCP server design, hook scripts, or API/SDK
+  questions unless the artifact under discussion is a prompt Claude reads.
+license: MIT
+metadata:
+  author: AeyeOps
+  version: "0.5.2"
+  summary: Prompt-engineering guidance for the instruction files Claude reads, covering system prompts, skills, commands, and agent definitions.
 ---
 
 # Prompt Writing Assistant
