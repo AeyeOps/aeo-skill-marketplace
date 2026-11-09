@@ -110,7 +110,6 @@ npx skills add AeyeOps/aeo-skill-marketplace --skill diataxis
 # aeo-dev
 npx skills add AeyeOps/aeo-skill-marketplace --skill repo-governance
 npx skills add AeyeOps/aeo-skill-marketplace --skill vscode-extension
-npx skills add AeyeOps/aeo-skill-marketplace --skill vscode-insiders-extension
 # aeo-infra
 npx skills add AeyeOps/aeo-skill-marketplace --skill aws-cli-operations
 npx skills add AeyeOps/aeo-skill-marketplace --skill az-cli-operations

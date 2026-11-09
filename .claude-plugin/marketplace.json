@@ -129,10 +129,10 @@
     },
     {
       "name": "aeo-dev",
-      "description": "Developer workflow tools: repository governance skill with /aeo-repo-bootstrap, /aeo-repo-curate-docs, /aeo-repo-roadmap-alignment-review, and /aeo-repo-sanitize commands, VS Code extension development (stable and Insiders), WSL remote workflows, and TypeScript tooling",
+      "description": "Developer workflow tools: repository governance skill with /aeo-repo-bootstrap, /aeo-repo-curate-docs, /aeo-repo-roadmap-alignment-review, and /aeo-repo-sanitize commands, VS Code extension development for stable and Insiders (build, test, publish, chat and MCP contributions, and driving open windows from a shell), WSL remote workflows, and TypeScript tooling",
       "category": "development",
       "source": "./aeo-dev",
-      "tags": ["vscode", "vscode-insiders", "extension", "wsl", "webview", "csp", "esbuild", "typescript", "treeview"]
+      "tags": ["vscode", "vscode-insiders", "extension", "wsl", "webview", "csp", "esbuild", "typescript", "treeview", "language-model-tools", "mcp", "vsce"]
     },
     {
       "name": "aeo-vsc-cc-sessions-sidecar",

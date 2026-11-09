@@ -1,14 +1,13 @@
 # Build, Test, and Publish
 
-Complete reference for the extension build pipeline, testing infrastructure, and marketplace
-publishing workflow. Supplements the main SKILL.md.
+Reference for the extension build pipeline, tests, and marketplace publishing.
 
 ## Table of Contents
 
 - [esbuild Configuration](#esbuild-configuration)
 - [TypeScript Configuration](#typescript-configuration)
 - [Testing Infrastructure](#testing-infrastructure)
-- [Debugging Tests](#debugging-tests)
+- [Debugging](#debugging)
 - [CI Setup](#ci-setup)
 - [Publishing to Marketplace](#publishing-to-marketplace)
 - [Platform-Specific Builds](#platform-specific-builds)
@@ -19,31 +18,119 @@ publishing workflow. Supplements the main SKILL.md.
 
 ## esbuild Configuration
 
-The complete `esbuild.js` script, npm scripts, and `.vscodeignore` are in the main SKILL.md.
-This section covers the design rationale and additional options.
+`yo code` writes the files below when esbuild is chosen at its "Which bundler to use?" prompt, or
+with `--bundler=esbuild`. They are shown here for converting an existing tsc or webpack project and
+for reviewing a scaffold.
+
+### esbuild.js
+
+```javascript
+const esbuild = require('esbuild');
+
+const production = process.argv.includes('--production');
+const watch = process.argv.includes('--watch');
+
+/** @type {import('esbuild').Plugin} */
+const esbuildProblemMatcherPlugin = {
+  name: 'esbuild-problem-matcher',
+  setup(build) {
+    build.onStart(() => { console.log('[watch] build started'); });
+    build.onEnd(result => {
+      for (const { text, location } of result.errors) {
+        console.error(`✘ [ERROR] ${text}`);
+        if (location) {
+          console.error(`    ${location.file}:${location.line}:${location.column}:`);
+        }
+      }
+      console.log('[watch] build finished');
+    });
+  },
+};
+
+async function main() {
+  const ctx = await esbuild.context({
+    entryPoints: ['src/extension.ts'],
+    bundle: true,
+    format: 'cjs',
+    minify: production,
+    sourcemap: !production,
+    sourcesContent: false,
+    platform: 'node',
+    outfile: 'dist/extension.js',
+    external: ['vscode'],
+    logLevel: 'warning',
+    plugins: [esbuildProblemMatcherPlugin],
+  });
+  if (watch) {
+    await ctx.watch();
+  } else {
+    await ctx.rebuild();
+    await ctx.dispose();
+  }
+}
+
+main().catch(e => { console.error(e); process.exit(1); });
+```
+
+### npm Scripts
+
+```json
+{
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  }
+}
+```
+
+- `check-types` runs `tsc --noEmit` because esbuild strips types without checking them.
+- `watch` runs esbuild and tsc in parallel through `npm-run-all`, a dev dependency.
+- `compile-tests` compiles the sources and tests into `out/`, where `.vscode-test.mjs` looks for
+  them, and `pretest` runs it before every `npm test`. Without it nothing writes `out/test`, and
+  the test run finds no files and still passes, because `vscode-test` fails on zero tests only
+  with `--fail-zero`.
+- `vscode:prepublish` runs automatically during `vsce package` and `vsce publish`.
+- `lint` uses ESLint's flat config, `eslint.config.mjs`.
+
+### .vscodeignore
+
+```
+.vscode/**
+.vscode-test/**
+out/**
+node_modules/**
+src/**
+.gitignore
+.yarnrc
+esbuild.js
+vsc-extension-quickstart.md
+**/tsconfig.json
+**/eslint.config.mjs
+**/*.map
+**/*.ts
+**/.vscode-test.*
+```
+
+Everything bundled into `dist/extension.js` is excluded, which keeps the `.vsix` small. `vsce ls`
+lists exactly what a package will ship.
 
 ### Key Configuration Decisions
 
-- `external: ['vscode']` — the `vscode` module is provided by the runtime, never bundled
-- `format: 'cjs'` — VS Code's extension host uses CommonJS
-- `platform: 'node'` — extensions run in Node.js, not the browser
-- `sourcemap: !production` — maps for development, omitted for published .vsix
-- esbuild processes TypeScript directly but does not type-check; run `tsc --noEmit` separately
-
-### Additional npm Scripts
-
-Beyond the scripts in SKILL.md, consider adding:
-
-- `"lint": "eslint src/"` — lint before publish
-
-Install `npm-run-all` as a dev dependency for the parallel `watch` task.
-
-### Additional .vscodeignore Entries
-
-Beyond the entries in SKILL.md, also exclude:
-
-- `.eslintrc*` — linter config not needed at runtime
-- `**/*.map` — source maps excluded from published .vsix
+- `external: ['vscode']`: the extension host provides the `vscode` module, so it is never bundled
+- `format: 'cjs'`: what the generator and the Bundling page emit. The desktop extension host has
+  also loaded ESM extensions, declared with `"type": "module"`, since VS Code 1.100
+- `platform: 'node'`: desktop extensions run in Node.js, not the browser
+- `sourcemap: !production`: maps for development, omitted from the published `.vsix`
 
 ---
 
@@ -57,7 +144,7 @@ Beyond the entries in SKILL.md, also exclude:
     "module": "Node16",
     "target": "ES2022",
     "lib": ["ES2022"],
-    "outDir": "out",
+    "types": ["node", "mocha"],
     "rootDir": "src",
     "sourceMap": true,
     "strict": true,
@@ -67,13 +154,17 @@ Beyond the entries in SKILL.md, also exclude:
     "noUnusedParameters": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "out"]
+  "include": ["src/**/*"]
 }
 ```
 
-The `outDir` is set to `out/` for tsc output, but esbuild writes to `dist/`. The `out/` directory
-is only used for type checking and test compilation; the actual extension runs from `dist/`.
+TypeScript 6.0 made `types` default to `[]`. Without the `types` entry, `tsc` sees neither Node's
+globals such as `console` nor Mocha's `suite` and `test`, and type checking fails. The two entries
+need `@types/node` and `@types/mocha` as dev dependencies; match `@types/node` to the Node version
+VS Code runs extensions on, which `code --version` does not print but the VS Code About dialog
+does.
+
+`compile-tests` writes to `out/` for the test runner. The extension itself runs from `dist/`.
 
 ---
 
@@ -82,7 +173,7 @@ is only used for type checking and test compilation; the actual extension runs f
 ### Setup
 
 ```bash
-npm install --save-dev @vscode/test-cli @vscode/test-electron
+npm install --save-dev @vscode/test-cli @vscode/test-electron @types/mocha
 ```
 
 ### Configuration (.vscode-test.mjs)
@@ -94,6 +185,7 @@ export default defineConfig({
   files: 'out/test/**/*.test.js',
   version: 'stable',                    // or 'insiders'
   workspaceFolder: './test-workspace',   // optional test workspace
+  launchArgs: ['--disable-extensions'],  // keep other installed extensions out
   mocha: {
     ui: 'tdd',
     timeout: 20000
@@ -121,7 +213,9 @@ export default defineConfig([
 ]);
 ```
 
-Run specific configs: `npx vscode-test --label unit`
+Run one configuration with `npx vscode-test --label unit`; `--label` matches only a configuration
+that declares that label. `npx vscode-test --list-configuration` prints the resolved
+configuration, including the files it found.
 
 ### Writing Tests
 
@@ -176,7 +270,7 @@ test-fixtures/             # workspace files for integration tests
 
 ---
 
-## Debugging Tests
+## Debugging
 
 ### Launch Configuration (.vscode/launch.json)
 
@@ -190,25 +284,15 @@ test-fixtures/             # workspace files for integration tests
       "request": "launch",
       "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-      "preLaunchTask": "npm: compile"
-    },
-    {
-      "name": "Extension Tests",
-      "type": "extensionHost",
-      "request": "launch",
-      "args": [
-        "--disable-extensions",
-        "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
-      ],
-      "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
-      "preLaunchTask": "npm: compile"
+      "preLaunchTask": "${defaultBuildTask}"
     }
   ]
 }
 ```
 
-The `--disable-extensions` flag prevents other installed extensions from interfering with tests.
+Run and debug tests through the Extension Test Runner extension (`ms-vscode.extension-test-runner`).
+It reads `.vscode-test.mjs` and lists the tests in the Testing view, so tests need no launch
+configuration of their own.
 
 ### Tasks Configuration (.vscode/tasks.json)
 
@@ -217,20 +301,36 @@ The `--disable-extensions` flag prevents other installed extensions from interfe
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "npm",
-      "script": "watch",
-      "isBackground": true,
-      "problemMatcher": ["$esbuild-watch", "$tsc-watch"],
+      "label": "watch",
+      "dependsOn": ["npm: watch:tsc", "npm: watch:esbuild"],
+      "presentation": { "reveal": "never" },
       "group": { "kind": "build", "isDefault": true }
     },
     {
       "type": "npm",
-      "script": "compile",
-      "problemMatcher": ["$esbuild", "$tsc"]
+      "script": "watch:esbuild",
+      "group": "build",
+      "problemMatcher": "$esbuild-watch",
+      "isBackground": true,
+      "label": "npm: watch:esbuild",
+      "presentation": { "group": "watch", "reveal": "never" }
+    },
+    {
+      "type": "npm",
+      "script": "watch:tsc",
+      "group": "build",
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true,
+      "label": "npm: watch:tsc",
+      "presentation": { "group": "watch", "reveal": "never" }
     }
   ]
 }
 ```
+
+The `$esbuild-watch` problem matcher comes from the `connor4312.esbuild-problem-matchers`
+extension. List it, with `dbaeumer.vscode-eslint` and `ms-vscode.extension-test-runner`, under
+`recommendations` in `.vscode/extensions.json`, as the generator does.
 
 ---
 
@@ -246,29 +346,62 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
       - run: npm ci
       - run: npm run check-types
       - run: npm run lint
       - run: xvfb-run -a npm test   # VS Code needs a display on Linux
 ```
 
-The `xvfb-run` wrapper provides a virtual display for the Extension Development Host.
+`@vscode/vsce`, `@vscode/test-cli` and `@vscode/test-electron` require Node 22 or later. The
+`xvfb-run` wrapper provides a virtual display for the Extension Development Host.
 
 ---
 
 ## Publishing to Marketplace
 
-### One-Time Setup
+### Publisher and Authentication
 
-1. Create a publisher at https://marketplace.visualstudio.com/manage
-2. Create a Personal Access Token (PAT) at Azure DevOps:
-   - Organization: "All accessible organizations"
-   - Scopes: Marketplace → Manage
-3. Login: `vsce login <publisher-id>`
+1. Create a publisher on the Visual Studio Marketplace publisher management page.
+2. Publish with a federated identity rather than a stored token. Global Azure DevOps personal
+   access tokens, the "All accessible organizations" kind that Marketplace publishing has used,
+   retire on December 1, 2026.
+
+**GitHub Actions, trusted publishing.** On the publisher's page, open Trusted Publishing and
+create a policy naming the repository owner, the repository, the workflow file under
+`.github/workflows`, and the GitHub environment if the job uses one. For a private repository,
+run that workflow within 48 hours; the first successful token exchange activates the policy.
+Then publish from the workflow with vsce 4.0.2 or later:
+
+```yaml
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npx @vscode/vsce publish --oidc
+```
+
+The Marketplace credential lasts 15 minutes, and each GitHub OIDC token can be exchanged once.
+
+**Azure Pipelines, Microsoft Entra ID.** Create an Azure Resource Manager service connection
+whose identity belongs to the publisher, and run `vsce publish --azure-credential` in an
+`AzureCLI@2` task that uses it.
+
+**Other CI providers and local publishing.** Trusted publishing supports no other OIDC provider.
+Until December 1, 2026, a global personal access token with the Marketplace → Manage scope still
+works through `vsce login <publisher-id>`, `vsce publish -p <token>`, or the `VSCE_PAT`
+environment variable.
 
 ### Publishing Commands
 
@@ -276,7 +409,7 @@ The `xvfb-run` wrapper provides a virtual display for the Extension Development 
 npm install -g @vscode/vsce
 
 vsce package                         # create .vsix without publishing
-vsce publish                         # publish using saved PAT
+vsce publish                         # publish with the configured credential
 vsce publish minor                   # auto-increment minor version + publish
 vsce publish 1.2.0                   # publish specific version
 ```
@@ -287,10 +420,9 @@ Local installation for testing:
 code --install-extension my-extension-0.1.0.vsix
 ```
 
-**WSL profile caveat**: If VS Code profiles are active, the CLI registers the extension in the
-global registry but NOT the active profile. The extension won't load until manually added to
-`~/.vscode-server/data/User/profiles/<profile-id>/extensions.json`. See the main
-SKILL.md Platform Notes for details.
+Use `code-insiders --install-extension` for Insiders. The install goes to the default profile
+unless `--profile <name>` names another; from a plain WSL or SSH shell `--profile` is not passed
+on, as SKILL.md's Platform Notes describe.
 
 ### Pre-Publish Checklist
 
@@ -298,22 +430,22 @@ SKILL.md Platform Notes for details.
 2. `CHANGELOG.md` updated
 3. `README.md` describes the extension (renders as marketplace page)
 4. `vscode:prepublish` script runs successfully
-5. `engines.vscode` matches minimum supported version
-6. `.vscodeignore` excludes dev files
+5. `engines.vscode` matches the minimum supported version, and `@types/vscode` is no newer: vsce
+   refuses to package when `@types/vscode` is greater than `engines.vscode`
+6. `vsce ls` shows only the files the extension needs at runtime
 
 ---
 
 ## Platform-Specific Builds
 
-For extensions with native dependencies:
+For extensions with native dependencies. `vsce package` takes one target per run, and
+`vsce publish` takes several:
 
 ```bash
-# Package for specific platforms
-vsce package --target linux-x64
-vsce package --target linux-arm64
-vsce package --target darwin-x64
-vsce package --target darwin-arm64
-vsce package --target win32-x64
+# Package one target per run
+for target in linux-x64 linux-arm64 darwin-x64 darwin-arm64 win32-x64; do
+  vsce package --target "$target"
+done
 
 # Publish multiple platforms at once
 vsce publish --target linux-x64 linux-arm64 darwin-x64 darwin-arm64 win32-x64
@@ -361,10 +493,10 @@ version number is higher.
   "pricing": "Free",
   "repository": {
     "type": "git",
-    "url": "https://github.com/user/repo"
+    "url": "<repository URL>"
   },
   "sponsor": {
-    "url": "https://github.com/sponsors/user"
+    "url": "<sponsor page URL>"
   },
   "galleryBanner": {
     "color": "#1e1e1e",
@@ -395,15 +527,16 @@ Maximum 30 keywords. These improve discoverability in marketplace search.
 {
   "badges": [
     {
-      "url": "https://img.shields.io/badge/...",
-      "href": "https://...",
+      "url": "<badge image URL>",
+      "href": "<link target>",
       "description": "Build Status"
     }
   ]
 }
 ```
 
-Only badges from approved services (shields.io, travis-ci.org, etc.) are allowed.
+vsce accepts badge images only from its list of trusted badge providers, such as shields.io; it
+rejects a package whose badge comes from any other host.
 
 ### Extension Packs
 

@@ -14,6 +14,7 @@ the main SKILL.md — read when implementing any of these patterns.
 - [Status Bar](#status-bar)
 - [Commands](#commands)
 - [Configuration](#configuration)
+- [Chat, Language Model Tools and MCP](#chat-language-model-tools-and-mcp)
 - [Disposable Pattern](#disposable-pattern)
 
 ---
@@ -114,7 +115,7 @@ Common codicons for tree items: `circle-filled`, `circle-outline`, `check`, `err
 ThemeColors for icons: `charts.green`, `charts.yellow`, `charts.blue`, `charts.red`,
 `charts.orange`, `charts.purple`, `errorForeground`, `warningForeground`.
 
-Full codicon list: https://microsoft.github.io/vscode-codicons/dist/codicon.html
+Full codicon list: the Codicon reference page in the vscode-codicons project.
 
 ---
 
@@ -332,8 +333,7 @@ Register in package.json under `contributes.views` pointing to a `viewsContainer
 
 When a single TreeView isn't sufficient (e.g., you need multi-line rows, styled status text, or
 custom layouts), add a WebviewView alongside the existing TreeView and let the user toggle between
-them. This pattern was validated in production and the lessons below reflect real failures and their
-fixes.
+them. The sections after the wiring cover the failures this pattern produces and their fixes.
 
 ### package.json — Two Views, One Container
 
@@ -466,15 +466,15 @@ vscode.commands.registerCommand('myExt.focusItem', async (itemId: string) => {
 });
 ```
 
-### WebviewView CSP — The Three-Stage Trap
+### WebviewView CSP — Silent Failures
 
-Webview Content Security Policy failures are silent — nothing renders, no error in console.
-Three separate CSP issues chain together when adding a WebviewView:
+Webview Content Security Policy failures are silent: nothing renders and the editor shows no
+error. Open Developer: Open Webview Developer Tools to see the violations. Three of them chain
+together when adding a WebviewView.
 
-**Stage 1: Inline onclick blocked.** Default CSP blocks all inline event handlers. Symptoms:
-click handlers silently do nothing — no console error unless you open webview devtools.
-
-Fix: Use event delegation with `data-` attributes and a nonce-guarded script:
+**Inline event handlers are blocked.** A CSP without `'unsafe-inline'` in `script-src` blocks
+every `onclick="..."` attribute, so click handlers silently do nothing. Use event delegation with
+`data-` attributes and a nonce-guarded script:
 
 ```html
 <!-- Each row carries its ID as a data attribute -->
@@ -491,41 +491,41 @@ Fix: Use event delegation with `data-` attributes and a nonce-guarded script:
 </script>
 ```
 
-**Stage 2: Nonce-based style-src breaks inline styles.** If you set
-`style-src 'nonce-${nonce}'`, all `style="..."` attributes on elements are blocked too —
-all dynamic colors disappear silently.
-
-The definitive fix is moving ALL dynamic colors from inline `style=""` attributes to CSS
-classes. Each row gets a state class (e.g., `class="row s-idle"`, `class="row s-thinking"`),
-and a static `<style nonce="${nonce}">` block defines per-state colors:
+**Inline `style=""` attributes are blocked.** A `style-src` without `'unsafe-inline'` blocks every
+`style="..."` attribute, so dynamic colors disappear. Move dynamic styling to CSS classes: each row
+gets a state class (`class="row s-idle"`, `class="row s-busy"`), and a stylesheet defines the
+per-state colors with theme variables:
 
 ```css
 .s-idle .dot { background: var(--vscode-charts-green); }
 .s-idle .status { color: var(--vscode-charts-green); }
-.s-idle { border-left-color: var(--vscode-charts-green); }
-.s-thinking .dot { background: var(--vscode-charts-yellow); }
-.s-thinking .status { color: var(--vscode-charts-yellow); }
-/* ... per state */
+.s-busy .dot { background: var(--vscode-charts-yellow); }
+.s-busy .status { color: var(--vscode-charts-yellow); }
 ```
 
-This eliminates inline style attributes entirely, so style-src only needs to allow the nonce
-for the `<style>` block. If you still need `'unsafe-inline'` for style-src (e.g., for VS Code
-theme variable usage), it is safe because styles cannot execute code.
+Theme variables such as `--vscode-charts-green` need no CSP allowance: VS Code sets them on the
+document element through script, which CSP does not restrict. Adding `'unsafe-inline'` beside a
+nonce in the same directive does nothing, because a browser ignores `'unsafe-inline'` when a
+nonce or hash is present.
 
-**Stage 3: Missing webview.cspSource.** Without `${webview.cspSource}` in style-src, external
-CSS loaded via `<link>` tags and VS Code's own injected styles fail to load.
+**The stylesheet needs `${webview.cspSource}`.** A stylesheet loaded with
+`<link href="${styleUri}">` from `webview.asWebviewUri()` loads only when `style-src` names
+`${webview.cspSource}`.
 
-**Final working CSP pattern:**
+**Working CSP**, with styles in a stylesheet and scripts behind a nonce:
 
 ```typescript
 `<meta http-equiv="Content-Security-Policy" content="
   default-src 'none';
-  style-src ${webview.cspSource} 'unsafe-inline';
+  style-src ${webview.cspSource};
   script-src 'nonce-${nonce}';
   img-src ${webview.cspSource} https:;
   font-src ${webview.cspSource};
 ">`
 ```
+
+When the styles must stay in the page, use one `<style nonce="${nonce}">` block and add
+`'nonce-${nonce}'` to `style-src`.
 
 ### Refresh Architecture for Time-Dependent Data
 
@@ -557,9 +557,9 @@ class MyWebviewProvider implements vscode.WebviewViewProvider {
 
 ### Cache Invalidation on Terminal Close
 
-If you cache ownership or mapping data (e.g., which items belong to this VS Code window),
-**never clear the entire cache** — it makes all items fail ownership checks, causing the panel
-to go blank until the next async detection cycle completes.
+If the views cache which items belong to a terminal, remove only the closed terminal's entries.
+Clearing the whole cache makes every item fail its lookup, and the panel goes blank until the
+next asynchronous match completes.
 
 ```typescript
 // WRONG — nuclear clear, panel goes blank until matchAll() finishes
@@ -618,13 +618,48 @@ const terminal = vscode.window.createTerminal({
   env: { MY_VAR: 'value' }
 });
 
-terminal.show();                    // focus this terminal
-terminal.sendText('echo hello');    // execute a command
-terminal.sendText('exit', true);    // send text + Enter
+terminal.show();                         // focus this terminal
+terminal.sendText('echo hello');         // type the text and press Enter (shouldExecute defaults to true)
+terminal.sendText('partial input', false); // type without pressing Enter
 
 // Get process info
 const pid = await terminal.processId;
 ```
+
+### Running a Command and Reading Its Result
+
+`sendText` cannot tell when a command finishes or what it returned. With shell integration, which
+VS Code injects into bash, zsh, fish and PowerShell, run the command through
+`terminal.shellIntegration` instead:
+
+```typescript
+async function run(terminal: vscode.Terminal, commandLine: string): Promise<{ exitCode: number | undefined; output: string } | undefined> {
+  const shellIntegration = terminal.shellIntegration ?? await new Promise<vscode.TerminalShellIntegration | undefined>(resolve => {
+    const listener = vscode.window.onDidChangeTerminalShellIntegration(e => {
+      if (e.terminal === terminal) { listener.dispose(); resolve(e.shellIntegration); }
+    });
+    setTimeout(() => { listener.dispose(); resolve(undefined); }, 3000);
+  });
+  if (!shellIntegration) {
+    terminal.sendText(commandLine);   // no shell integration: no exit code or output available
+    return undefined;
+  }
+  const execution = shellIntegration.executeCommand(commandLine);
+  let output = '';
+  const reading = (async () => { for await (const data of execution.read()) { output += data; } })();
+  const exitCode = await new Promise<number | undefined>(resolve => {
+    const listener = vscode.window.onDidEndTerminalShellExecution(e => {
+      if (e.execution === execution) { listener.dispose(); resolve(e.exitCode); }
+    });
+  });
+  await reading;
+  return { exitCode, output };
+}
+```
+
+Start `execution.read()` right after `executeCommand`, before awaiting the end event, or early
+output is missed. The activation events `onTerminal:<shell>` and
+`onTerminalShellIntegration:<shell>` activate an extension when such a terminal opens.
 
 ### Enumerating and Finding Terminals
 
@@ -698,10 +733,11 @@ context.subscriptions.push(watcher);
 ### Watching Outside the Workspace
 
 ```typescript
-// For files outside workspace folders, use an absolute glob
+// For files outside workspace folders, use an absolute base URI
+// (import * as os from 'os'; import * as path from 'path';)
 const watcher = vscode.workspace.createFileSystemWatcher(
   new vscode.RelativePattern(
-    vscode.Uri.file('/home/user/.config/myapp'),
+    vscode.Uri.file(path.join(os.homedir(), '.config', 'myapp')),
     '*.json'
   )
 );
@@ -786,6 +822,109 @@ vscode.workspace.onDidChangeConfiguration(e => {
 await vscode.workspace.getConfiguration('myExt')
   .update('refreshInterval', 5000, vscode.ConfigurationTarget.Global);
 ```
+
+---
+
+## Chat, Language Model Tools and MCP
+
+Each of these pairs a `contributes` entry with a registration in `activate()`, and VS Code
+generates the matching activation event (`onLanguageModelTool:`, `onChatParticipant:`,
+`onMcpCollection:`) from the contribution.
+
+### Language Model Tool
+
+A tool the chat agent can call. The model reads `modelDescription` and `inputSchema` to decide when
+and how:
+
+```jsonc
+"contributes": {
+  "languageModelTools": [{
+    "name": "myExt_findItems",
+    "displayName": "Find Items",
+    "toolReferenceName": "findItems",          // lets a user write #findItems in a prompt
+    "canBeReferencedInPrompt": true,
+    "modelDescription": "Finds items in the workspace whose name matches a query.",
+    "userDescription": "Find items by name.",
+    "inputSchema": {
+      "type": "object",
+      "properties": { "query": { "type": "string", "description": "Text to match" } },
+      "required": ["query"]
+    }
+  }]
+}
+```
+
+```typescript
+interface FindItemsInput { query: string }
+
+context.subscriptions.push(
+  vscode.lm.registerTool<FindItemsInput>('myExt_findItems', {
+    async invoke(options, _token) {
+      const matches = await findItems(options.input.query);
+      return new vscode.LanguageModelToolResult([
+        new vscode.LanguageModelTextPart(JSON.stringify(matches))
+      ]);
+    }
+  })
+);
+```
+
+An optional `prepareInvocation` returns the confirmation message shown before a tool with side
+effects runs. Another extension's tool is called with `vscode.lm.invokeTool(name, options)`.
+
+### Chat Participant
+
+An `@`-mention in the chat view with its own handler:
+
+```jsonc
+"contributes": {
+  "chatParticipants": [{
+    "id": "myExt.helper",
+    "name": "helper",
+    "fullName": "My Helper",
+    "description": "Answers questions about my items"
+  }]
+}
+```
+
+```typescript
+const participant = vscode.chat.createChatParticipant('myExt.helper',
+  async (request, _context, stream, token) => {
+    const [model] = await vscode.lm.selectChatModels();
+    if (!model) { stream.markdown('No language model is available.'); return; }
+    const response = await model.sendRequest(
+      [vscode.LanguageModelChatMessage.User(request.prompt)], {}, token);
+    for await (const chunk of response.text) { stream.markdown(chunk); }
+  });
+context.subscriptions.push(participant);
+```
+
+`request.model` holds the model the user picked in the chat view; `selectChatModels` chooses one
+by vendor, family or id.
+
+### MCP Server Definition Provider
+
+Offers MCP servers to VS Code, which starts them and lists their tools to the chat agent:
+
+```jsonc
+"contributes": {
+  "mcpServerDefinitionProviders": [{ "id": "myExt.servers", "label": "My Servers" }]
+}
+```
+
+```typescript
+context.subscriptions.push(
+  vscode.lm.registerMcpServerDefinitionProvider('myExt.servers', {
+    provideMcpServerDefinitions: async () => [
+      new vscode.McpStdioServerDefinition('My Local Server', 'node', [serverScriptPath]),
+      new vscode.McpHttpServerDefinition('My Remote Server', vscode.Uri.parse(serverUrl)),
+    ],
+  })
+);
+```
+
+`resolveMcpServerDefinition` runs just before a server starts, and is the place to ask the user
+for anything the server needs. Fire `onDidChangeMcpServerDefinitions` when the list changes.
 
 ---
 

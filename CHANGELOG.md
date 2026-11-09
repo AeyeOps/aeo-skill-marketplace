@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-11-09
+
+Refresh of the VS Code extension skill against VS Code 1.144.1, Insiders 1.145.0 and `@vscode/vsce` 4.1.0, checked against the extension docs, the bundled `vscode.d.ts`, a fresh `yo code` scaffold and live runs. Breaking for aeo-dev installers: the `vscode-insiders-extension` skill is removed and its content now lives in `vscode-extension`.
+
+### Added
+
+- **aeo-dev**: `vscode-extension` gains `scripts/vscode-command.mjs` and `references/running-window.md`, which run any VS Code command in an already-open window from a shell. The script sends `SIGUSR1` to each window's extension host (started with `--inspect-port=0`), finds the window by its workspace folder through the inspector, runs the command through the `vscode` API, and closes the inspector again. The main use is reloading open windows after installing an updated `.vsix`, since an update reaches a window only after it reloads. Verified live on Linux with stable 1.144.1 and Insiders 1.145.0
+- **aeo-dev**: `vscode-extension` covers language model tools, chat participants and MCP server definition providers, with their contribution points and registration calls, plus `onStartupFinished` and terminal commands run through shell integration with their exit code and output
+- **aeo-dev**: `vscode-extension` gains `references/provenance.md`, listing the vendor pages it was checked against
+
+### Changed
+
+- **aeo-dev**: `vscode-insiders-extension` is merged into `vscode-extension`. The two shared about 86% of their SKILL.md and identical references. The merged skill carries a stable-versus-Insiders table of CLIs, extension folders, user data, logs and remote server folders (0.3.3 → 0.4.0)
+- **aeo-dev**: the full `esbuild.js`, npm scripts and `.vscodeignore` move from SKILL.md to `references/build-test-publish.md`, and every reference is linked beside the subject that needs it
+
+### Fixed
+
+- **aeo-dev**: publishing now leads with `vsce publish --oidc` trusted publishing from GitHub Actions and `--azure-credential` from Azure Pipelines. Global Azure DevOps PATs, which the old setup used, retire on December 1, 2026
+- **aeo-dev**: the tsconfig gains `"types": ["node", "mocha"]`, without which TypeScript 6.0 fails to type-check a scaffold
+- **aeo-dev**: the npm scripts gain `compile-tests` and `pretest`. Without them nothing compiled the tests to `out/`, so `npm test` found no tests and still passed
+- **aeo-dev**: `vsce package --target` takes one target per run
+- **aeo-dev**: CI uses Node 22 and `actions/checkout@v7` / `actions/setup-node@v7`, since vsce and the test tools require Node 22
+- **aeo-dev**: `@types/vscode` must not be newer than `engines.vscode`, or vsce refuses the package
+- **aeo-dev**: the scaffold step chooses esbuild in the generator, which has offered it since 2024, instead of converting a tsc build by hand
+- **aeo-dev**: the test launch configuration that pointed at a nonexistent runner is replaced by the Extension Test Runner extension. The `$esbuild-watch` problem matcher now names the extension it needs
+- **aeo-dev**: the `.vscodeignore` matches the generator's and excludes the ESLint flat config, the quickstart and source maps
+- **aeo-dev**: webview CSP guidance no longer recommends `'unsafe-inline'` beside a nonce, which browsers ignore. Theme variables need no CSP allowance
+- **aeo-dev**: `terminal.sendText` executes by default
+- **aeo-dev**: profile installs are described as they behave: `--profile <name>` works on desktop and is not passed on from a plain WSL or SSH shell
+- **aeo-dev**: a remote extension host does set `VSCODE_IPC_HOOK_CLI`
+- **aeo-dev**: Insiders runs about one weekly release ahead of stable, not one month
+- **aeo-dev**: the description drops the selling sentence and the capitalized exclusion, and adds the new triggers
+
 ## [0.6.1] - 2026-09-06
 
 Verification pass on the published 0.6.0: installed from the repository with the `skills` CLI, loaded through the Claude Code plugin validator, and spot-checked against the n8n-mcp README and the n8n 2.0 breaking-changes page fetched today.

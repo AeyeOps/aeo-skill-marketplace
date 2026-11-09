@@ -1,29 +1,56 @@
 ---
 name: vscode-extension
 description: |
-  Use when building or debugging a VS Code extension on stable VS Code for Windows, macOS, or Linux desktop —
-  scaffolding with esbuild, fixing blank webview panels or silent CSP violations, troubleshooting extensions that
-  won't load after install with profiles, adding dual TreeView+WebviewView toggle panels, or publishing to the
-  marketplace. Contains verified extension development workflows, webview CSP pitfall resolutions, and
-  profile-based install fixes that produce more correct results than reasoning from general training alone. Do
-  NOT use for code-insiders on WSL/Linux (use vscode-insiders-extension), VS Code user configuration (themes,
-  keybindings, tasks.json), Chrome/browser extensions, Electron apps, JupyterLab plugins, or Monaco Editor
-  embeds.
+  Use when building, debugging, testing or publishing a VS Code extension, on stable VS Code or Insiders
+  (code-insiders), on Windows, macOS or Linux desktop or in a WSL or SSH remote: scaffolding and bundling with
+  esbuild, TreeView and WebviewView panels, blank webviews from Content Security Policy violations, terminal
+  commands through shell integration, language model tools, chat participants and MCP server providers,
+  extensions that do not load after install under profiles, getting an updated extension into windows that
+  are already open, and running VS Code commands in an open window from a shell or script. Not for VS Code
+  user configuration such as themes, keybindings or tasks.json, browser extensions, Electron apps, JupyterLab
+  plugins, or Monaco Editor embeds.
 license: MIT
 metadata:
   author: AeyeOps
-  version: "0.3.3"
-  summary: Verified workflows for building, debugging, and publishing VS Code extensions on stable desktop VS Code.
+  version: "0.4.0"
+  summary: Verified workflows for building, testing, publishing and driving VS Code extensions on stable VS Code and Insiders.
 ---
 
 # VS Code Extension Development
 
-Guide for building VS Code extensions from scaffold through publication.
+Guide for building VS Code extensions from scaffold through publication, and for driving the
+windows that run them.
+
+When VS Code's behavior in a session contradicts a line here, or a VS Code release changes it,
+tell the user which line is wrong and what you observed, and correct the line in the skill's
+source when you have it. The vendor pages this skill was checked against are listed in
+[references/provenance.md](references/provenance.md); read it when a fact here needs re-checking.
 
 ## Environment Notes
 
-VS Code extensions run in three distinct environments. The extension code and APIs are identical
-across all three — the differences are in where files live and how the extension host is launched.
+VS Code extensions run in three environments, on either stable VS Code or Insiders. The extension
+code and APIs are identical everywhere; what differs is where files live and how the extension
+host starts.
+
+### Stable and Insiders
+
+Insiders is a separate install with its own CLI, folders and settings, and runs about one weekly
+release ahead of stable. When the user develops on Insiders, every command, launch configuration
+and documentation reference in their project uses `code-insiders`. The sections below name
+stable's paths; Insiders uses these instead:
+
+| | Stable | Insiders |
+|---|---|---|
+| CLI | `code` | `code-insiders` |
+| Extensions | `~/.vscode/extensions/` | `~/.vscode-insiders/extensions/` |
+| User data, Linux | `~/.config/Code/User/` | `~/.config/Code - Insiders/User/` |
+| User data, macOS | `~/Library/Application Support/Code/User/` | `~/Library/Application Support/Code - Insiders/User/` |
+| User data, Windows | `%APPDATA%\Code\User\` | `%APPDATA%\Code - Insiders\User\` |
+| Logs, Linux | `~/.config/Code/logs/` | `~/.config/Code - Insiders/logs/` |
+| Remote server, WSL or SSH | `~/.vscode-server/` | `~/.vscode-server-insiders/` |
+
+On Windows the extensions folders are `%USERPROFILE%\.vscode\extensions\` and
+`%USERPROFILE%\.vscode-insiders\extensions\`.
 
 ### Native (Windows/macOS/Linux desktop)
 
@@ -36,6 +63,8 @@ The extension host runs locally on the same machine as the VS Code UI.
 - **Profile extensions**: `<user-data>/profiles/<profile-id>/extensions.json`
 - **File watchers**: OS-native (ReadDirectoryChangesW on Windows, FSEvents on macOS, inotify on Linux)
 - **Install**: `code --install-extension my-ext.vsix`
+- **`process.env`**: The desktop extension host lacks terminal variables such as
+  `VSCODE_IPC_HOOK_CLI`; read them from a terminal's `/proc/<terminal_pid>/environ`
 
 ### WSL Remote (VS Code on Windows, extension host in WSL)
 
@@ -46,10 +75,10 @@ Windows, workspace extensions run in WSL.
 - **CLI**: `code` (available inside WSL via the VS Code Server shim)
 - **Server-side extensions (WSL)**: `~/.vscode-server/extensions/`
 - **UI-side extensions (Windows)**: `%USERPROFILE%\.vscode\extensions\`
-  (from WSL: `/mnt/c/Users/<user>/.vscode/extensions/`)
+  (from WSL: `"$(wslpath "$(cmd.exe /c 'echo %USERPROFILE%' | tr -d '\r')")/.vscode/extensions/"`)
 - **Server-side profiles (WSL)**: `~/.vscode-server/data/User/profiles/<profile-id>/extensions.json`
 - **Settings/keybindings (Windows)**: `%APPDATA%\Code\User\profiles\<profile-id>\settings.json`
-  (from WSL: `/mnt/c/Users/<user>/AppData/Roaming/Code/User/profiles/<profile-id>/`)
+  (from WSL: `"$(wslpath "$(cmd.exe /c 'echo %APPDATA%' | tr -d '\r')")/Code/User/profiles/<profile-id>/"`)
   — the Windows side is **authoritative** for UI/editor settings (theme, font, keybindings,
   layout). The WSL server-side profile at `~/.vscode-server/data/User/profiles/<profile-id>/`
   has only a minimal `settings.json` — most settings are not duplicated there.
@@ -59,8 +88,8 @@ Windows, workspace extensions run in WSL.
 - **Path translation**: Not needed for extension code — the extension host runs natively in WSL.
   Windows paths are only relevant for the VS Code UI process.
 - **Install**: `code --install-extension my-ext.vsix` (runs inside WSL, installs to WSL server dir)
-- **`process.env`**: The extension host does NOT have terminal-specific variables like
-  `VSCODE_IPC_HOOK_CLI` — read those from `/proc/<terminal_pid>/environ` instead
+- **`process.env`**: The remote extension host sets `VSCODE_IPC_HOOK_CLI` to its own CLI socket,
+  so a `code` command the extension spawns reaches its window
 
 ### SSH Remote (VS Code on any OS, extension host on remote Linux)
 
@@ -69,7 +98,8 @@ the extension host runs as a Node.js server over SSH. Same constraints as WSL Re
 
 ### Launch Config
 
-Use `${execPath}` in `.vscode/launch.json` — it resolves correctly across all three environments.
+Use `${execPath}` in `.vscode/launch.json` — it resolves correctly in all three environments and
+on both builds.
 
 ## Quick Start — Scaffold a New Extension
 
@@ -79,27 +109,26 @@ Generate a TypeScript extension project:
 npx --package yo --package generator-code -- yo code
 ```
 
-Select "New Extension (TypeScript)" when prompted. This creates a ready-to-run project with
-`src/extension.ts`, `package.json`, and TypeScript configuration.
+Select "New Extension (TypeScript)" when prompted, and choose esbuild at "Which bundler to use?"
+(or pass `--bundler=esbuild`); the default is unbundled. This creates a ready-to-run project with
+`src/extension.ts`, `package.json`, `esbuild.js`, TypeScript and ESLint configuration, and tests.
 
 Open the project and launch the Extension Development Host with F5 to test immediately.
-
-After scaffolding, convert the build system from tsc to esbuild — see the esbuild section below.
-The yo generator creates a tsc-based build by default, but esbuild bundles are smaller, faster,
-and what VS Code itself uses internally (as of v1.110).
 
 ## Project Structure
 
 ```
 extension-name/
   package.json            # manifest: contribution points, activation, settings
-  esbuild.js              # build script (replaces default tsc pipeline)
+  esbuild.js              # build script
   tsconfig.json           # TypeScript config
+  eslint.config.mjs       # ESLint flat config
   .vscodeignore           # files excluded from .vsix package
   .vscode-test.mjs        # test runner configuration
   src/
     extension.ts          # activate() / deactivate() entry point
     *.ts                  # feature modules
+    test/                 # tests, compiled to out/ by compile-tests
   dist/
     extension.js          # bundled output (single file)
 ```
@@ -117,7 +146,7 @@ The manifest declares everything the extension contributes to VS Code. Key field
   "name": "my-extension",
   "displayName": "My Extension",
   "version": "0.1.0",
-  "engines": { "vscode": "^1.110.0" },   // caret = forward-compatible
+  "engines": { "vscode": "^1.110.0" },   // minimum VS Code; caret = forward-compatible
   "main": "./dist/extension",             // points to esbuild output
   "activationEvents": [],                 // usually auto-inferred
   "contributes": { /* see below */ }
@@ -131,7 +160,8 @@ declare them manually. Notable exceptions:
 
 - `onWebviewPanel:viewType` — for webview panel restoration
 - `onUri` — for URI handlers
-- `*` — activate on startup (avoid unless truly needed)
+- `onStartupFinished` — activate after VS Code has started, without delaying startup
+- `*` — activate during startup; use `onStartupFinished` unless the extension must be ready first
 
 For views (`contributes.views`), VS Code automatically activates on `onView:viewId`.
 
@@ -245,8 +275,9 @@ Every disposable (commands, watchers, providers, views) should be pushed to
 
 ## Core API Patterns
 
-This section covers the most common patterns. For detailed API reference with full code examples,
-read `references/api-patterns.md`.
+This section covers the most common patterns. When implementing TreeView, Webview, WebviewView,
+Terminal, FileSystemWatcher, StatusBar, command or configuration code, read
+[references/api-patterns.md](references/api-patterns.md) for full examples.
 
 ### TreeView
 
@@ -281,22 +312,38 @@ pattern involves:
 2. Toggle commands flip the context key and persist to `globalState`
 3. Both providers share a single data pipeline and refresh together
 4. User interactions in both views route through shared VS Code commands (not direct calls)
-5. CSP requires careful layering: nonce for scripts, `'unsafe-inline'` for styles, and
-   `${webview.cspSource}` for external CSS
+5. CSP: a nonce for scripts, `${webview.cspSource}` for the extension's stylesheet, and dynamic
+   styling through CSS classes rather than inline `style` attributes
 
 This pattern has several non-obvious failure modes (silent CSP blocking, cache invalidation
-blanking the panel, stale focus handlers). For the complete implementation guide with all
-pitfalls and fixes, read `references/api-patterns.md` §Dual View.
+blanking the panel, stale focus handlers). Before building it, read the Dual View section of
+[references/api-patterns.md](references/api-patterns.md).
 
 ### Terminal
 
 For interacting with VS Code's integrated terminal:
 
 - `window.createTerminal()` — create terminals
+- `terminal.sendText(text)` — type the text and press Enter; pass `false` as the second argument
+  to leave it unexecuted
+- `terminal.shellIntegration.executeCommand()` — run a command and get its exit code from
+  `onDidEndTerminalShellExecution` and its output from `execution.read()`; shell integration can
+  arrive after the terminal opens, so the Terminal section of
+  [references/api-patterns.md](references/api-patterns.md) waits for it and falls back to `sendText`
 - `terminal.show()` — focus a terminal (handles tabs and split panes)
 - `terminal.processId` — get the underlying PID
 - `window.terminals` — enumerate all open terminals
 - `onDidOpenTerminal` / `onDidCloseTerminal` — lifecycle events
+
+### Chat, Language Model Tools and MCP
+
+An extension can give the chat agent a tool (`vscode.lm.registerTool` with
+`contributes.languageModelTools`), add an `@`-participant to the chat view
+(`vscode.chat.createChatParticipant` with `contributes.chatParticipants`), and offer MCP servers
+(`vscode.lm.registerMcpServerDefinitionProvider` with `contributes.mcpServerDefinitionProviders`).
+VS Code generates the activation event for each from its contribution. When building one, read the
+Chat, Language Model Tools and MCP section of
+[references/api-patterns.md](references/api-patterns.md).
 
 ### FileSystemWatcher
 
@@ -321,124 +368,29 @@ context.subscriptions.push(watcher);
 
 ## Building with esbuild
 
-esbuild is the recommended bundler (VS Code's own built-in extensions switched to it in v1.110).
-It produces a single `dist/extension.js` file from the TypeScript source.
+esbuild bundles `src/extension.ts` into a single `dist/extension.js`. The `vscode` module stays
+external because the extension host provides it, and `tsc --noEmit` type-checks separately because
+esbuild strips types without checking them. `vscode:prepublish` runs automatically during
+`vsce package` and `vsce publish`.
 
-### esbuild.js
-
-```javascript
-const esbuild = require('esbuild');
-
-const production = process.argv.includes('--production');
-const watch = process.argv.includes('--watch');
-
-/** @type {import('esbuild').Plugin} */
-const esbuildProblemMatcherPlugin = {
-  name: 'esbuild-problem-matcher',
-  setup(build) {
-    build.onStart(() => { console.log('[watch] build started'); });
-    build.onEnd(result => {
-      for (const { text, location } of result.errors) {
-        console.error(`✘ [ERROR] ${text}`);
-        if (location) {
-          console.error(`    ${location.file}:${location.line}:${location.column}:`);
-        }
-      }
-      console.log('[watch] build finished');
-    });
-  },
-};
-
-async function main() {
-  const ctx = await esbuild.context({
-    entryPoints: ['src/extension.ts'],
-    bundle: true,
-    format: 'cjs',
-    minify: production,
-    sourcemap: !production,
-    sourcesContent: false,
-    platform: 'node',
-    outfile: 'dist/extension.js',
-    external: ['vscode'],
-    logLevel: 'warning',
-    plugins: [esbuildProblemMatcherPlugin],
-  });
-  if (watch) {
-    await ctx.watch();
-  } else {
-    await ctx.rebuild();
-    await ctx.dispose();
-  }
-}
-
-main().catch(e => { console.error(e); process.exit(1); });
-```
-
-### npm Scripts
-
-```json
-{
-  "scripts": {
-    "compile": "npm run check-types && node esbuild.js",
-    "check-types": "tsc --noEmit",
-    "watch": "npm-run-all -p watch:*",
-    "watch:esbuild": "node esbuild.js --watch",
-    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "npm run check-types && node esbuild.js --production",
-    "vscode:prepublish": "npm run package",
-    "test": "vscode-test"
-  }
-}
-```
-
-The `watch` script runs esbuild and tsc in parallel — esbuild handles bundling while tsc
-provides type checking. This gives sub-second rebuilds with full type safety.
-
-`vscode:prepublish` runs automatically during `vsce package` and `vsce publish`.
-
-### .vscodeignore
-
-```
-.vscode/
-node_modules/
-out/
-src/
-tsconfig.json
-esbuild.js
-.vscode-test.mjs
-**/*.ts
-!dist/**
-```
-
-Everything bundled into `dist/extension.js` can be excluded. This keeps the .vsix small.
+When setting up or changing the build, read
+[references/build-test-publish.md](references/build-test-publish.md) for the complete `esbuild.js`,
+the npm scripts and `.vscodeignore`.
 
 ## Testing
 
-For testing setup, configuration, and debugging details, read `references/build-test-publish.md`.
+For test configuration, debugging tests and CI, read
+[references/build-test-publish.md](references/build-test-publish.md).
 
-Quick setup:
-
-```bash
-npm install --save-dev @vscode/test-cli @vscode/test-electron
-```
-
-Tests run inside an Extension Development Host with full VS Code API access. Configure in
-`.vscode-test.mjs`:
-
-```javascript
-import { defineConfig } from '@vscode/test-cli';
-
-export default defineConfig({
-  files: 'out/test/**/*.test.js',
-  mocha: { ui: 'tdd', timeout: 20000 }
-});
-```
-
-Run: `npm test` or `npx vscode-test --label unitTests`
+Tests run under Mocha inside an Extension Development Host with full VS Code API access.
+`@vscode/test-cli` reads `.vscode-test.mjs`, whose `files` glob points at compiled tests in `out/`.
+esbuild writes only `dist/`, so a `compile-tests` script must compile the tests to `out/`, and a
+`pretest` script runs it before `npm test`; without them the run finds no tests and still passes.
 
 ## Publishing
 
-For full publishing workflow, read `references/build-test-publish.md`.
+For publisher setup, pre-release versions, platform targets and marketplace metadata, read
+[references/build-test-publish.md](references/build-test-publish.md).
 
 Quick reference:
 
@@ -451,7 +403,25 @@ vsce publish --pre-release        # pre-release channel
 code --install-extension my-ext-0.1.0.vsix   # local install
 ```
 
-Platform-specific builds: `vsce package --target linux-x64 linux-arm64 darwin-x64`
+`vsce publish` from CI authenticates through a federated identity (`--oidc` on GitHub Actions,
+`--azure-credential` on Azure Pipelines); global Azure DevOps tokens retire on December 1, 2026.
+Platform-specific packages take one `vsce package --target <target>` per target.
+
+### Updating an Extension in Open Windows
+
+A first install activates in every open window at once. An update does not: each window keeps
+running the version it loaded until it reloads, so a window that has not reloaded still shows the
+old behavior. After installing an updated `.vsix`, reload each open window that uses it before
+judging the new version. In a local window, the Restart Extensions button VS Code offers after an
+update applies it without a full reload; a WSL or SSH window needs Reload Window. That button has
+no command id, and Developer: Restart Extension Host only stops and restarts the hosts, so a script
+uses Reload Window.
+
+A shell cannot press Reload Window in a window that lacks keyboard focus, and the `code` CLI has
+no option that runs a command. When a script or agent must reload a window, or run any other
+command in it, read [references/running-window.md](references/running-window.md) and use
+[scripts/vscode-command.mjs](scripts/vscode-command.mjs), which runs a command in the window
+that has a given folder open.
 
 ### Stable vs Insiders — Same Extension
 
@@ -459,46 +429,49 @@ A `.vsix` package works on both VS Code stable and Insiders — there is no sepa
 only factor is the `engines.vscode` version in `package.json`:
 
 - `"^1.110.0"` means the extension requires VS Code 1.110+. If a new API you use only exists
-  in Insiders (which runs ahead of stable by ~1 month), stable users can't install until that
-  version ships. Use the lowest version that supports the APIs you need.
+  in Insiders, stable users can't install until that version ships. Use the lowest version that
+  supports the APIs you need.
+- When developing on Insiders, test against stable before publishing for broad reach.
+- Pin `@types/vscode` to the same floor. The generator writes the newest version to both, and
+  `vsce package` refuses a package whose `@types/vscode` is newer than `engines.vscode`.
 - The marketplace serves the same package to both builds.
-- Local install just differs by CLI: `code --install-extension` vs `code-insiders --install-extension`.
 
 ## Platform Notes
 
 ### Profile-Based Extension Registration
 
-When VS Code profiles are active, `code --install-extension` may register the extension in the
-global registry but NOT in the active profile's registry. This is especially common in WSL/SSH
-remote environments where the global registry is at `~/.vscode-server/extensions/extensions.json`
-but the profile registry is at `~/.vscode-server/data/User/profiles/<profile-id>/extensions.json`.
-The `--profile` flag may not fix this on WSL. The extension won't load until manually added to
-the profile-specific `extensions.json`. Without a publisher field in package.json, the extension
-installs as `undefined_publisher.<name>-<version>`.
+`code --install-extension` installs into the default profile unless told otherwise, so an
+extension installed while a window uses another profile does not load there.
 
-On native installs, the equivalent paths are under `~/.vscode/` instead of `~/.vscode-server/`.
+- On desktop, `--profile <name>` installs into that profile, matched by name. An unknown name
+  fails with `Profile '<name>' not found.`
+- From a plain WSL or SSH shell, `--profile` is not passed on to the VS Code server, and the
+  install lands in the server's default profile. Install from the window's integrated terminal
+  instead, which installs into the window's current profile, or add the extension to
+  `~/.vscode-server/data/User/profiles/<profile-id>/extensions.json` by hand.
+- Without a `publisher` field in package.json, the extension installs as
+  `undefined_publisher.<name>-<version>`.
+
+Each profile's extension list is `<user-data>/profiles/<profile-id>/extensions.json` on desktop.
 
 ### Webview Content Security Policy
 
-- Inline `onclick` attributes are blocked by default CSP — use nonce-based `<script>` blocks
-  with `addEventListener` instead
-- `style-src 'nonce-...'` blocks inline `style=""` attributes — use
-  `style-src ${webview.cspSource} 'unsafe-inline'` for style-src, or move dynamic styling to
-  CSS classes with `data-*` attribute selectors
-- Always include `${webview.cspSource}` in style-src for CSS to load correctly
+- Violations are silent; Developer: Open Webview Developer Tools shows them
+- Inline `onclick` attributes are blocked — use a nonce-guarded `<script>` with
+  `addEventListener` instead
+- Inline `style=""` attributes are blocked unless `style-src` allows `'unsafe-inline'`, and a
+  nonce in the same directive cancels `'unsafe-inline'` — move dynamic styling to CSS classes
+- Include `${webview.cspSource}` in `style-src` so the extension's stylesheet loads
+- Theme variables such as `--vscode-editor-foreground` need no CSP allowance
 
 ### Architecture Constraints
 
-- Extensions run in the Extension Host process, separate from the VS Code UI
+- Extensions run in the extension host, separate from the VS Code UI. On desktop each window has
+  its own host, an Electron utility process started with `--inspect-port=0`; in a WSL or SSH
+  window the host runs as a Node.js server on the remote
+- The Node extension host loads `main` as ESM when the file ends in `.mjs`, or when
+  `"type": "module"` is set and the file is not `.cjs` (VS Code 1.100 and later); CommonJS
+  still works
 - No DOM access — you cannot manipulate VS Code's UI directly
 - No custom CSS injection — use contribution points and the API
 - Webviews are sandboxed with their own security context
-
-## Reference Files
-
-- `references/api-patterns.md` — Detailed API patterns with full code examples for TreeView,
-  Webview, WebviewView, Terminal, FileSystemWatcher, and StatusBar. Read when implementing
-  any of these APIs.
-- `references/build-test-publish.md` — esbuild configuration rationale and additional options,
-  TypeScript config, test runner setup, debugging tests, CI configuration, publishing workflow,
-  and marketplace metadata. Read when setting up the build pipeline or preparing to publish.
