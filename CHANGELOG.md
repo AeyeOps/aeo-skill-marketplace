@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.1] - 2026-11-09
+
+The WSL remote notes in the VS Code extension skill, checked live in a WSL window from VS Code 1.117 on Windows with Remote - WSL 0.104.3.
+
+### Fixed
+
+- **aeo-dev**: `vscode-extension` says to spawn `code` asynchronously from a remote extension host. The host serves `VSCODE_IPC_HOOK_CLI` on its own event loop, so `execFileSync` waits until it times out. It also notes that `/proc/<pid>/environ` lacks the variable, because the host sets it after it starts (0.4.0 → 0.4.1)
+- **aeo-dev**: `vscode-extension` separates the two remote `--profile` cases. A plain WSL shell's `code` drops it without a message. A plain SSH shell has no working `code`, and the server's own `code-server` prints `Ignoring option 'profile': not supported for server.`
+
 ## [0.7.0] - 2026-11-09
 
 Refresh of the VS Code extension skill against VS Code 1.144.1, Insiders 1.145.0 and `@vscode/vsce` 4.1.0, checked against the extension docs, the bundled `vscode.d.ts`, a fresh `yo code` scaffold and live runs. Breaking for aeo-dev installers: the `vscode-insiders-extension` skill is removed and its content now lives in `vscode-extension`.

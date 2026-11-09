@@ -12,7 +12,7 @@ description: |
 license: MIT
 metadata:
   author: AeyeOps
-  version: "0.4.0"
+  version: "0.4.1"
   summary: Verified workflows for building, testing, publishing and driving VS Code extensions on stable VS Code and Insiders.
 ---
 
@@ -88,8 +88,11 @@ Windows, workspace extensions run in WSL.
 - **Path translation**: Not needed for extension code — the extension host runs natively in WSL.
   Windows paths are only relevant for the VS Code UI process.
 - **Install**: `code --install-extension my-ext.vsix` (runs inside WSL, installs to WSL server dir)
-- **`process.env`**: The remote extension host sets `VSCODE_IPC_HOOK_CLI` to its own CLI socket,
-  so a `code` command the extension spawns reaches its window
+- **`process.env`**: Once it starts, the remote extension host sets `VSCODE_IPC_HOOK_CLI` to its
+  own CLI socket, so a `code` command the extension spawns reaches its window. Spawn it
+  asynchronously: the host serves that socket on its own event loop, so `execFileSync` waits
+  until it times out. The host's `/proc/<pid>/environ` lacks the variable, because it shows only
+  the environment the host started with
 
 ### SSH Remote (VS Code on any OS, extension host on remote Linux)
 
@@ -445,9 +448,12 @@ extension installed while a window uses another profile does not load there.
 
 - On desktop, `--profile <name>` installs into that profile, matched by name. An unknown name
   fails with `Profile '<name>' not found.`
-- From a plain WSL or SSH shell, `--profile` is not passed on to the VS Code server, and the
-  install lands in the server's default profile. Install from the window's integrated terminal
-  instead, which installs into the window's current profile, or add the extension to
+- From a plain WSL shell, `code` drops `--profile` without a message, and the install lands in
+  the server's default profile. A plain SSH shell has no working `code`; the server's own
+  `~/.vscode-server/bin/<commit>/bin/code-server --install-extension` prints
+  `Ignoring option 'profile': not supported for server.` and installs into the same default.
+  Install from the window's integrated terminal instead, which installs into the window's
+  current profile, or add the extension to
   `~/.vscode-server/data/User/profiles/<profile-id>/extensions.json` by hand.
 - Without a `publisher` field in package.json, the extension installs as
   `undefined_publisher.<name>-<version>`.

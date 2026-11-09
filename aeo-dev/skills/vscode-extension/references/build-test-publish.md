@@ -421,8 +421,9 @@ code --install-extension my-extension-0.1.0.vsix
 ```
 
 Use `code-insiders --install-extension` for Insiders. The install goes to the default profile
-unless `--profile <name>` names another; from a plain WSL or SSH shell `--profile` is not passed
-on, as SKILL.md's Platform Notes describe.
+unless `--profile <name>` names another. In a WSL or SSH remote a plain shell ignores
+`--profile`, and the window's integrated terminal installs into the window's current profile,
+as SKILL.md's Platform Notes describe.
 
 ### Pre-Publish Checklist
 
