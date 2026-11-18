@@ -140,6 +140,13 @@
       "category": "development",
       "source": "./aeo-vsc-cc-sessions-sidecar",
       "tags": ["vscode", "claude-code", "hooks", "sidecar", "sessions", "lineage"]
+    },
+    {
+      "name": "aeo-ux3-product-design-harness",
+      "description": "Product decisions and validated review-to-execution handoffs. Review-only source candidate; Python/jsonschema required and known upstream limitations apply.",
+      "category": "productivity",
+      "source": "./aeo-ux3-product-design-harness",
+      "tags": ["product-design", "product-decisions", "handoff", "validation"]
     }
   ]
 }

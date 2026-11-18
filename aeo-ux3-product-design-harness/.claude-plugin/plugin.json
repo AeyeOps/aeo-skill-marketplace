@@ -1,0 +1,10 @@
+{
+  "name": "aeo-ux3-product-design-harness",
+  "version": "0.1.0",
+  "description": "Product decisions and validated review-to-execution handoffs. Requires Python and jsonschema; see README for known source limitations.",
+  "author": {
+    "name": "cis2042",
+    "url": "https://github.com/cis2042"
+  },
+  "license": "MIT"
+}
