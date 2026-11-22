@@ -31,7 +31,7 @@ graph LR
 | **Productivity** | 3 plugins | Agile roles, requirements gathering, troubleshooting |
 | **Developer Tools** | 6 plugins | Claude skills, VS Code extensions, repo governance, deployment, performance, self-improving memory |
 | **Design** | 1 plugin | UX optimization, React PWA patterns |
-| **Infrastructure** | 1 plugin | AWS and Azure CLI operations, cloud resource management |
+| **Infrastructure** | 1 plugin | AWS and Azure CLI operations, cloud resource management, NETGEAR Orbi mesh Wi-Fi diagnostics |
 
 **Total:** 19 plugins · 41 skills · 25 agents · 37 commands
 
@@ -116,6 +116,7 @@ npx skills add AeyeOps/aeo-skill-marketplace --skill az-cli-operations
 npx skills add AeyeOps/aeo-skill-marketplace --skill glinet-slate7
 npx skills add AeyeOps/aeo-skill-marketplace --skill lima-vm-operations
 npx skills add AeyeOps/aeo-skill-marketplace --skill mlx-serving
+npx skills add AeyeOps/aeo-skill-marketplace --skill orbi
 # aeo-n8n
 npx skills add AeyeOps/aeo-skill-marketplace --skill n8n
 # aeo-python
@@ -233,9 +234,9 @@ Cloud operations and resource management.
 
 | Plugin | Description |
 |--------|-------------|
-| [**aeo-infra**](./aeo-infra) | AWS CLI v2 and Azure CLI operations — authentication, credential management, service patterns, dangerous command awareness |
+| [**aeo-infra**](./aeo-infra) | AWS CLI v2 and Azure CLI operations — authentication, credential management, service patterns, dangerous command awareness. Also covers GL-iNet Slate 7 configuration and NETGEAR Orbi mesh Wi-Fi diagnostics. |
 
-**Skills included:** AWS CLI operations, Azure CLI operations, JMESPath queries, service patterns
+**Skills included:** AWS CLI, Azure CLI, Lima, MLX serving, GL.iNet Slate 7, NETGEAR Orbi, and Tailscale on macOS with Headscale.
 
 ---
 

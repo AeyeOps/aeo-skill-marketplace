@@ -1,6 +1,6 @@
 # aeo-infra
 
-Infrastructure operations skills for Claude Code — AWS CLI v2, Azure CLI, Lima (Linux VMs on Apple Silicon Macs), MLX/oMLX local LLM serving on Apple Silicon, and GL-iNet Slate 7 travel router.
+Infrastructure operations skills for Claude Code — AWS CLI v2, Azure CLI, Lima (Linux VMs on Apple Silicon Macs), MLX/oMLX local LLM serving on Apple Silicon, the GL-iNet Slate 7 travel router, and NETGEAR Orbi mesh Wi-Fi.
 
 ## Skills
 
@@ -98,6 +98,10 @@ Comprehensive reference for the GL-iNet Slate 7 (GL-BE3600) Wi-Fi 7 travel route
 - Initial setup wizard, direct connection without internet, all network modes (Router/AP/Extender/WDS/Drop-in Gateway)
 - SSH/CLI access, useful commands, UCI configuration
 - Touchscreen-guided reset (Repair Mode vs Reset Mode), factory reset, firmware update, U-Boot bricked-device recovery
+
+### orbi
+
+Use the [Orbi diagnostics skill](./skills/orbi/SKILL.md) when a repeater cannot join a NETGEAR Orbi mesh, when you need to identify a satellite, or when you need to establish what happened during an outage. It covers the local admin UI, router activity logs, and Wi-Fi observations from the affected client.
 
 ## Installation
 

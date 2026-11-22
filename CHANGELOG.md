@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-11-22
+
+### Added
+
+- **aeo-infra** (0.6.9 → 0.7.0) adds the `orbi` skill for diagnosing NETGEAR Orbi mesh Wi-Fi. It can read and summarize the router's local activity log, compare a repeater's saved access point with a Wi-Fi survey, and verify HTTPS through a selected Windows or Linux network interface. The Slate 7 procedure shows how to remove a stale access-point lock while preserving the 5 GHz band selection.
+
 ## [0.7.1] - 2026-11-09
 
 The WSL remote notes in the VS Code extension skill, checked live in a WSL window from VS Code 1.117 on Windows with Remote - WSL 0.104.3.
